@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "turbo run build"
+  },
+  "author": "Daniel Wykerd",
+  "license": "MIT",
+  "devDependencies": {
+    "turbo": "^1.5.6"
+  }
+}

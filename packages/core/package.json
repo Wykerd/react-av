@@ -1,0 +1,35 @@
+{
+  "name": "@react-av/core",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup --config rollup.config.js"
+  },
+  "keywords": [],
+  "author": "Daniel Wykerd",
+  "license": "MIT",
+  "dependencies": {
+    "@react-av/vtt-core": "workspace:^"
+  },
+  "devDependencies": {
+    "@react-hook/resize-observer": "^1.2.6",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^9.0.1",
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "@types/rollup-plugin-peer-deps-external": "^2.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recoil": "^0.7.6",
+    "rollup": "^3.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recoil": "^0.7.6"
+  }
+}

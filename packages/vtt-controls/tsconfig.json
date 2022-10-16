@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": true,    
+    "outDir": "./",     
+    "esModuleInterop": true, 
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "declarationDir": "."
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
+}
