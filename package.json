@@ -4,7 +4,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "changes": "changeset",
-    "publish-packages": "turbo run build && changeset version && changeset publish"
+    "publish-packages": "turbo run build && changeset version && pnpm install && pnpm publish -r"
   },
   "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",

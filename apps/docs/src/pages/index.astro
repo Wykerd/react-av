@@ -1,0 +1,36 @@
+---
+import Examples from "../components/Examples";
+---
+
+<html lang="en">
+	<head>
+		<title>React AV</title>
+		<meta
+			name="description"
+			content="Fully-featured, headless, hooks-based, and declarative media player framework for React."
+		/>
+		<link rel="icon" href="/favicon.ico" />
+	</head>
+	<body>
+		<main class="flex flex-col items-center justify-center">
+            <section class="text-center px-8 py-16">
+                <span class="py-1 px-3 rounded-full bg-orange-500 text-white">
+                    Experimental Release
+                </span>
+                <h1 class="font-black text-6xl sm:text-7xl text-slate-900">
+                    React AV
+                </h1>
+                <h2 class="text-4xl text-slate-800">
+                    Build modern media players with React.
+                </h2>
+                <p class="mt-4 text-xl text-slate-600">
+                    Fully-featured, headless, hooks-based, and declarative media player framework for React.
+                </p>
+				<a class="mt-8 mx-auto rounded-full block w-fit py-2 px-8 bg-red-500 text-lg text-white" href="/en/introduction">
+					Get Started
+				</a>
+            </section>
+			<Examples client:only="react" />
+		</main>
+	</body>
+</html>
