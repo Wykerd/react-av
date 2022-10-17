@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "description": "Fully-featured, headless, hooks-based, and declarative media player framework for React.",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup --config rollup.config.js",
     "dev": "rollup --config rollup.config.js --watch"

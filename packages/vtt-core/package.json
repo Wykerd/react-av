@@ -2,9 +2,12 @@
   "name": "@react-av/vtt-core",
   "version": "0.0.0",
   "description": "W3C specification compliant WebVTT implementation.",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
-    "build": "tsc",
+    "build:cjs": "tsc --outDir dist/cjs --module commonjs",
+    "build:esm": "tsc --outDir dist/esm --module esnext",
+    "build": "pnpm build:cjs && pnpm build:esm",
     "dev": "tsc --watch"
   },
   "keywords": [],

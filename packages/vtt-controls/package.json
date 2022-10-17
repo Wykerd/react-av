@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "description": "WebVTT controls for use with React AV.",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup --config rollup.config.js",
     "dev": "rollup --config rollup.config.js --watch"

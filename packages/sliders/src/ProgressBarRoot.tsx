@@ -1,7 +1,8 @@
-import { Root as SliderRoot } from '@radix-ui/react-slider';
+import * as Slider from '@radix-ui/react-slider';
+const SliderRoot = Slider.Root;
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
-import React, { ComponentProps, createContext, forwardRef, MouseEvent, RefObject, useContext, useEffect, useRef, useState } from 'react';
+import React, { ComponentProps, createContext, forwardRef, HTMLAttributes, MouseEvent, RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { useMediaCurrentTimeFine, useMediaDuration } from '@react-av/core';
 
 export interface ProgressBarTooltipContextState {
@@ -18,7 +19,9 @@ export function useMediaProgressBarTooltip() {
     return context;
 }
 
-export const ProgressBarRoot = forwardRef<HTMLSpanElement, Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min" | "step">>(function ProgressBarRoot({children, ...props}, ref) {
+export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min" | "step"> & HTMLAttributes<HTMLSpanElement>;
+
+export const ProgressBarRoot = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, ...props}, ref) {
     const [currentTime, setCurrentTime] = useMediaCurrentTimeFine();
     const internalRef = useRef<HTMLSpanElement>(null);
     const duration = useMediaDuration();

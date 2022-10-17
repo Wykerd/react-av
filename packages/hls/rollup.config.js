@@ -8,11 +8,18 @@ const commonjs = require('@rollup/plugin-commonjs');
  */
 const config = {
     input: 'src/index.tsx',
-    output: {
-        file: 'dist/index.js',
-        format: 'cjs',
-        sourcemap: true
-    },
+    output: [
+        {
+            file: 'dist/index.js',
+            format: 'cjs',
+            sourcemap: true
+        },
+        {
+            file: 'dist/index.es.js',
+            format: 'es',
+            sourcemap: true
+        }
+    ],
     plugins: [
         commonjs(),
         typescript(),

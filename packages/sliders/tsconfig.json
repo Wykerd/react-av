@@ -12,7 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "declarationDir": "."
+    "declarationDir": ".",
+    "baseUrl": ".",
+    "preserveSymlinks": true
   },
   "include": [
     "src/**/*"
