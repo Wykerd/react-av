@@ -1,15 +1,21 @@
 {
   "name": "@react-av/vtt",
   "version": "0.0.0",
-  "description": "",
+  "description": "WebVTT support for React AV.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "dev": "rollup --config rollup.config.js --watch"
   },
   "dependencies": {},
   "keywords": [],
-  "author": "Daniel Wykerd",
+  "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
+  "repository": {
+    "directory": "packages/vtt",
+    "type": "git",
+    "url": "https://github.com/Wykerd/react-av.git"
+  },
   "devDependencies": {
     "@react-av/core": "workspace:^",
     "@react-av/vtt-core": "workspace:^",

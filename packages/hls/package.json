@@ -1,14 +1,20 @@
 {
   "name": "@react-av/hls",
   "version": "0.0.0",
-  "description": "",
+  "description": "HLS media elements for React AV.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "dev": "rollup --config rollup.config.js --watch"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Daniel Wykerd <daniel@wykerd.dev>",
+  "license": "MIT",
+  "repository": {
+    "directory": "packages/hls",
+    "type": "git",
+    "url": "https://github.com/Wykerd/react-av.git"
+  },
   "devDependencies": {
     "@react-av/core": "workspace:^",
     "@rollup/plugin-commonjs": "^23.0.0",

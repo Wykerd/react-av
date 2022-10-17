@@ -1,11 +1,14 @@
 {
   "private": true,
   "scripts": {
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "changes": "changeset",
+    "publish-packages": "turbo run build && changeset version && changeset publish"
   },
   "author": "Daniel Wykerd",
   "license": "MIT",
   "devDependencies": {
+    "@changesets/cli": "^2.25.0",
     "turbo": "^1.5.6"
   }
 }

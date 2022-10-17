@@ -1,14 +1,20 @@
 {
   "name": "@react-av/vtt-core",
   "version": "0.0.0",
-  "description": "",
+  "description": "W3C specification compliant WebVTT implementation.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "tsc --watch"
   },
   "keywords": [],
-  "author": "",
+  "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
+  "repository": {
+    "directory": "packages/vtt-core",
+    "type": "git",
+    "url": "https://github.com/Wykerd/react-av.git"
+  },
   "devDependencies": {
     "typescript": "^4.8.4"
   }

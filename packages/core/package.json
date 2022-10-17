@@ -1,16 +1,23 @@
 {
   "name": "@react-av/core",
   "version": "0.0.0",
-  "description": "",
+  "description": "Fully-featured, headless, hooks-based, and declarative media player framework for React.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "dev": "rollup --config rollup.config.js --watch"
   },
   "keywords": [],
-  "author": "Daniel Wykerd",
+  "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
+  "repository": {
+    "directory": "packages/core",
+    "type": "git",
+    "url": "https://github.com/Wykerd/react-av.git"
+  },
   "dependencies": {
-    "@react-av/vtt-core": "workspace:^"
+    "@react-av/vtt-core": "workspace:^",
+    "recoil": "^0.7.6"
   },
   "devDependencies": {
     "@react-hook/resize-observer": "^1.2.6",
@@ -29,7 +36,6 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "recoil": "^0.7.6"
+    "react-dom": "^18.2.0"
   }
 }

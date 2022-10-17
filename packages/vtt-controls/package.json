@@ -1,10 +1,11 @@
 {
   "name": "@react-av/vtt-controls",
   "version": "0.0.0",
-  "description": "",
+  "description": "WebVTT controls for use with React AV.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "dev": "rollup --config rollup.config.js --watch"
   },
   "devDependencies": {
     "@react-av/core": "workspace:^",
@@ -28,6 +29,11 @@
     "react-dom": "^18.2.0"
   },
   "keywords": [],
-  "author": "Daniel Wykerd",
-  "license": "MIT"
+  "author": "Daniel Wykerd <daniel@wykerd.dev>",
+  "license": "MIT",
+  "repository": {
+    "directory": "packages/vtt-controls",
+    "type": "git",
+    "url": "https://github.com/Wykerd/react-av.git"
+  }
 }
