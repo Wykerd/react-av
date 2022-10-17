@@ -586,9 +586,9 @@ export const Container = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElemen
 export function useSize(target: RefObject<HTMLElement>) {
     const [size, setSize] = useState<DOMRect>()
   
-    useLayoutEffect(() => {
+    useEffect(() => {
       setSize(target.current?.getBoundingClientRect())
-    }, [target])
+    }, [target]);
 
     useResizeObserver(target, (entry) => setSize(entry.contentRect))
     return size;
