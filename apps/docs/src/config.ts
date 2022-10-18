@@ -51,7 +51,20 @@ export const SIDEBAR: Sidebar = {
 		],
 		'Core': [
 			{ text: 'Components', link: 'en/core-components' },
-			{ text: 'Hooks', link: 'en/core-hooks' }
+			{ text: 'Hooks', link: 'en/core-hooks' },
+			{ text: 'HLS and DASH support', link: 'en/core-other-sources' },
+		],
+		'Text Tracks': [
+			{ text: 'Introduction', link: 'en/text-track-introduction' },
+			{ text: 'Components', link: 'en/text-track-components' },
+			{ text: 'Hooks', link: 'en/text-track-hooks' },
+			{ text: 'Implementation', link: 'en/webvtt' }
+		],
+		'Controls': [
+			{ text: 'Introduction', link: 'en/controls-intro' },
+			{ text: 'Core Controls', link: 'en/controls' },
+			{ text: 'Sliders', link: 'en/sliders' },
+			{ text: 'VTT Controls', link: 'en/vtt-controls' },
 		],
 	},
 };
