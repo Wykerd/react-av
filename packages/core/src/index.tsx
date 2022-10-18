@@ -1,5 +1,5 @@
 import { atom, DefaultValue, RecoilRoot, selector, useRecoilState, useRecoilTransaction_UNSTABLE, useRecoilValue, useSetRecoilState } from "recoil";
-import React, { createContext, forwardRef, HTMLAttributes, HTMLProps, RefObject, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { createContext, forwardRef, HTMLAttributes, HTMLProps, RefObject, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import useResizeObserver from '@react-hook/resize-observer';
 
@@ -19,12 +19,12 @@ export enum MediaReadyState {
 }
 
 export const elementState_internal = atom({
-    key: "elementState_internal",
+    key: "react-av:elementState_internal",
     default: null as HTMLMediaElement | null
 });
 
 export const elementState = selector({
-    key: "elementState",
+    key: "react-av:elementState",
     get: ({ get }) => {
         return get(elementState_internal);
     }
@@ -35,12 +35,12 @@ export function useMediaElement() {
 }
 
 const isAudioOnlyState_internal = atom({
-    key: "isAudioOnlyState_internal",
+    key: "react-av:isAudioOnlyState_internal",
     default: false
 });
 
 export const isAudioOnlyState = selector({
-    key: "isAudioOnlyState",
+    key: "react-av:isAudioOnlyState",
     get({ get }) {
         return get(isAudioOnlyState_internal);
     }
@@ -51,12 +51,12 @@ export function useMediaAudioOnly() {
 }
 
 const isMutedState_internal = atom({
-    key: "isMutedState_internal",
+    key: "react-av:isMutedState_internal",
     default: false
 });
 
 export const isMutedState = selector({
-    key: "isMutedState",
+    key: "react-av:isMutedState",
     get({ get }) {
         return get(isMutedState_internal);
     },
@@ -76,12 +76,12 @@ export function useMediaMuted() {
 }
 
 const readyState_internal = atom({
-    key: "readyState_internal",
+    key: "react-av:readyState_internal",
     default: MediaReadyState.HAVE_NOTHING
 });
 
 export const readyState = selector({
-    key: "readyState",
+    key: "react-av:readyState",
     get({ get }) {
         return get(readyState_internal);
     }
@@ -92,12 +92,12 @@ export function useMediaReadyState() {
 }
 
 const networkState_internal = atom({
-    key: "networkState_internal",
+    key: "react-av:networkState_internal",
     default: MediaNetworkState.NETWORK_NO_SOURCE
 });
 
 export const networkState = selector({
-    key: "networkState",
+    key: "react-av:networkState",
     get({ get }) {
         return get(networkState_internal);
     }
@@ -108,12 +108,12 @@ export function useMediaNetworkState() {
 }
 
 const errorState_internal = atom({
-    key: "errorState_internal",
+    key: "react-av:errorState_internal",
     default: null as MediaError | null
 });
 
 export const errorState = selector({
-    key: "errorState",
+    key: "react-av:errorState",
     get({ get }) {
         return get(errorState_internal);
     }
@@ -124,12 +124,12 @@ export function useMediaError() {
 }
 
 const endedState_internal = atom({
-    key: "endedState_internal",
+    key: "react-av:endedState_internal",
     default: false
 });
 
 export const endedState = selector({
-    key: "endedState",
+    key: "react-av:endedState",
     get({ get }) {
         return get(endedState_internal);
     }
@@ -140,12 +140,12 @@ export function useMediaEnded() {
 }
 
 const bufferedState_internal = atom({
-    key: "bufferedState_internal",
+    key: "react-av:bufferedState_internal",
     default: null as TimeRanges | null
 });
 
 export const bufferedState = selector({
-    key: "bufferedState",
+    key: "react-av:bufferedState",
     get({ get }) {
         return get(bufferedState_internal);
     }
@@ -156,12 +156,12 @@ export function useMediaBuffered() {
 }
 
 const seekingState_internal = atom({
-    key: "seekingState_internal",
+    key: "react-av:seekingState_internal",
     default: false
 });
 
 export const seekingState = selector({
-    key: "seekingState",
+    key: "react-av:seekingState",
     get({ get }) {
         return get(seekingState_internal);
     }
@@ -172,12 +172,12 @@ export function useMediaSeeking() {
 }
 
 const seekableState_internal = atom({
-    key: "seekableState_internal",
+    key: "react-av:seekableState_internal",
     default: null as TimeRanges | null
 });
 
 export const seekableState = selector({
-    key: "seekableState",
+    key: "react-av:seekableState",
     get({ get }) {
         return get(seekableState_internal);
     }
@@ -188,12 +188,12 @@ export function useMediaSeekable() {
 }
 
 const playingState_internal = atom({
-    key: "playingState_internal",
+    key: "react-av:playingState_internal",
     default: false
 });
 
 export const playingState = selector({
-    key: "playingState",
+    key: "react-av:playingState",
     get({ get }) {
         return get(playingState_internal);
     },
@@ -216,12 +216,12 @@ export function useMediaPlaying() {
 }
 
 const loopState_internal = atom({
-    key: "loopState_internal",
+    key: "react-av:loopState_internal",
     default: false
 });
 
 export const loopState = selector({
-    key: "loopState",
+    key: "react-av:loopState",
     get({ get }) {
         return get(loopState_internal);
     },
@@ -241,12 +241,12 @@ export function useMediaLoop() {
 }
 
 const volumeState_internal = atom({
-    key: "volumeState_internal",
+    key: "react-av:volumeState_internal",
     default: 1
 });
 
 export const volumeState = selector({
-    key: "volumeState",
+    key: "react-av:volumeState",
     get({ get }) {
         return get(volumeState_internal);
     },
@@ -266,12 +266,12 @@ export function useMediaVolume() {
 }
 
 const playbackRateState_internal = atom({
-    key: "playbackRateState_internal",
+    key: "react-av:playbackRateState_internal",
     default: 1
 });
 
 export const playbackRateState = selector({
-    key: "playbackRateState",
+    key: "react-av:playbackRateState",
     get({ get }) {
         return get(playbackRateState_internal);
     },
@@ -291,12 +291,12 @@ export function useMediaPlaybackRate() {
 }
 
 const durationState_internal = atom({
-    key: "durationState_internal",
+    key: "react-av:durationState_internal",
     default: 0
 });
 
 export const durationState = selector({
-    key: "durationState",
+    key: "react-av:durationState",
     get({ get }) {
         return get(durationState_internal);
     }
@@ -307,12 +307,12 @@ export function useMediaDuration() {
 }
 
 const currentTimeState_internal = atom({
-    key: "currentTimeState_internal",
+    key: "react-av:currentTimeState_internal",
     default: 0
 });
 
 export const currentTimeState = selector({
-    key: "currentTimeState",
+    key: "react-av:currentTimeState",
     get({ get }) {
         return get(currentTimeState_internal);
     },
@@ -326,6 +326,17 @@ export const currentTimeState = selector({
         }
     }
 });
+
+export const mediaOpaqueState = atom({
+    key: "react-av:mediaOpaqueState",
+    default: {} as Record<string, any>
+});
+
+export function useMediaOpaque<T = any>(key: string) {
+    const [state, setState] = useRecoilState(mediaOpaqueState);
+
+    return [state[key] as T | undefined, (value: T) => setState({ ...state, [key]: value })] as const;
+}
 
 export function useMediaCurrentTime() {
     return useRecoilState(currentTimeState);
@@ -349,12 +360,12 @@ export function useMediaCurrentTimeFine() {
 }
 
 const fullscreenState_internal = atom({
-    key: "fullscreenState_internal",
+    key: "react-av:fullscreenState_internal",
     default: false
 });
 
 export const fullscreenState = selector({
-    key: "fullscreenState",
+    key: "react-av:fullscreenState",
     get({ get }) {
         return get(fullscreenState_internal);
     },
@@ -533,6 +544,9 @@ const MediaInternal = ({ children }:  { children: React.ReactNode }) => {
     </>
 }
 
+/**
+ * The `Media.Root` component is the root of the React AV component tree. It provides the context for all other components to work.
+ */
 export function Root({ children, ...props }: React.ComponentProps<typeof MediaInternal>) {
     return <RecoilRoot>
         <MediaInternal {...props}>
@@ -541,7 +555,12 @@ export function Root({ children, ...props }: React.ComponentProps<typeof MediaIn
     </RecoilRoot>
 }
 
-export const Video = forwardRef<HTMLVideoElement, Omit<HTMLProps<HTMLVideoElement>, "children">>(function Video({ ...props }, f_ref) {
+/**
+ * The `Media.Video` component is a wrapper around the HTML5 `<video>` element. It accepts all props that a `video` element accepts.
+ * 
+ * @note The `Media.Video` component must be wrapped in a `Media.Container` component.
+ */
+export const Video = forwardRef<HTMLVideoElement, HTMLProps<HTMLVideoElement>>(function Video({ children, ...props }, f_ref) {
     const ref = useRef<HTMLVideoElement>(null);
     const [, setElement] = useRecoilState(elementState_internal);
 
@@ -557,10 +576,15 @@ export const Video = forwardRef<HTMLVideoElement, Omit<HTMLProps<HTMLVideoElemen
         if (typeof f_ref === 'function') f_ref(current);
         // @ts-ignore
         else if (f_ref) f_ref.current = current;
-    }} />;
+    }}>
+        {children}
+    </video>;
 });
 
-export const Audio = forwardRef<HTMLAudioElement, Omit<HTMLProps<HTMLAudioElement>, "children">>(function Audio({ ...props }, f_ref) {
+/**
+ * The `Media.Audio` component is a wrapper around the HTML5 `<audio>` element. It accepts all props that an `audio` element accepts.
+ */
+export const Audio = forwardRef<HTMLAudioElement, HTMLProps<HTMLAudioElement>>(function Audio({ children, ...props }, f_ref) {
     const ref = useRef<HTMLAudioElement>(null);
     const [, setElement] = useRecoilState(elementState_internal);
 
@@ -574,9 +598,17 @@ export const Audio = forwardRef<HTMLAudioElement, Omit<HTMLProps<HTMLAudioElemen
         if (typeof f_ref === 'function') f_ref(current);
         // @ts-ignore
         else if (f_ref) f_ref.current = current;
-    }} />;
+    }}>
+        {children}
+    </audio>;
 });
 
+/**
+ * The `Media.Container` component is a wrapper around the video element. It is required by other parts of the React AV library 
+ * to correctly render overlays and captions. It acts as a portal for both captions and the `Media.Viewport` component.
+ *
+ * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
+ */
 export const Container = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(function Container({ children, style, ...props }, ref) {
     return <div {...props} style={{ position: 'relative', ...(style || {}) }} ref={ref} data-media-container="true">
         {children}
@@ -600,6 +632,12 @@ export function useMediaViewportHover() {
     return useContext(ViewportHoverContext);
 }
 
+/**
+ * The `Media.Viewport` component allows you to overlay UI components on top of the video element. 
+ * It portals the UI components to the `Media.Container` component.
+ * 
+ * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
+ */
 export const Viewport = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivElement>, "onMouseMove"> & { hoverInactiveTimeout?: number, inactiveClassName?: string }>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, ...props }, ref) {
     const element = useMediaElement();
     const [ hover, setHover ] = useState(false);
@@ -619,6 +657,8 @@ export const Viewport = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivEl
     const overlay = <ViewportHoverContext.Provider value={hover}>
         <div 
             {...props} 
+            data-media-viewport="true"
+            data-media-viewport-hover={""+hover}
             onMouseMove={handleMouseMove} 
             onMouseLeave={handleMouseLeave} 
             ref={ref}
