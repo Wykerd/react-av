@@ -1,7 +1,6 @@
 import { atom, DefaultValue, RecoilRoot, selector, useRecoilState, useRecoilTransaction_UNSTABLE, useRecoilValue, useSetRecoilState } from "recoil";
 import React, { createContext, forwardRef, HTMLAttributes, HTMLProps, RefObject, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import useResizeObserver from '@react-hook/resize-observer';
 
 export enum MediaNetworkState {
     NETWORK_EMPTY = 0,
@@ -614,17 +613,6 @@ export const Container = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElemen
         {children}
     </div>
 });
-
-export function useSize(target: RefObject<HTMLElement>) {
-    const [size, setSize] = useState<DOMRect>()
-  
-    useEffect(() => {
-      setSize(target.current?.getBoundingClientRect())
-    }, [target]);
-
-    useResizeObserver(target, (entry) => setSize(entry.contentRect))
-    return size;
-}
 
 export const ViewportHoverContext = createContext<boolean | undefined>(undefined);
 

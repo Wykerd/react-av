@@ -1,6 +1,6 @@
 import React, { forwardRef, HTMLAttributes, useEffect, useRef } from "react";
-import { useSize } from "@react-av/core";
 import { useMediaProgressBarTooltip } from "./ProgressBarRoot";
+import useResizeObserver from "use-resize-observer";
 
 export type ProgressBarTooltipProps = HTMLAttributes<HTMLDivElement> & {
     showingClassName?: string;
@@ -19,8 +19,12 @@ export const ProgressBarTooltip = forwardRef<HTMLDivElement, ProgressBarTooltipP
 
     const i_ref = useRef<HTMLDivElement>(null);
 
-    const size = useSize(i_ref);
-    const containerSize = useSize(root);
+    const { width = 0 } = useResizeObserver({
+        ref: i_ref
+    });
+    const { width: containerWidth = 0 } = useResizeObserver({
+        ref: root
+    });
 
     useEffect(() => {
         if (onShowChange) {
@@ -42,10 +46,10 @@ export const ProgressBarTooltip = forwardRef<HTMLDivElement, ProgressBarTooltipP
             ...(style || {}),
             left: 
                 position === 'center' ?
-                    `max(min(${percentage * 100}%, ${(containerSize?.width ?? 0) - ((size?.width ?? 0) / 2)}px), ${(size?.width ?? 0) / 2}px)` :
+                    `max(min(${percentage * 100}%, ${(containerWidth ?? 0) - ((width ?? 0) / 2)}px), ${(width ?? 0) / 2}px)` :
                 position === 'left' ?
-                    `max(min(${percentage * 100}%, ${(containerSize?.width ?? 0) - (size?.width ?? 0)}px), 0px)` :
-                    `max(min(${percentage * 100}%, ${(containerSize?.width ?? 0)}px), ${(size?.width ?? 0)}px)`
+                    `max(min(${percentage * 100}%, ${(containerWidth ?? 0) - (width ?? 0)}px), 0px)` :
+                    `max(min(${percentage * 100}%, ${(containerWidth ?? 0)}px), ${(width ?? 0)}px)`
         }}
         className={`${className} ${show ? showingClassName : ""}`.trim() || undefined}
     >
