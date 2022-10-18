@@ -14,6 +14,7 @@ You must choose which wrapper element to place around the `Cue` component. This 
 
 ```jsx
 import { Cue } from '@react-av/vtt';
+import { VTTCue } from '@react-av/vtt-core';
 
 () => (
   <Cue

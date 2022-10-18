@@ -26,7 +26,7 @@ const Fullscreen = forwardRef<HTMLButtonElement, FullscreenProps>(function Fulls
     const playingState = fullscreen ? "fullscreen" : "default";
 
     return <button 
-        data-fullscreen-state={playingState} 
+        data-media-fullscreen-state={playingState} 
         onClick={() => setFullscreen(!fullscreen)}
         ref={ref}
         {...btnProps}

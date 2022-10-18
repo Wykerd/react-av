@@ -36,7 +36,7 @@ const Mute = forwardRef<HTMLButtonElement, MuteProps>(function Mute(props, ref) 
     const none = volume == 0;
 
     return <button 
-        data-mute-state={muted ? "muted" : high ? "high" : none ? "none" : "low"}
+        data-media-mute-state={muted ? "muted" : high ? "high" : none ? "none" : "low"}
         onClick={() => setMuted(!muted)}
         ref={ref}
         {...btnProps}

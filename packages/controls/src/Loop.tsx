@@ -20,7 +20,7 @@ const Loop = forwardRef<HTMLButtonElement, LoopProps>(function Loop(props, ref) 
     } = props;
 
     return <button 
-        data-loop-state={loop ? "true" : "false"}
+        data-media-loop-state={loop ? "loop" : "default"}
         onClick={() => setLoop(!loop)}
         ref={ref}
         {...btnProps}

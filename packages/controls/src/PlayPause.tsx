@@ -35,7 +35,7 @@ const PlayPause = forwardRef<HTMLButtonElement, PlayProps>(function PlayPause(pr
         "loading";
 
     return <button 
-        data-play-state={playingState} 
+        data-media-play-state={playingState} 
         onClick={() => setPlaying(!playing)}
         ref={ref}
         {...btnProps}
