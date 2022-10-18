@@ -233,6 +233,7 @@ importers:
       rollup-plugin-peer-deps-external: ^2.2.4
       tslib: ^2.4.0
       typescript: ^4.8.4
+      use-resize-observer: ^9.0.2
     dependencies:
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
@@ -250,6 +251,7 @@ importers:
       rollup-plugin-peer-deps-external: 2.2.4_rollup@3.2.0
       tslib: 2.4.0
       typescript: 4.8.4
+      use-resize-observer: 9.0.2_biqbaboplfbrettd7655fr4n2y
 
   packages/vtt:
     specifiers:
@@ -6769,6 +6771,17 @@ packages:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
       punycode: 2.1.1
+    dev: true
+
+  /use-resize-observer/9.0.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-JOzsmF3/IDmtjG7OE5qXOP69LEpBpwhpLSiT1XgSr+uFRX0ftJHQnDaP7Xq+uhbljLYkJt67sqsbnyXBjiY8ig==}
+    peerDependencies:
+      react: 16.8.0 - 18
+      react-dom: 16.8.0 - 18
+    dependencies:
+      '@juggle/resize-observer': 3.4.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /use-sync-external-store/1.2.0_react@18.2.0:
