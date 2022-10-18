@@ -21,6 +21,7 @@ const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivE
 
     return <div 
         {...props} 
+        data-media-overlay-inactive={""+isHidden}
         tabIndex={1}
         className={`${className} ${isHidden ? inactiveClassName || "" : ""}`.trim() || undefined}
         onMouseLeave={function (e) { onMouseLeave?.apply(arguments, [e]); setActive(false); }}
