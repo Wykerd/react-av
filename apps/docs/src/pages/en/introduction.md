@@ -14,7 +14,7 @@ A modern library for building media experiences in React, including features suc
 - ✅ **Headless, style however you want.**
 - ✅ **Extensive set of prebuilt components.**
 - ✅ **Fully typed, built with TypeScript.**
-- ✅ **Caption, chapter and storyboard support with a spec compliant WebVTT implementation.**
+- ✅ **Caption, chapter and storyboard support with a fully-featured<!-- TODO: spec compliant --> WebVTT implementation.**
 
 ## Getting Started
 

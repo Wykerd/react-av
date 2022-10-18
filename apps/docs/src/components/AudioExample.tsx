@@ -32,7 +32,7 @@ export default function AudioExample () {
         <Track kind="subtitles" language="en" label="English" src="./dinosaurchestra.vtt" id="lyrics" />
         <div className="flex flex-row w-full gap-4">
             <div className="max-w-md flex flex-col shrink-0">
-                <img src="/dinosaurchestra.webp" width={384} height={384} className="w-96" />
+                <img src="/dinosaurchestra.jpeg" width={384} height={384} className="w-96" />
                 <div className="w-full bg-black/50 p-2 z-10 flex flex-row items-center gap-2 transition cursor-default">
                     <PlayPause 
                         className="p-1 bg-transparent focus-visible:bg-red-500 hover:bg-red-500 rounded-md block text-white transition" 

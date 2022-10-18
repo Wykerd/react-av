@@ -4,7 +4,7 @@ description: WebVTT Introduction for React AV.
 layout: ../../layouts/MainLayout.astro
 ---
 
-React AV features a fully-featured and spec compliant [W3C WebVTT](https://www.w3.org/TR/webvtt1/) parser and renderer. This not only allows for the rendering of captions and subtitles, but also for the rendering of chapters and metadata such as storyboards.
+React AV features a fully-featured <!-- TODO: and spec compliant --> [W3C WebVTT](https://www.w3.org/TR/webvtt1/) parser and renderer. This not only allows for the rendering of captions and subtitles, but also for the rendering of chapters and metadata such as storyboards.
 
 ## Installation
 
