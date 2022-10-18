@@ -1,6 +1,6 @@
 export const SITE = {
-	title: 'Documentation',
-	description: 'Your website description.',
+	title: 'React AV',
+	description: 'Fully-featured, headless, hooks-based, and declarative media player framework for React.',
 	defaultLanguage: 'en_US',
 };
 
@@ -8,10 +8,9 @@ export const OPEN_GRAPH = {
 	image: {
 		src: 'https://github.com/withastro/astro/blob/main/assets/social/banner.jpg?raw=true',
 		alt:
-			'astro logo on a starry expanse of space,' +
-			' with a purple saturn-like planet floating in the right foreground',
+			'Fully-featured, headless, hooks-based, and declarative media player framework for React.',
 	},
-	twitter: 'astrodotbuild',
+	twitter: 'danielwykerd',
 };
 
 // This is the type of the frontmatter you put in the docs markdown files.
@@ -30,7 +29,7 @@ export const KNOWN_LANGUAGES = {
 } as const;
 export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
 
-export const GITHUB_EDIT_URL = `https://github.com/withastro/astro/tree/main/examples/docs`;
+export const GITHUB_EDIT_URL = `https://github.com/Wykerd/react-av/tree/master/apps/docs`;
 
 export const COMMUNITY_INVITE_URL = `https://astro.build/chat`;
 
@@ -47,11 +46,12 @@ export type Sidebar = Record<
 >;
 export const SIDEBAR: Sidebar = {
 	en: {
-		'Section Header': [
+		'Getting Started': [
 			{ text: 'Introduction', link: 'en/introduction' },
-			{ text: 'Page 2', link: 'en/page-2' },
-			{ text: 'Page 3', link: 'en/page-3' },
 		],
-		'Another Section': [{ text: 'Page 4', link: 'en/page-4' }],
+		'Core': [
+			{ text: 'Components', link: 'en/core-components' },
+			{ text: 'Hooks', link: 'en/core-hooks' }
+		],
 	},
 };
