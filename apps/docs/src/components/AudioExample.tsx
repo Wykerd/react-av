@@ -9,13 +9,13 @@ function Teleprompter() {
     const [cues, activeCues] = useMediaTextTrack('lyrics');
     const [, setCurrentTime] = Media.useMediaCurrentTime();
 
-    return <ol className="h-[429px] grow overflow-auto">
+    return <ol className="h-[429px] grow overflow-auto text-center sm:text-start px-2 sm:px-0">
         {
             cues.map((cue, i) => <Cue 
                 key={i} 
                 as="li" 
                 cue={cue} 
-                className={`${activeCues.includes(cue) ? "text-slate-900 scale-100" : "text-slate-500 scale-[60%] hover:scale-75"} font-bold text-xl origin-left transition`}
+                className={`${activeCues.includes(cue) ? "text-slate-900 scale-100" : "text-slate-500 scale-[60%] hover:scale-75"} font-bold text-xl origin-center sm:origin-left transition`}
                 ref={current => {
                     activeCues.includes(cue) && current?.scrollIntoView({behavior: "smooth", block: "center"});
                 }}
@@ -30,8 +30,8 @@ export default function AudioExample () {
     return <Media.Root>
         <Media.Audio src="./dinosaurchestra.mp3" />
         <Track kind="subtitles" language="en" label="English" src="./dinosaurchestra.vtt" id="lyrics" />
-        <div className="flex flex-row w-full gap-4">
-            <div className="max-w-md flex flex-col shrink-0">
+        <div className="flex flex-col sm:flex-row w-full gap-4">
+            <div className="max-w-xs mx-auto sm:mx-0 sm:max-w-md flex flex-col shrink-0">
                 <img src="/dinosaurchestra.jpeg" width={384} height={384} className="w-96" />
                 <div className="w-full bg-black/50 p-2 z-10 flex flex-row items-center gap-2 transition cursor-default">
                     <PlayPause 

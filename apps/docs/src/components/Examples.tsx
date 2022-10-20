@@ -19,6 +19,7 @@ export default function Examples() {
         {
             isAudioExample ? <AudioExample /> : <VideoExample />
         }
+        <div className="text-center p-2">
         {
             isAudioExample ? <span className="text-xs">
                 <a href="https://lemondemon.bandcamp.com/track/dinosaurchestra-part-three" target="blank">Dinosaurchesra Part Three by Lemon Demon</a> is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="blank">CC BY-NC-SA 3.0</a>.
@@ -26,5 +27,6 @@ export default function Examples() {
                 <a href="https://www.youtube.com/watch?v=_cMxraX_5RE" target="blank">Sprite Fright by Blender Studio</a> is licensed under <a href="https://studio.blender.org/films/sprite-fright/pages/about/" target="blank">CC BY 1.0</a> by <a href="https://studio.blender.org" target="blank">Blender Foundation</a>.
             </span>
         }
+        </div>
     </section>
 }
