@@ -388,10 +388,46 @@ function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect,
     } 
     // - If cue’s WebVTT cue snap-to-lines flag is false
     else {
-        
+        // 1. Let bounding box be the bounding box of the boxes in boxes.
+        container.append(boxes);
+        const boundingBox = boxes.getBoundingClientRect();
+        container.removeChild(boxes);
+        // 2. Run the appropriate steps from the following list:
+        // - If the WebVTT cue writing direction is horizontal
+        if (cue.vertical == "") {
+            // - If the WebVTT cue line alignment is center alignment
+            // Move all the boxes in boxes up by half of the height of bounding box.
+            boxes.style.top = `${parseFloat(top.substring(0, top.length - 2)) - (boundingBox.height/2)}px`;
+            // - If the WebVTT cue line alignment is end alignment
+            // Move all the boxes in boxes up by the height of bounding box.
+            boxes.style.top = `${parseFloat(top.substring(0, top.length - 2)) - boundingBox.height}px`;
+        // - If the WebVTT cue writing direction is vertical growing left or vertical growing right
+        } else {
+            // - If the WebVTT cue line alignment is center alignment
+            // Move all the boxes in boxes left by half of the width of bounding box.
+            boxes.style.left = `${parseFloat(left.substring(0, left.length - 2)) - (boundingBox.width/2)}px`;
+            // - If the WebVTT cue line alignment is end alignment
+            // Move all the boxes in boxes left by the width of bounding box.
+            boxes.style.left = `${parseFloat(left.substring(0, left.length - 2)) - boundingBox.width}px`;
+        }
+        // 3. If none of the boxes in boxes would overlap any of the boxes in output, and all the boxes in boxes are within the video’s rendering area, then jump to the step labeled done positioning below.
+        const { fits, aboveView, belowView, leftOfView, rightOfView, collides } = noOverlapsAndContained(boxes, container, viewRect);
+        // 4. If there is a position to which the boxes in boxes can be moved while maintaining the relative positions of the boxes in boxes to each other such that none of the boxes in boxes would overlap any of the boxes in output, and all the boxes in boxes would be within the video’s rendering area, then move the boxes in boxes to the closest such position to their current position, and then jump to the step labeled done positioning below. If there are multiple such positions that are equidistant from their current position, use the highest one amongst them; if there are several at that height, then use the leftmost one amongst them.
+        if (fits && !collides) return boxes;
+        // We first move the box into view
+        if (aboveView) 
+            boxes.style.top = '0px';
+        else if (belowView)
+            boxes.style.top = `${viewRect.height - boundingBox.height}px`;
+        if (leftOfView)
+            boxes.style.left = '0px';
+        else if (rightOfView)
+            boxes.style.left = `${viewRect.width - boundingBox.width}px`;
+        // TODO: We must now find a position that doesn't overlap any other boxes
+
+        // 5. Otherwise, jump to the step labeled done positioning below. (The boxes will unfortunately overlap.)
+        return boxes;
     }
-    
-    return boxes;
 }
 
 // If none of the boxes in boxes would overlap any of the boxes in output, and all of the boxes in boxes are entirely within the title area box, then jump to the step labeled done positioning below.
