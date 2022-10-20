@@ -867,7 +867,7 @@ function consumeCharacterReference(input: string, position: number, additionalAl
         // Otherwise, a character reference is parsed. If the last character matched is not a U+003B SEMICOLON character (;), there is a parse error.
         return {
             position,
-            reference: named_character_reference[consumed]!.characters,
+            reference: named_character_reference[consumed]!,
         }
     }
 }
