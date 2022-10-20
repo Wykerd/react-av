@@ -36,6 +36,7 @@ const PictureInPicture = forwardRef<HTMLButtonElement, PIPProps>(function Pictur
         ref={ref}
         type="button"
         {...btnProps}
+        aria-label="Toggle Picture-in-Picture"
         onClick={handlePictureInPicture}
     >
         {icon}

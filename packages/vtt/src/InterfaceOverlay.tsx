@@ -1,5 +1,5 @@
 import React, { forwardRef, HTMLAttributes, useEffect, useRef, useState } from "react";
-import { Renderer } from '@react-av/vtt-core';
+import { Renderer, WebVTTUpdateTextTracksDisplay } from '@react-av/vtt-core';
 import { useMediaElement, useMediaPlaying, useMediaViewportHover } from "@react-av/core";
 
 const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivElement>, "tabIndex"> & { persistent?: boolean, inactiveClassName?: string }>(function InterfaceOverlay({ children, persistent, inactiveClassName, className, onMouseEnter, onMouseLeave, onFocus, onBlur, ...props }, f_ref) {
@@ -12,6 +12,7 @@ const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivE
     useEffect(() => {
         if (!element || !ref.current || (hover !== undefined && !hover && !persistent && playing && !active)) return;
         Renderer.addUIContainer(element as HTMLVideoElement, ref.current);
+        element?.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(element as HTMLVideoElement);
         return () => {
             Renderer.removeUIContainer(element as HTMLVideoElement);
         }
@@ -22,7 +23,7 @@ const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivE
     return <div 
         {...props} 
         data-media-overlay-inactive={""+isHidden}
-        tabIndex={1}
+        tabIndex={0}
         className={`${className} ${isHidden ? inactiveClassName || "" : ""}`.trim() || undefined}
         onMouseLeave={function (e) { onMouseLeave?.apply(arguments, [e]); setActive(false); }}
         onMouseEnter={function (e) { onMouseEnter?.apply(arguments, [e]); setActive(true); }}
