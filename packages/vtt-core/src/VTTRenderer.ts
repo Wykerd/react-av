@@ -3,6 +3,10 @@ import VTTCue, { toTimestampString } from "./VTTCue";
 import WebVTTParseCueText, { WebVTTBold, WebVTTClass, WebVTTInternalNode, WebVTTItalic, WebVTTLanguage, WebVTTNode, WebVTTNodeList, WebVTTRuby, WebVTTRubyText, WebVTTText, WebVTTTimestamp, WebVTTUnderline, WebVTTVoice } from "./VTTCueTextParser";
 import VTTRegion from "./VTTRegion";
 
+// custom elements
+import './renderer/TextTrackContainer';
+import './renderer/TextTrackContainer';
+
 const uiContainers = new Map<HTMLVideoElement, HTMLDivElement>();
 const didShowUI = new Set<HTMLVideoElement>();
 
@@ -29,10 +33,9 @@ export default function WebVTTUpdateTextTracksDisplay(
     // TODO: maybe add a fallback for when the video element is not in a container
     if (!container) return;
     container.style.position = "relative";
-    let textTrackContainer = container.querySelector('div[data-vtt-container="true"]') as HTMLDivElement | null;
+    let textTrackContainer = container.querySelector('vtt-texttrackcontainer') as HTMLElement | null;
     if (!textTrackContainer) {
-        textTrackContainer = document.createElement('div');
-        textTrackContainer.setAttribute('data-vtt-container', 'true');
+        textTrackContainer = document.createElement('vtt-texttrackcontainer');
         textTrackContainer.style.position = 'absolute';
         textTrackContainer.style.width = '100%';
         textTrackContainer.style.height = '100%';
@@ -46,6 +49,8 @@ export default function WebVTTUpdateTextTracksDisplay(
     const videoRegion = video.getBoundingClientRect();
     const viewHeight = videoRegion.height;
     const viewWidth = videoRegion.width;
+
+    textTrackContainer.setAttribute('vheight', '' + viewHeight);
     // 3. Let output be an empty list of absolutely positioned CSS block boxes.
     // XXX: since this is a JavaScript implementation and we do not have direct access to the layout engine, we will use divs as CSS boxes as described in the spec.
     // XXX: we directly append to textTrackContainer, so we don't need to keep track of output
@@ -86,7 +91,7 @@ export default function WebVTTUpdateTextTracksDisplay(
     for (const track of tracks) {
         regions = [...regions, ...track._regions];
     }
-    const regionBoxes = new Map<VTTRegion, HTMLDivElement>();
+    const regionBoxes = new Map<VTTRegion, HTMLElement>();
     // 11. If reset is false, then, for each WebVTT region region in regions let regionNode be a WebVTT region object.
     if (!reset) {
         // 12. Apply the following steps for each regionNode:
@@ -107,8 +112,7 @@ export default function WebVTTUpdateTextTracksDisplay(
             let topOffset = regionNode.regionAnchorY * regionNode.lines / 100;
             let top = (regionNode.viewportAnchorY / 100 - topOffset) * viewHeight;
             // 2. Apply the terms of the CSS specifications to regionNode within the following constraints, thus obtaining a CSS box box positioned relative to an initial containing block:
-            const box = document.createElement('div');
-            applyBaseRegionCSS(box, viewHeight);
+            const box = document.createElement('vtt-region');
             box.style.width = `${width}px`;
             box.style.maxHeight = `${lines}px`;
             box.style.left = `${left}px`;
@@ -201,7 +205,7 @@ export default function WebVTTUpdateTextTracksDisplay(
                 // 5. Let left be offset %. [CSS-VALUES]
                 let left = `${offset}%`;
                 // 6. Obtain a set of CSS boxes boxes positioned relative to an initial containing block.
-                const boxes = obtainCSSBoxes(cue, nodes, viewHeight);
+                const boxes = obtainCSSBoxes(cue, nodes);
                 boxes.style.left = left;
                 // 7. If there are no line boxes in boxes, skip the remainder of these substeps for cue. The cue is ignored.
                 // TODO: check this condition
@@ -232,7 +236,7 @@ export default function WebVTTUpdateTextTracksDisplay(
     // XXX: we've already appended to textTrackContainer and added it to the DOM
 }
 
-function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect, container: HTMLDivElement) {
+function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect, container: HTMLElement) {
     const viewWidth = viewRect.width;
     const viewHeight = viewRect.height;
     // 2. Determine the value of maximum size for cue as per the appropriate rules from the following list:
@@ -287,7 +291,7 @@ function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect,
     const left = `${(xPosition / 100) * viewWidth}px`;
 
     // 8. Obtain a set of CSS boxes boxes positioned relative to an initial containing block.
-    const boxes = obtainCSSBoxes(cue, nodes, viewHeight);
+    const boxes = obtainCSSBoxes(cue, nodes);
     boxes.style.top = top;
     boxes.style.left = left;
     boxes.style.width = width;
@@ -307,7 +311,7 @@ function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect,
         // Vertical: Let step be the width of the first line box in boxes.
         boxes.style.opacity = "0";
         container.append(boxes);
-        const rects = boxes.querySelector('div[data-vtt-type="cue"]')?.getClientRects();
+        const rects = boxes.querySelector('vtt-cue-bgbox')?.getClientRects();
         const boundingRect = boxes.getBoundingClientRect();
         container.removeChild(boxes);
         boxes.style.removeProperty("opacity");
@@ -360,7 +364,7 @@ function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect,
                 if (shouldSwitchDirection) {
                     // 17. Switch direction: If switched is true, then remove all the boxes in boxes, and jump to the step labeled done positioning below.
                     if (switched) {
-                        return document.createElement('div');
+                        return document.createElement('vtt-cue-root');
                     }
                     // 18. Otherwise, move all the boxes in boxes back to their specified position as determined in the earlier step.
                     boxes.style.top = specifiedTop;
@@ -391,7 +395,7 @@ function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect,
 }
 
 // If none of the boxes in boxes would overlap any of the boxes in output, and all of the boxes in boxes are entirely within the title area box, then jump to the step labeled done positioning below.
-function noOverlapsAndContained(boxes: HTMLDivElement, outputContainer: HTMLDivElement, viewRect: DOMRect) {
+function noOverlapsAndContained(boxes: HTMLElement, outputContainer: HTMLElement, viewRect: DOMRect) {
     boxes.style.opacity = "0";
     outputContainer.append(boxes);
     const boundingRect = boxes.getBoundingClientRect();
@@ -439,12 +443,12 @@ function applyClassList(element: Element, node: WebVTTInternalNode) {
     if (node.classNames.length > 0) element.setAttribute('class', node.classNames.join(' '));
 }
 
-function constructDOMFromNodes(element: WebVTTNode, inRuby: boolean): Node {
+function constructDOMFromNodes(element: WebVTTNode): Node {
     // TODO: again, this might be optimized, its a massive if-else ladder
     if (element instanceof WebVTTNodeList) {
         const root = document.createDocumentFragment();
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
@@ -453,87 +457,70 @@ function constructDOMFromNodes(element: WebVTTNode, inRuby: boolean): Node {
         const root = document.createElement('span');
         applyClassList(root, element);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTItalic) {
         const root = document.createElement('i');
-        if (inRuby) root.style.display = 'ruby-base';
-        root.style.fontStyle = 'italic';
         applyClassList(root, element);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTBold) {
         const root = document.createElement('b');
-        if (inRuby) root.style.display = 'ruby-base';
-        root.style.fontWeight = 'bold';
         applyClassList(root, element);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTUnderline) {
         const root = document.createElement('u');
-        if (inRuby) root.style.display = 'ruby-base';
-        root.style.textDecoration = 'underline';
         applyClassList(root, element);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTRuby) {
         const root = document.createElement('ruby');
-        root.style.display = 'ruby';
         applyClassList(root, element);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, true));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTRubyText) {
         const root = document.createElement('rt');
-        root.style.display = 'ruby-text';
-        root.style.background = 'rgba(0,0,0,0.8)';
         applyClassList(root, element);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTVoice) {
-        const root = document.createElement('span');
-        if (inRuby) root.style.display = 'ruby-base';
-        applyClassList(root, element);
+        const root = document.createElement('v');
         root.setAttribute('title', element.value);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTLanguage) {
         const root = document.createElement('span');
-        if (inRuby) root.style.display = 'ruby-base';
-        applyClassList(root, element);
         root.setAttribute('lang', element.lang);
         for (const child of element.children) {
-            root.appendChild(constructDOMFromNodes(child, inRuby));
+            root.appendChild(constructDOMFromNodes(child));
         }
         return root;
     }
     else if (element instanceof WebVTTText) {
-        if (inRuby) {
-            const root = document.createElement('span');
-            root.style.display = 'ruby-base';
-            root.appendChild(document.createTextNode(element.value));
-            return root;
-        }
-        return document.createTextNode(element.value);
+        const root = document.createElement('span');
+        root.appendChild(document.createTextNode(element.value));
+        return root;
     }
     else if (element instanceof WebVTTTimestamp) {
         return document.createProcessingInstruction('timestamp', toTimestampString(element.value));
@@ -542,47 +529,19 @@ function constructDOMFromNodes(element: WebVTTNode, inRuby: boolean): Node {
     throw new Error('Unreachable state reached');
 }
 
-function obtainCSSBoxes(cue: VTTCue, nodes: WebVTTNodeList, viewHeight: number) {
+function obtainCSSBoxes(cue: VTTCue, nodes: WebVTTNodeList) {
     // The children of the nodes must be wrapped in an anonymous box whose display property has the value inline. This is the WebVTT cue background box.
-    const rootBox = document.createElement('div');
-    rootBox.style.position = "absolute";
-    rootBox.style.unicodeBidi = "plaintext";
-    rootBox.style.overflowWrap = "break-word";
-    // TODO: don't know how to set this rootBox.style.textWrap = "balance";
-    // XXX: top, left, width, height set outside of this method
-    rootBox.style.writingMode = cue.vertical === "" ? 
-        "horizontal-tb" : 
-    cue.vertical === "lr" ?
-        "vertical-lr" : "vertical-rl";
-    rootBox.style.textAlign = cue.align;
-    rootBox.style.font = `${viewHeight * 0.05}px sans-serif`;
-    rootBox.style.color = 'rgba(255,255,255,1)';
-    rootBox.style.whiteSpace = "pre-line";
+    const rootBox = document.createElement('vtt-cue-root');
+    rootBox.setAttribute('vertical', cue.vertical);
+    rootBox.setAttribute('align', cue.align);
     
     // The background shorthand property on the WebVTT cue background box and on WebVTT Ruby Text Objects must be set to rgba(0,0,0,0.8). [CSS3-COLOR]
-    const cueBackgroundBox = document.createElement('div');
-    cueBackgroundBox.setAttribute('data-vtt-type', 'cue');
-    cueBackgroundBox.style.display = 'inline';
-    cueBackgroundBox.style.background = "rgba(0,0,0,0.8)";
+    const cueBackgroundBox = document.createElement('vtt-cue-bgbox');
 
-    cueBackgroundBox.append(constructDOMFromNodes(nodes, false) as DocumentFragment);
+    cueBackgroundBox.append(constructDOMFromNodes(nodes) as DocumentFragment);
     rootBox.append(cueBackgroundBox);
 
     return rootBox;
-}
-
-function applyBaseRegionCSS(element: HTMLDivElement, viewHeight: number) {
-    element.style.position = 'absolute';
-    element.style.writingMode = 'horizontal-tb';
-    element.style.background = 'rgba(0,0,0,0.8)';
-    element.style.overflowWrap = 'break-word';
-    element.style.font = `${viewHeight * 0.05}px sans-serif`;
-    element.style.color = 'rgba(255,255,255,1)';
-    element.style.overflow = 'hidden';
-    element.style.minHeight = '0px';
-    element.style.display = 'inline-flex';
-    element.style.flexFlow = 'column';
-    element.style.justifyContent = 'flex-end';
 }
 
 function getComputedLine(cue: VTTCue) {

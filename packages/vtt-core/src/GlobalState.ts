@@ -8,7 +8,7 @@ const lastTimestampPlayers = new Map<HTMLMediaElement, number | undefined>();
 export const textTrackLists = new Map<HTMLMediaElement, TextTrack[]>();
 const listOfNewlyIntroducedCues = new Map<HTMLMediaElement, Set<TextTrackCue>>();
 export const activeCueFlags = new Map<TextTrackCue, boolean>(); 
-export const displayStates = new Map<TextTrackCue, HTMLDivElement[]>();
+export const displayStates = new Map<TextTrackCue, HTMLElement[]>();
 const customTextTrackUpdateRules = new Map<HTMLMediaElement, ((element: HTMLMediaElement) => void)[]>();
 const onTrackAddedSubscribers = new Map<HTMLMediaElement, Set<(track: TextTrack) => void>>();
 
