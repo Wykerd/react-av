@@ -4,7 +4,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "changes": "changeset",
-    "publish-packages": "turbo run build && changeset version && pnpm install && pnpm publish -r"
+    "publish-packages": "turbo run build && changeset version && pnpm install && pnpm publish -r --access public --filter !@react-av/docs"
   },
   "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
