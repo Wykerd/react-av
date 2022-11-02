@@ -47,6 +47,7 @@ const PlayPause = forwardRef<HTMLButtonElement, PlayProps>(function PlayPause(pr
                 loadingClassName)).trim() || undefined
         }
         type="button"
+        disabled={playingState === "loading"}
         aria-label={playing ? "Pause" : "Play"}
     >
         {
