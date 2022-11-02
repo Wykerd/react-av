@@ -33,7 +33,7 @@ export default class VTTParser {
 
     textTrack(kind: TextTrackKind, language: string, label: string = "", id: string = uuid()): TextTrack {
         // TODO: Implement this correctly
-        const textTrack = new TextTrack(kind, label, language, false, "hidden", id);
+        const textTrack = new TextTrack(kind, label, language, false, "showing", id);
         for (const cue of this.#cues) {
             cue.track = textTrack;
             textTrack.addCue(cue);
