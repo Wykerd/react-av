@@ -1,3 +1,5 @@
+if (globalThis.document) {
+
 const template = document.createElement("template");
 
 template.innerHTML = `
@@ -129,7 +131,6 @@ vtt-cue-root.bg_black {
 </style>
 <slot></slot>
 `;
-
 class TextTrackContainer extends HTMLElement {
     #hostStyles: HTMLStyleElement;
     constructor() {
@@ -183,3 +184,5 @@ class TextTrackContainer extends HTMLElement {
 }
 
 window.customElements.define('vtt-texttrackcontainer', TextTrackContainer);
+
+}

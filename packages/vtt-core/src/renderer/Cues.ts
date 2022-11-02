@@ -1,3 +1,4 @@
+if (globalThis.document) {
 class VTTNodeList extends HTMLElement {
     constructor() {
         super();
@@ -45,3 +46,5 @@ window.customElements.define('vtt-cue-root', VTTNodeList);
 window.customElements.define('v', VTTVoiceElement);
 window.customElements.define('vtt-cue-bgbox', VTTCueBackgroundBox);
 window.customElements.define('vtt-region', VTTRegionElement);
+
+}
