@@ -96,7 +96,6 @@ importers:
   packages/core:
     specifiers:
       '@react-av/vtt-core': workspace:^
-      '@react-hook/resize-observer': ^1.2.6
       '@rollup/plugin-node-resolve': ^15.0.0
       '@rollup/plugin-typescript': ^9.0.1
       '@types/react': ^18.0.21
@@ -113,7 +112,6 @@ importers:
       '@react-av/vtt-core': link:../vtt-core
       recoil: 0.7.6_biqbaboplfbrettd7655fr4n2y
     devDependencies:
-      '@react-hook/resize-observer': 1.2.6_react@18.2.0
       '@rollup/plugin-node-resolve': 15.0.0_rollup@3.2.0
       '@rollup/plugin-typescript': 9.0.1_rj3m3m4muaihcbyy7urm2wsxey
       '@types/react': 18.0.21
@@ -1305,33 +1303,6 @@ packages:
       clsx: 1.2.1
       react: 18.2.0
     dev: false
-
-  /@react-hook/latest/1.0.3_react@18.2.0:
-    resolution: {integrity: sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==}
-    peerDependencies:
-      react: '>=16.8'
-    dependencies:
-      react: 18.2.0
-    dev: true
-
-  /@react-hook/passive-layout-effect/1.2.1_react@18.2.0:
-    resolution: {integrity: sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==}
-    peerDependencies:
-      react: '>=16.8'
-    dependencies:
-      react: 18.2.0
-    dev: true
-
-  /@react-hook/resize-observer/1.2.6_react@18.2.0:
-    resolution: {integrity: sha512-DlBXtLSW0DqYYTW3Ft1/GQFZlTdKY5VAFIC4+km6IK5NiPPDFchGbEJm1j6pSgMqPRHbUQgHJX7RaR76ic1LWA==}
-    peerDependencies:
-      react: '>=16.8'
-    dependencies:
-      '@juggle/resize-observer': 3.4.0
-      '@react-hook/latest': 1.0.3_react@18.2.0
-      '@react-hook/passive-layout-effect': 1.2.1_react@18.2.0
-      react: 18.2.0
-    dev: true
 
   /@react-stately/utils/3.5.1_react@18.2.0:
     resolution: {integrity: sha512-INeQ5Er2Jm+db8Py4upKBtgfzp3UYgwXYmbU/XJn49Xw27ktuimH9e37qP3bgHaReb5L3g8IrGs38tJUpnGPHA==}

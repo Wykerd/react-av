@@ -1,5 +1,13 @@
 # @react-av/core
 
+## 0.0.2
+
+### Patch Changes
+
+- Fix WebVTT renderer reset behaviour
+- Updated dependencies
+  - @react-av/vtt-core@0.0.2
+
 ## 0.0.1
 
 ### Patch Changes
