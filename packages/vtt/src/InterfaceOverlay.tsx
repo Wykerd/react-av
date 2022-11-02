@@ -1,4 +1,4 @@
-import React, { forwardRef, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { forwardRef, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { Renderer, WebVTTUpdateTextTracksDisplay } from '@react-av/vtt-core';
 import { useMediaElement, useMediaPlaying, useMediaViewportHover } from "@react-av/core";
 
@@ -8,17 +8,19 @@ const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivE
     const ref = useRef<HTMLDivElement>(null);
     const [playing] = useMediaPlaying();
     const [active, setActive] = useState(false);
+    const isHidden = useMemo(() => {
+        return hover !== undefined && !hover && !persistent && playing && !active;
+    }, [hover, persistent, playing, active]);
 
     useEffect(() => {
-        if (!element || !ref.current || (hover !== undefined && !hover && !persistent && playing && !active)) return;
+        if (!element || !ref.current || isHidden) return;
         Renderer.addUIContainer(element as HTMLVideoElement, ref.current);
         element?.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(element as HTMLVideoElement);
         return () => {
             Renderer.removeUIContainer(element as HTMLVideoElement);
+            element?.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(element as HTMLVideoElement, true);
         }
-    }, [element, hover, persistent, playing, active]);
-
-    const isHidden = hover !== undefined && !hover && !persistent && playing && !active;
+    }, [element, isHidden]);
 
     return <div 
         {...props} 
