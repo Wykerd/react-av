@@ -23,7 +23,6 @@
     "recoil": "^0.7.6"
   },
   "devDependencies": {
-    "@react-hook/resize-observer": "^1.2.6",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-typescript": "^9.0.1",
     "@types/react": "^18.0.21",
