@@ -24,9 +24,11 @@ export function removeUIContainer(video: HTMLVideoElement) {
  * @param video 
  * @param reset If the last time these rules were run, the user agent was not exposing a user interface for video, but now it is, optionally let reset be true. Otherwise, let reset be false.
  * @param ui exposed user interface over video
+ * @param forceReset force reset - this is non-standard
  */
 export default function WebVTTUpdateTextTracksDisplay( 
-    video: HTMLVideoElement
+    video: HTMLVideoElement,
+    forceReset: boolean = false,
 ) {
     const container = video.parentElement;
     const ui = uiContainers.get(video);
@@ -68,7 +70,7 @@ export default function WebVTTUpdateTextTracksDisplay(
         textTrackContainer.append(div);
     }
     // 5. If the last time these rules were run, the user agent was not exposing a user interface for video, but now it is, optionally let reset be true. Otherwise, let reset be false.
-    const reset = false; // TODO: this was said to be optional, including this does not render the first subtitle track after exposing the ui: !didShowUI.has(video) && ui;
+    const reset = Boolean(!didShowUI.has(video) && ui) || forceReset;
     if (ui) didShowUI.add(video);
     else didShowUI.delete(video);
     // 6. Let tracks be the subset of video’s list of text tracks that have as their rules for updating the text track rendering these rules for updating the display of WebVTT text tracks, and whose text track mode is showing.
@@ -122,7 +124,9 @@ export default function WebVTTUpdateTextTracksDisplay(
             textTrackContainer.append(box);
             regionBoxes.set(regionNode, box);
         }
-        // 13. If reset is false, then, for each WebVTT cue cue in cues: if cue’s text track cue display state has a set of CSS boxes, then:
+    }
+    // 13. If reset is false, then, for each WebVTT cue cue in cues: if cue’s text track cue display state has a set of CSS boxes, then:
+    if (!reset) {
         for (const cue of cues) {
             const displayState = displayStates.get(cue);
             if (!Array.isArray(displayState)) continue;
@@ -133,7 +137,7 @@ export default function WebVTTUpdateTextTracksDisplay(
                 regionBox.append(...displayState);
                 const items = regionBox.querySelectorAll('*');
                 items.forEach(item => {
-                    // TODO: left, height
+                    // TODO: left, height. Is this needed?
                     item.setAttribute('style', 'position: relative; unicode-bidi: plaintext; width: auto');
                     // XXX: afaik we don't set text-align here.
                 })
@@ -148,87 +152,76 @@ export default function WebVTTUpdateTextTracksDisplay(
             const displayState = displayStates.get(cue);
             return !Array.isArray(displayState) || displayState.length === 0;
         });
+    }
 
-        // XXX: this implementation is not perfectly spec compliant
-        // sort by start time, earliest first
-        // then sort by end time, latest first
-        const trackOrderedCues = cues.sort((a, b) => {
-            if (a.startTime === b.startTime)
-                return b.endTime - a.endTime;
-            return a.startTime - b.startTime;
-        });
+    // XXX: this implementation is not perfectly spec compliant
+    // sort by start time, earliest first
+    // then sort by end time, latest first
+    const trackOrderedCues = cues.sort((a, b) => {
+        if (a.startTime === b.startTime)
+            return b.endTime - a.endTime;
+        return a.startTime - b.startTime;
+    });
 
-        // 14. For each WebVTT cue cue in cues that has not yet had corresponding CSS boxes added to output, in text track cue order, run the following substeps:
-        for (const cue of trackOrderedCues) {
-            // 1. Let nodes be the list of WebVTT Node Objects obtained by applying the WebVTT cue text parsing rules, with the fallback language language if provided, to the cue’s cue text.
-            const nodes = WebVTTParseCueText(cue.text, cue.track?.language);
-            // 2. If cue’s WebVTT cue region is null, run the following substeps:
-            if (!cue.region) {
-                // - Apply WebVTT cue settings to obtain CSS boxes boxes from nodes.
-                const boxes = applyCueSettings(cue, nodes, videoRegion, textTrackContainer);
-                // - Let cue’s text track cue display state have the CSS boxes in boxes.
-                const displayState = displayStates.get(cue);
-                if (Array.isArray(displayState)) {
-                    displayState.push(boxes);
-                } else {
-                    displayStates.set(cue, [boxes]);
-                }
-                // - Add the CSS boxes in boxes to output.
-                textTrackContainer.append(boxes);
-            }
-            // 3. Otherwise, run the following substeps:
-            else {
-                // 1. Let region be cue’s WebVTT cue region.
-                const region = cue.region;
-                // 2. If region’s WebVTT region scroll setting is up and region already has one child, set region’s transition-property to top and transition-duration to 0.433s.
-                if (region.scroll === "up" && regionBoxes.get(region)?.children.length === 1) {
-                    const regionBox = regionBoxes.get(region);
-                    if (regionBox) {
-                        regionBox.style.transitionProperty = "top";
-                        regionBox.style.transitionDuration = "0.433s";
-                    }
-                }
-                // 3. Let offset be cue’s computed position multiplied by region’s WebVTT region width and divided by 100 (i.e. interpret it as a percentage of the region width).
-                const computedPositon = getComputedPosition(cue);
-                let offset = computedPositon * region.width / 100;
-                // 4. Adjust offset using cue’s computed position alignment as follows:
-                // - If the computed position alignment is center alignment
-                if (cue.positionAlign === "center") {
-                    // Subtract half of region’s WebVTT region width from offset.
-                    offset -= region.width / 2;
-                }
-                // - If the computed position alignment is line-right alignment
-                else if (cue.positionAlign === "line-right") {
-                    // Subtract region’s WebVTT region width from offset.
-                    offset -= region.width;
-                }
-                // 5. Let left be offset %. [CSS-VALUES]
-                let left = `${offset}%`;
-                // 6. Obtain a set of CSS boxes boxes positioned relative to an initial containing block.
-                const boxes = obtainCSSBoxes(cue, nodes);
-                boxes.style.left = left;
-                // 7. If there are no line boxes in boxes, skip the remainder of these substeps for cue. The cue is ignored.
-                // TODO: check this condition
-                // 8. Let cue’s text track cue display state have the CSS boxes in boxes.
-                const displayState = displayStates.get(cue);
-                if (Array.isArray(displayState)) {
-                    displayState.push(boxes);
-                }
-                else {
-                    displayStates.set(cue, [boxes]);
-                }
-                // 9. Add the CSS boxes in boxes to region.
+    // 14. For each WebVTT cue cue in cues that has not yet had corresponding CSS boxes added to output, in text track cue order, run the following substeps:
+    for (const cue of trackOrderedCues) {
+        // 1. Let nodes be the list of WebVTT Node Objects obtained by applying the WebVTT cue text parsing rules, with the fallback language language if provided, to the cue’s cue text.
+        const nodes = WebVTTParseCueText(cue.text, cue.track?.language);
+        // 2. If cue’s WebVTT cue region is null, run the following substeps:
+        if (!cue.region) {
+            // - Apply WebVTT cue settings to obtain CSS boxes boxes from nodes.
+            const boxes = applyCueSettings(cue, nodes, videoRegion, textTrackContainer);
+            // - Let cue’s text track cue display state have the CSS boxes in boxes.
+            displayStates.set(cue, [boxes]);
+            // - Add the CSS boxes in boxes to output.
+            textTrackContainer.append(boxes);
+        }
+        // 3. Otherwise, run the following substeps:
+        else {
+            // 1. Let region be cue’s WebVTT cue region.
+            const region = cue.region;
+            // 2. If region’s WebVTT region scroll setting is up and region already has one child, set region’s transition-property to top and transition-duration to 0.433s.
+            if (region.scroll === "up" && regionBoxes.get(region)?.children.length === 1) {
                 const regionBox = regionBoxes.get(region);
                 if (regionBox) {
-                    regionBox.append(boxes);
+                    regionBox.style.transitionProperty = "top";
+                    regionBox.style.transitionDuration = "0.433s";
                 }
-                // 10. If the CSS boxes boxes together have a height less than the height of the region box, let diff be the absolute difference between the two height values. Increase top by diff and re-apply it to regionNode.
-                const boxesHeight = boxes.getBoundingClientRect().height;
-                const regionBoxHeight = regionBox?.getBoundingClientRect().height ?? 0;
-                const diff = Math.abs(boxesHeight - regionBoxHeight);
-                if (boxesHeight < regionBoxHeight && regionBox) {
-                    regionBox.style.top = `${parseFloat(regionBox.style.top.substring(0, regionBox.style.top.length - 2)) + diff}px`;
-                }
+            }
+            // 3. Let offset be cue’s computed position multiplied by region’s WebVTT region width and divided by 100 (i.e. interpret it as a percentage of the region width).
+            const computedPositon = getComputedPosition(cue);
+            let offset = computedPositon * region.width / 100;
+            // 4. Adjust offset using cue’s computed position alignment as follows:
+            // - If the computed position alignment is center alignment
+            if (cue.positionAlign === "center") {
+                // Subtract half of region’s WebVTT region width from offset.
+                offset -= region.width / 2;
+            }
+            // - If the computed position alignment is line-right alignment
+            else if (cue.positionAlign === "line-right") {
+                // Subtract region’s WebVTT region width from offset.
+                offset -= region.width;
+            }
+            // 5. Let left be offset %. [CSS-VALUES]
+            let left = `${offset}%`;
+            // 6. Obtain a set of CSS boxes boxes positioned relative to an initial containing block.
+            const boxes = obtainCSSBoxes(cue, nodes);
+            boxes.style.left = left;
+            // 7. If there are no line boxes in boxes, skip the remainder of these substeps for cue. The cue is ignored.
+            // TODO: check this condition
+            // 8. Let cue’s text track cue display state have the CSS boxes in boxes.
+            displayStates.set(cue, [boxes])
+            // 9. Add the CSS boxes in boxes to region.
+            const regionBox = regionBoxes.get(region);
+            if (regionBox) {
+                regionBox.append(boxes);
+            }
+            // 10. If the CSS boxes boxes together have a height less than the height of the region box, let diff be the absolute difference between the two height values. Increase top by diff and re-apply it to regionNode.
+            const boxesHeight = boxes.getBoundingClientRect().height;
+            const regionBoxHeight = regionBox?.getBoundingClientRect().height ?? 0;
+            const diff = Math.abs(boxesHeight - regionBoxHeight);
+            if (boxesHeight < regionBoxHeight && regionBox) {
+                regionBox.style.top = `${parseFloat(regionBox.style.top.substring(0, regionBox.style.top.length - 2)) + diff}px`;
             }
         }
     }
