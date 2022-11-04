@@ -1,7 +1,7 @@
 {
   "name": "@react-av/hls",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "HLS media elements for React AV.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",

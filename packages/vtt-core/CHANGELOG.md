@@ -1,5 +1,11 @@
 # @react-av/vtt-core
 
+## 0.0.4
+
+### Patch Changes
+
+- Add resize observer to recompute text track cue positions when video container size changes
+
 ## 0.0.3
 
 ### Patch Changes
