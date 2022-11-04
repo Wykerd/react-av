@@ -1,5 +1,13 @@
 # @react-av/vtt
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @react-av/vtt-core@0.0.3
+  - @react-av/core@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@react-av/core",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Fully-featured, headless, hooks-based, and declarative media player framework for React.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
