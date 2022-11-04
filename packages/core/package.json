@@ -19,7 +19,6 @@
     "url": "https://github.com/Wykerd/react-av.git"
   },
   "dependencies": {
-    "@react-av/vtt-core": "workspace:^",
     "recoil": "^0.7.6"
   },
   "devDependencies": {
