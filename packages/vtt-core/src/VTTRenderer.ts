@@ -39,18 +39,21 @@ export default function WebVTTUpdateTextTracksDisplay(
     if (!textTrackContainer) {
         textTrackContainer = document.createElement('vtt-texttrackcontainer');
         textTrackContainer.style.position = 'absolute';
-        textTrackContainer.style.width = '100%';
-        textTrackContainer.style.height = '100%';
-        textTrackContainer.style.top = '0';
-        textTrackContainer.style.left = '0';
         container.append(textTrackContainer);
     }
     // make sure the container is positioned relative
     if (container.style.position !== "relative") 
         container.style.position = "relative";
+
+    const containerRegion = container.getBoundingClientRect();
     const videoRegion = video.getBoundingClientRect();
     const viewHeight = videoRegion.height;
     const viewWidth = videoRegion.width;
+
+    textTrackContainer.style.width = `${viewWidth}px`;
+    textTrackContainer.style.height = `${viewHeight}px`;
+    textTrackContainer.style.top = `${videoRegion.top - containerRegion.top}px`;
+    textTrackContainer.style.left = `${videoRegion.left - containerRegion.left}px`;
 
     textTrackContainer.setAttribute('vheight', '' + viewHeight);
     // 3. Let output be an empty list of absolutely positioned CSS block boxes.
