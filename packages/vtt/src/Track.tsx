@@ -13,6 +13,7 @@ export default function Track({ kind, language, label, src, id }: { kind: TextTr
 
         if (!element) return;
         Globals.addControlledMediaElement(element);
+        Globals.recomputeTextTrackDisplayOnResize(element);
 
         let isDone = false;
 
@@ -27,9 +28,9 @@ export default function Track({ kind, language, label, src, id }: { kind: TextTr
         })().catch(e => console.warn('react-media(vtt): failed to load track.', e));
 
         return () => {
+            if (element && track) Globals.removeTextTrack(element, track);
             if (Globals.textTrackLists.get(element)?.length === 0) Globals.removeControlledMediaElement(element);
             if (!isDone) controller.abort();
-            if (element && track) Globals.removeTextTrack(element, track);
         }
     }, [element, kind, label, language, src, id]);
 

@@ -31,6 +31,21 @@ export function addControlledMediaElement(element: HTMLMediaElement) {
     listOfNewlyIntroducedCues.set(element, new Set());
 }
 
+const observer = globalThis?.ResizeObserver ? new ResizeObserver((entries) => {
+    for (const entry of entries) {
+        if (textTrackLists.has(entry.target as HTMLMediaElement)) {
+            entry.target.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(entry.target as HTMLVideoElement, true);
+        }
+    }
+}) : undefined;
+
+export function recomputeTextTrackDisplayOnResize(element: HTMLMediaElement) {
+    const tracks = textTrackLists.get(element);
+    if (tracks !== undefined) {
+        observer?.observe(element);
+    }
+}
+
 export function addCustomTextTrackUpdateRule(element: HTMLMediaElement, rule: (element: HTMLMediaElement) => void) {
     const rules = customTextTrackUpdateRules.get(element) || [];
     rules.push(rule);
@@ -52,6 +67,7 @@ export function removeControlledMediaElement(element: HTMLMediaElement) {
     listOfNewlyIntroducedCues.delete(element);
     customTextTrackUpdateRules.delete(element);
     onTrackAddedSubscribers.delete(element);
+    observer?.unobserve(element);
 }
 
 export function addTextTrack(element: HTMLMediaElement, track: TextTrack) {
