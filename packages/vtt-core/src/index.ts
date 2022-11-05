@@ -1,4 +1,5 @@
-export * as Globals from './GlobalState';
+import * as VTT from './GlobalState';
+export default VTT;
 export {default as TextTrack} from './TextTrack';
 export * from './TextTrack';
 export {default as VTTCue} from './VTTCue';

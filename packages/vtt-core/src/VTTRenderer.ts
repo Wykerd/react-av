@@ -1,4 +1,4 @@
-import { activeCueFlags, displayStates, textTrackLists } from "./GlobalState";
+import { getContext, getCueContext, setCueDisplayState } from "./GlobalState";
 import VTTCue, { toTimestampString } from "./VTTCue";
 import WebVTTParseCueText, { WebVTTBold, WebVTTClass, WebVTTInternalNode, WebVTTItalic, WebVTTLanguage, WebVTTNode, WebVTTNodeList, WebVTTRuby, WebVTTRubyText, WebVTTText, WebVTTTimestamp, WebVTTUnderline, WebVTTVoice } from "./VTTCueTextParser";
 import VTTRegion from "./VTTRegion";
@@ -77,7 +77,7 @@ export default function WebVTTUpdateTextTracksDisplay(
     if (ui) didShowUI.add(video);
     else didShowUI.delete(video);
     // 6. Let tracks be the subset of video’s list of text tracks that have as their rules for updating the text track rendering these rules for updating the display of WebVTT text tracks, and whose text track mode is showing.
-    const list = textTrackLists.get(video);
+    const list = getContext(video)?.tracks;
     if (!list) return;
     const tracks = list.filter(track => track.mode === 'showing' && track);
     // 7. Let cues be an empty list of text track cues.
@@ -86,7 +86,7 @@ export default function WebVTTUpdateTextTracksDisplay(
     for (const track of tracks) {
         if (!track.cues) continue;
         for (const cue of track.cues) {
-            if (activeCueFlags.get(cue) && cue instanceof VTTCue) 
+            if (getCueContext(cue)?.active && cue instanceof VTTCue) 
                 cues.push(cue);
         }
     }
@@ -131,7 +131,7 @@ export default function WebVTTUpdateTextTracksDisplay(
     // 13. If reset is false, then, for each WebVTT cue cue in cues: if cue’s text track cue display state has a set of CSS boxes, then:
     if (!reset) {
         for (const cue of cues) {
-            const displayState = displayStates.get(cue);
+            const displayState = getCueContext(cue)?.displayState;
             if (!Array.isArray(displayState)) continue;
             // - If cue’s WebVTT cue region is not null, add those boxes to that region’s box and remove cue from cues.
             if (cue.region) {
@@ -152,7 +152,7 @@ export default function WebVTTUpdateTextTracksDisplay(
         }
         // XXX: remove cues that have non empty display states
         cues = cues.filter(cue => {
-            const displayState = displayStates.get(cue);
+            const displayState = getCueContext(cue)?.displayState;
             return !Array.isArray(displayState) || displayState.length === 0;
         });
     }
@@ -175,7 +175,7 @@ export default function WebVTTUpdateTextTracksDisplay(
             // - Apply WebVTT cue settings to obtain CSS boxes boxes from nodes.
             const boxes = applyCueSettings(cue, nodes, videoRegion, textTrackContainer);
             // - Let cue’s text track cue display state have the CSS boxes in boxes.
-            displayStates.set(cue, [boxes]);
+            setCueDisplayState(cue, boxes);
             // - Add the CSS boxes in boxes to output.
             textTrackContainer.append(boxes);
         }
@@ -213,7 +213,7 @@ export default function WebVTTUpdateTextTracksDisplay(
             // 7. If there are no line boxes in boxes, skip the remainder of these substeps for cue. The cue is ignored.
             // TODO: check this condition
             // 8. Let cue’s text track cue display state have the CSS boxes in boxes.
-            displayStates.set(cue, [boxes])
+            setCueDisplayState(cue, boxes);
             // 9. Add the CSS boxes in boxes to region.
             const regionBox = regionBoxes.get(region);
             if (regionBox) {

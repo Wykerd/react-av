@@ -1,5 +1,5 @@
 import React, { forwardRef, HTMLProps, useEffect, useRef, useState } from "react";
-import { Globals, TextTrack, VTTCue } from '@react-av/vtt-core';
+import VTT, { TextTrack, VTTCue } from '@react-av/vtt-core';
 import { useMediaElement } from "@react-av/core";
 
 declare module "react" {
@@ -18,7 +18,7 @@ export function useMediaTextTrack(id: string) {
         if (!media) return;
         function update() {
             if (!media) return;
-            const list = Globals.textTrackLists.get(media);
+            const list = VTT.getContext(media)?.tracks;
             if (!list) return;
             const tracks = list.filter(track => track.id === id && track);
             if (tracks.length === 0) return;
@@ -36,12 +36,12 @@ export function useMediaTextTrack(id: string) {
             setActiveCues(activeCues as VTTCue[]);
         }
 
-        Globals.addOnTrackAdded(media, update);
-        Globals.addCustomTextTrackUpdateRule(media, update);
+        VTT.getContext(media)?.tracksChanged.addEventListener("change", update);
+        VTT.getContext(media)?.updateRules.add(update);
 
         return () => {
-            Globals.removeOnTrackAdded(media, update);
-            Globals.removeCustomTextTrackUpdateRule(media, update);
+            VTT.getContext(media)?.tracksChanged.removeEventListener("change", update);
+            VTT.getContext(media)?.updateRules.delete(update);
         }
     }, [media, id]);
 
@@ -57,15 +57,15 @@ export function useMediaTextTrackList() {
         if (!media) return;
         function update() {
             if (!media) return;
-            const list = Globals.textTrackLists.get(media);
+            const list = VTT.getContext(media)?.tracks;
             if (!list) return;
             setTracks(list);
         }
 
-        Globals.addOnTrackAdded(media, update);
+        VTT.getContext(media)?.tracksChanged.addEventListener("change", update);
 
         return () => {
-            Globals.removeOnTrackAdded(media, update);
+            VTT.getContext(media)?.tracksChanged.removeEventListener("change", update);
         }
     }, [media]);
 

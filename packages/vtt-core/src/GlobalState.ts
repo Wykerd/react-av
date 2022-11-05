@@ -4,90 +4,119 @@ import TextTrack from "./TextTrack";
 import { TextTrackCue } from "./VTTCue";
 import WebVTTUpdateTextTracksDisplay from "./VTTRenderer";
 
-const lastTimestampPlayers = new Map<HTMLMediaElement, number | undefined>();
-export const textTrackLists = new Map<HTMLMediaElement, TextTrack[]>();
-const listOfNewlyIntroducedCues = new Map<HTMLMediaElement, Set<TextTrackCue>>();
-export const activeCueFlags = new Map<TextTrackCue, boolean>(); 
-export const displayStates = new Map<TextTrackCue, HTMLElement[]>();
-const customTextTrackUpdateRules = new Map<HTMLMediaElement, ((element: HTMLMediaElement) => void)[]>();
-const onTrackAddedSubscribers = new Map<HTMLMediaElement, Set<(track: TextTrack) => void>>();
+export type TextTrackChangedCallback = (element: HTMLMediaElement, track?: TextTrack) => void;
+export type TextTrackUpdateRule = (element: HTMLMediaElement, affectedTracks: TextTrack[]) => void;
 
-export function addOnTrackAdded(element: HTMLMediaElement, callback: (track: TextTrack) => void) {
-    if (!onTrackAddedSubscribers.has(element)) {
-        onTrackAddedSubscribers.set(element, new Set());
-    }
-    onTrackAddedSubscribers.get(element)!.add(callback);
+export interface TextTrackContext {
+    refcount: number;
+    tracks: TextTrack[];
+    tracksChanged: EventTarget;
+    lastTimestamp?: number;
+    newlyIntroducedCues: Set<TextTrackCue>;
+    updateRules: Set<TextTrackUpdateRule>;
 }
 
-export function removeOnTrackAdded(element: HTMLMediaElement, callback: (track: TextTrack) => void) {
-    if (onTrackAddedSubscribers.has(element)) {
-        onTrackAddedSubscribers.get(element)!.delete(callback);
-    }
+export interface TextTrackCueContext {
+    active: boolean;
+    displayState?: HTMLElement;
 }
 
-export function addControlledMediaElement(element: HTMLMediaElement) {
-    lastTimestampPlayers.set(element, undefined);
-    textTrackLists.set(element, []);
-    listOfNewlyIntroducedCues.set(element, new Set());
+const trackContext = new Map<HTMLMediaElement, TextTrackContext>();
+const cueContext = new Map<TextTrackCue, TextTrackCueContext>();
+
+export function getContext(element: HTMLMediaElement) {
+    return trackContext.get(element);
+}
+
+export function getCueContext(cue: TextTrackCue) {
+    return cueContext.get(cue);
+}
+
+export function setCueDisplayState(cue: TextTrackCue, state: HTMLElement) {
+    const ctx = getCueContext(cue);
+    if (ctx) {
+        ctx.displayState = state;
+    } else {
+        cueContext.set(cue, { active: false, displayState: state });
+    }
 }
 
 const observer = globalThis?.ResizeObserver ? new ResizeObserver((entries) => {
     for (const entry of entries) {
-        if (textTrackLists.has(entry.target as HTMLMediaElement)) {
+        if (trackContext.has(entry.target as HTMLMediaElement)) {
             entry.target.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(entry.target as HTMLVideoElement, true);
         }
     }
 }) : undefined;
 
-export function recomputeTextTrackDisplayOnResize(element: HTMLMediaElement) {
-    const tracks = textTrackLists.get(element);
+export function defaultUpdateRule(element: HTMLMediaElement, affectedTracks: TextTrack[]) {
+    element.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(element as HTMLVideoElement);
+}
+
+export function observeResize(element: HTMLMediaElement) {
+    const tracks = trackContext.get(element);
     if (tracks !== undefined) {
         observer?.observe(element);
     }
 }
 
-export function addCustomTextTrackUpdateRule(element: HTMLMediaElement, rule: (element: HTMLMediaElement) => void) {
-    const rules = customTextTrackUpdateRules.get(element) || [];
-    rules.push(rule);
-    customTextTrackUpdateRules.set(element, rules);
-}
-
-export function removeCustomTextTrackUpdateRule(element: HTMLMediaElement, rule: (element: HTMLMediaElement) => void) {
-    const rules = customTextTrackUpdateRules.get(element) || [];
-    const index = rules.indexOf(rule);
-    if (index !== -1) {
-        rules.splice(index, 1);
-    }
-    customTextTrackUpdateRules.set(element, rules);
-}
-
-export function removeControlledMediaElement(element: HTMLMediaElement) {
-    lastTimestampPlayers.delete(element);
-    textTrackLists.delete(element);
-    listOfNewlyIntroducedCues.delete(element);
-    customTextTrackUpdateRules.delete(element);
-    onTrackAddedSubscribers.delete(element);
+export function unobserveResize(element: HTMLMediaElement) {
     observer?.unobserve(element);
 }
 
-export function addTextTrack(element: HTMLMediaElement, track: TextTrack) {
-    const list = textTrackLists.get(element);
-    if (list) {
-        list.push(track);
-    }
-    if (onTrackAddedSubscribers.has(element)) {
-        onTrackAddedSubscribers.get(element)!.forEach(callback => callback(track));
-    }
+export function init(element: HTMLMediaElement) {
+    trackContext.set(element, {
+        refcount: 0,
+        tracks: [],
+        tracksChanged: new EventTarget(),
+        lastTimestamp: undefined,
+        newlyIntroducedCues: new Set(),
+        updateRules: new Set([defaultUpdateRule])
+    });
+
+    return trackContext.get(element)!;
 }
 
-export function removeTextTrack(element: HTMLMediaElement, track: TextTrack) {
-    const list = textTrackLists.get(element);
-    if (list) {
-        const index = list.indexOf(track);
-        if (index >= 0) {
-            list.splice(index, 1);
-        }
+export function deinit(element: HTMLMediaElement) {
+    observer?.unobserve(element);
+    trackContext.delete(element);
+}
+
+export function ref(element: HTMLMediaElement) {
+    const context = trackContext.get(element);
+    if (!context) init(element);
+    trackContext.get(element)!.refcount++;
+}
+
+export function deref(element: HTMLMediaElement) {
+    const context = trackContext.get(element);
+    if (!context) return;
+    context.refcount--;
+    if (context.refcount === 0) deinit(element);
+}
+
+export function addTrack(element: HTMLMediaElement, track: TextTrack) {
+    const context = trackContext.get(element);
+    if (!context) return;
+    context.tracks.push(track);
+    
+    context.tracksChanged.dispatchEvent(new CustomEvent("change", {
+        detail: context
+    }));
+}
+
+export function removeTrack(element: HTMLMediaElement, track: TextTrack) {
+    const context = trackContext.get(element);
+    if (!context) return;
+
+    const index = context.tracks.indexOf(track);
+    if (index >= 0) {
+        context.tracks.splice(index, 1);
     }
+
+    context.tracksChanged.dispatchEvent(new CustomEvent("change", {
+        detail: context
+    }));
 }
 
 if (globalThis?.window) {
@@ -98,11 +127,20 @@ if (globalThis?.window) {
     timeLoop();
 }
 
-export default function timeMarchesOn() {
-    for (const [element, lastTimestamp] of lastTimestampPlayers) {
+export function updateTextTrackDisplay(element: HTMLMediaElement, affectedTracks: TextTrack[]) {
+    const context = trackContext.get(element);
+    if (!context) return;
+    context.updateRules.forEach((value) => {
+        value(element, affectedTracks);
+    });
+}
+
+export function timeMarchesOn() {
+    for (const [element, context] of trackContext) {
+        const lastTimestamp = context.lastTimestamp;
         if (element.currentTime === lastTimestamp) continue;
-        lastTimestampPlayers.set(element, element.currentTime);
-        const textTrackList = textTrackLists.get(element);
+        context.lastTimestamp = element.currentTime;
+        const textTrackList = context.tracks;
         if (!textTrackList) continue;
         // 1. Let current cues be a list of cues, initialized to contain all the cues of all the hidden or showing text tracks of the media element (not the disabled ones) whose start times are less than or equal to the current playback position and whose end times are greater than the current playback position.
         const currentCues = Array.from(textTrackList)
@@ -123,7 +161,7 @@ export default function timeMarchesOn() {
             return cue.startTime >= lastTime && cue.endTime <= element.currentTime;
         });
         // 5. Remove all the cues in missed cues that are also in the media element's list of newly introduced cues, and then empty the element's list of newly introduced cues.
-        const newlyIntroducedCues = listOfNewlyIntroducedCues.get(element);
+        const newlyIntroducedCues = context.newlyIntroducedCues;
         if (newlyIntroducedCues) {
             missedCues = missedCues.filter(cue => !newlyIntroducedCues.has(cue));
             newlyIntroducedCues.clear();
@@ -131,10 +169,10 @@ export default function timeMarchesOn() {
         // 6. If the time was reached through the usual monotonic increase of the current playback position during normal playback, and if the user agent has not fired a timeupdate event at the element in the past 15 to 250ms and is not still running event handlers for such an event, then the user agent must queue a media element task given the media element to fire an event named timeupdate at the element. (In the other cases, such as explicit seeks, relevant events get fired as part of the overall process of changing the current playback position.)
         // XXX: this is handled by the media element implementation. Our implementation only concerns itself with the cue events.
         // 7. If all of the cues in current cues have their text track cue active flag set, none of the cues in other cues have their text track cue active flag set, and missed cues is empty, then return.
-        if (currentCues.every(cue => activeCueFlags.get(cue)) && otherCues.every(cue => !activeCueFlags.get(cue)) && missedCues.length === 0) 
+        if (currentCues.every(cue => cueContext.get(cue)?.active) && otherCues.every(cue => !cueContext.get(cue)?.active) && missedCues.length === 0) 
             continue;
         // 8. If the time was reached through the usual monotonic increase of the current playback position during normal playback, and there are cues in other cues that have their text track cue pause-on-exit flag set and that either have their text track cue active flag set or are also in missed cues, then immediately pause the media element.
-        if ((!lastTime || lastTime - element.currentTime > 40) && otherCues.some(cue => cue.pauseOnExit && (activeCueFlags.get(cue) || missedCues.includes(cue)))) {
+        if ((!lastTime || lastTime - element.currentTime > 40) && otherCues.some(cue => cue.pauseOnExit && (cueContext.get(cue)?.active || missedCues.includes(cue)))) {
             element.pause();
         }
         // 9. Let events be a list of tasks, initially empty. Each task in this list will be associated with a text track, a text track cue, and a time, which are used to sort the list before the tasks are queued.
@@ -155,9 +193,9 @@ export default function timeMarchesOn() {
         // 10. For each text track cue in missed cues, prepare an event named enter for the TextTrackCue object with the text track cue start time.
         missedCues.forEach(cue => prepareEvent("enter", cue, cue.startTime));
         // 11. For each text track cue in other cues that either has its text track cue active flag set or is in missed cues, prepare an event named exit for the TextTrackCue object with the later of the text track cue end time and the text track cue start time.
-        otherCues.filter(cue => activeCueFlags.get(cue) || missedCues.includes(cue)).forEach(cue => prepareEvent("exit", cue, Math.max(cue.endTime, cue.startTime)));
+        otherCues.filter(cue => cueContext.get(cue)?.active || missedCues.includes(cue)).forEach(cue => prepareEvent("exit", cue, Math.max(cue.endTime, cue.startTime)));
         // 12. For each text track cue in current cues that does not have its text track cue active flag set, prepare an event named enter for the TextTrackCue object with the text track cue start time.
-        currentCues.filter(cue => !activeCueFlags.get(cue)).forEach(cue => prepareEvent("enter", cue, cue.startTime));
+        currentCues.filter(cue => !cueContext.get(cue)?.active).forEach(cue => prepareEvent("enter", cue, cue.startTime));
         // 13. Sort the tasks in events in ascending time order (tasks with earlier times first).
         // Further sort tasks in events that have the same time by the relative text track cue order of the text track cues associated with these tasks.
         // Finally, sort tasks in events that have the same time and same text track cue order by placing tasks that fire enter events before those that fire exit events.
@@ -186,16 +224,22 @@ export default function timeMarchesOn() {
             // XXX: we do not support html element tracks.
         });
         // 17. Set the text track cue active flag of all the cues in the current cues, and unset the text track cue active flag of all the cues in the other cues.
-        currentCues.forEach(cue => activeCueFlags.set(cue, true));
+        currentCues.forEach(cue => {
+            const context = cueContext.get(cue);
+            if (context) context.active = true;
+            else cueContext.set(cue, { active: true, displayState: undefined });
+        });
         otherCues.forEach(cue => {
-            activeCueFlags.set(cue, false);
-            // XXX: clear the display state
-            displayStates.delete(cue);
+            const context = cueContext.get(cue);
+            if (context) {
+                context.active = false;
+                context.displayState = undefined;
+            } else {
+                cueContext.set(cue, { active: false, displayState: undefined });
+            }
         });
         // 18. Run the rules for updating the text track rendering of each of the text tracks in affected tracks that are showing, providing the text track's text track language as the fallback language if it is not the empty string. For example, for text tracks based on WebVTT, the rules for updating the display of WebVTT text tracks. [WEBVTT]
-        if (!customTextTrackUpdateRules.has(element) || !customTextTrackUpdateRules.get(element)?.length)
-            element.nodeName === "VIDEO" && WebVTTUpdateTextTracksDisplay(element as HTMLVideoElement);
-        else
-            customTextTrackUpdateRules.get(element)?.forEach(func => func(element));
+        // TODO: use affected tracks
+        updateTextTrackDisplay(element, affectedTracks);
     }
 }

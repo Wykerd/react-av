@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Globals, TextTrack, TextTrackKind, VTTParser } from '@react-av/vtt-core';
+import VTT, { TextTrack, TextTrackKind, VTTParser } from '@react-av/vtt-core';
 import { useMediaElement } from "@react-av/core";
 
 // TODO: cleanup
@@ -12,8 +12,8 @@ export default function Track({ kind, language, label, src, id }: { kind: TextTr
         let track: TextTrack | null = null;
 
         if (!element) return;
-        Globals.addControlledMediaElement(element);
-        Globals.recomputeTextTrackDisplayOnResize(element);
+        VTT.ref(element);
+        VTT.observeResize(element);
 
         let isDone = false;
 
@@ -24,12 +24,12 @@ export default function Track({ kind, language, label, src, id }: { kind: TextTr
             isDone = true;
             const parser = new VTTParser(text);
             track = parser.textTrack(kind, language, label, id);
-            Globals.addTextTrack(element, track);
+            VTT.addTrack(element, track);
         })().catch(e => console.warn('react-media(vtt): failed to load track.', e));
 
         return () => {
-            if (element && track) Globals.removeTextTrack(element, track);
-            if (Globals.textTrackLists.get(element)?.length === 0) Globals.removeControlledMediaElement(element);
+            if (element && track) VTT.removeTrack(element, track);
+            VTT.deref(element);
             if (!isDone) controller.abort();
         }
     }, [element, kind, label, language, src, id]);
