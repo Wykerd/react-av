@@ -1,5 +1,11 @@
 # @react-av/vtt-core
 
+## 0.0.7
+
+### Patch Changes
+
+- Minor fixes for AABB and hooks of VTT
+
 ## 0.0.6
 
 ### Patch Changes
