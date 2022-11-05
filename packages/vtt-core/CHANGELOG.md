@@ -1,5 +1,11 @@
 # @react-av/vtt-core
 
+## 0.0.6
+
+### Patch Changes
+
+- General refactor of VTT libraries. Brings our implementation more inline with the standard HTML implementations.
+
 ## 0.0.5
 
 ### Patch Changes

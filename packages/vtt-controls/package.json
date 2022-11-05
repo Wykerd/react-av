@@ -1,6 +1,6 @@
 {
   "name": "@react-av/vtt-controls",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": false,
   "description": "WebVTT controls for use with React AV.",
   "main": "dist/index.js",
