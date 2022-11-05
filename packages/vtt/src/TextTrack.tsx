@@ -16,6 +16,7 @@ export function useMediaTextTrack(id: string) {
 
     useEffect(() => {
         if (!media) return;
+        VTT.ref(media);
         function update() {
             if (!media) return;
             const track = VTT.getTrackById(media, id);
@@ -40,6 +41,7 @@ export function useMediaTextTrack(id: string) {
             VTT.getContext(media)?.tracksChanged.removeEventListener("change", update);
             VTT.getContext(media)?.tracksChanged.removeEventListener("cuechange", update);
             VTT.getContext(media)?.updateRules.delete(update);
+            VTT.deref(media);
         }
     }, [media, id]);
 
@@ -53,17 +55,19 @@ export function useMediaTextTrackList() {
 
     useEffect(() => {
         if (!media) return;
+        VTT.ref(media);
         function update() {
             if (!media) return;
             const list = VTT.getContext(media)?.tracks;
             if (!list) return;
-            setTracks(list);
+            setTracks([...list]);
         }
 
         VTT.getContext(media)?.tracksChanged.addEventListener("change", update);
 
         return () => {
             VTT.getContext(media)?.tracksChanged.removeEventListener("change", update);
+            VTT.deref(media);
         }
     }, [media]);
 
