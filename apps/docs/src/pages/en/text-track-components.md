@@ -28,9 +28,14 @@ import { VTTCue } from '@react-av/vtt-core';
 
 The `Track` component allows you to add tracks to your media player. You should use this component instead of the built-in `track` element.
 
-<!-- TODO: once the Track component is cleaned up, this should be updated -->
+Our `Track` component accepts the same props as the built-in `track` element: 
 
-Our `Track` component is still a work in progress. As such we do not yet provide a complete list of props required to use this component. We are working on this and will update this documentation once it is complete.
+- `kind` - the kind of track (captions, subtitles, descriptions, chapters, or metadata). Defaults to `subtitles`.
+- `src` - the URL of the track file. Required.  
+- `srclang` - the language of the track. Defaults to empty string.
+- `label` - the label of the track. Defaults to empty string.
+- `default` - whether the track is the default track. Defaults to `false`.
+- `id` - the ID of the track. Defaults to nothing.
 
 ```jsx
 import * as Media from '@react-av/core';
@@ -40,7 +45,7 @@ import * as Media from '@react-av/core';
     <Media.Container>
       <Media.Video />
     </Media.Container>
-    <Track kind="subtitles" language="en" src="subtitles.vtt" />
+    <Track kind="subtitles" srclang="en" src="subtitles.vtt" default />
   </Media.Root>
 );
 ```

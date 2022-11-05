@@ -1,3 +1,4 @@
+import { getCueContext } from "./GlobalState";
 import { TextTrackCue } from "./VTTCue";
 
 export type TextTrackKind = "subtitles" |  "captions" |  "descriptions" |  "chapters" | "metadata";
@@ -17,9 +18,9 @@ export default class TextTrack extends EventTarget {
     get language() {
         return this.#language;
     }
-    #id: string;
+    #id?: string;
     get id() {
-        return this.#id;
+        return this.#id || "";
     }
     #isBandMetadataTrackDispatchType: boolean;
     get inBandMetadataTrackDispatchType() {
@@ -30,17 +31,16 @@ export default class TextTrack extends EventTarget {
         return this.#mode;
     }
     set mode(mode: TextTrackMode) {
+        if (!["disabled", "hidden", "showing"].includes(mode)) return;
         this.#mode = mode;
     }
     #cues?: TextTrackCue[];
     get cues() {
         return this.#cues;
     }
-    // get activeCues() {
-        // TODO
-        // return this.#cues;
-    // }
-
+    get activeCues() {
+        return this.#cues?.filter(cue => getCueContext(cue)?.active);
+    }
 
     #regions: VTTRegion[] = [];
     // XXX: this is non-standard
@@ -50,6 +50,10 @@ export default class TextTrack extends EventTarget {
 
     addCue(cue: TextTrackCue) {
         if (this.#cues) {
+            if (this.#cues.includes(cue)) {
+                // remove the old cue
+                this.removeCue(cue);
+            }
             this.#cues.push(cue);
         } else {
             this.#cues = [cue];
@@ -61,6 +65,8 @@ export default class TextTrack extends EventTarget {
             const index = this.#cues.indexOf(cue);
             if (index > -1) {
                 this.#cues.splice(index, 1);
+            } else {
+                throw new DOMException("The cue does not exist in the track", "NotFoundError");
             }
         }
     }
@@ -76,13 +82,13 @@ export default class TextTrack extends EventTarget {
         }
     }
 
-    constructor(kind: TextTrackKind, label: string, language: string, isBandMetadataTrackDispatchType: boolean, mode: TextTrackMode, id: string, regions?: VTTRegion[]) {
+    constructor(kind: TextTrackKind, mode?: TextTrackMode, label?: string, language?: string, id?: string, isBandMetadataTrackDispatchType?: boolean, regions?: VTTRegion[]) {
         super();
-        this.#kind = kind;
-        this.#label = label;
-        this.#language = language;
-        this.#isBandMetadataTrackDispatchType = isBandMetadataTrackDispatchType;
-        this.#mode = mode;
+        this.#kind = kind ? ["subtitles", "captions", "descriptions", "chapters", "metadata"].includes(kind) ? kind : "metadata" : "subtitles";
+        this.#label = label || "";
+        this.#language = language || "";
+        this.#isBandMetadataTrackDispatchType = !!isBandMetadataTrackDispatchType;
+        this.#mode = mode || "hidden";
         this.#id = id;
         this.#regions = regions || [];
     }

@@ -11,3 +11,4 @@ export {default as VTTRegion} from './VTTRegion';
 export * from './VTTRegion';
 export * as Renderer from './VTTRenderer';
 export {default as WebVTTUpdateTextTracksDisplay} from './VTTRenderer';
+export * from './Track';

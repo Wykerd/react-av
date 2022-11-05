@@ -12,7 +12,7 @@ export default function VideoExample() {
                 <Media.Video src="./sprite-fright.webm" poster="./sprite-fright.jpg" className="max-w-full max-h-full grow" />
             </Media.Container>
         </div>
-        <Track kind="subtitles" language="en" label="English" src="./sprite-fright.vtt" id="default" />
+        <Track kind="subtitles" srclang="en" label="English" src="./sprite-fright.vtt" id="default" default />
         <Media.Viewport className="absolute top-0 bottom-0 left-0 right-0 w-full h-full z-10" inactiveClassName="cursor-none">
             <InterfaceOverlay className="absolute bottom-0 w-full bg-black/50 p-2 z-10 flex flex-row items-center gap-2 transition cursor-default" inactiveClassName="opacity-0">
                 <PlayPause 

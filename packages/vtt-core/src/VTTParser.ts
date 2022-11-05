@@ -2,19 +2,6 @@ import TextTrack, { TextTrackKind } from './TextTrack';
 import TextTrackCue from './VTTCue';
 import VTTRegion from './VTTRegion';
 
-function uuid() {
-    if (crypto.randomUUID) return crypto.randomUUID();
-    return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c =>
-        (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
-    );
-}
-
-// A Fully-featured Media Player for React
-// - Easy to use hook-based API
-// - Fully-featured, spec compliant, WebVTT support.
-// - Headless, fully customizable UI.
-// - Bring your own media source. Supports HLS, DASH, and more.
-
 export default class VTTParser {
     // 2. Let position be a pointer into input, initially pointing at the start of the string.
     #position: number = 0;
@@ -31,9 +18,17 @@ export default class VTTParser {
         this.#parse();
     }
 
-    textTrack(kind: TextTrackKind, language: string, label: string = "", id: string = uuid()): TextTrack {
+    get regions() {
+        return [...this.#regions];
+    }
+
+    get cues() {
+        return [...this.#cues];
+    }
+
+    textTrack(kind: TextTrackKind, language?: string, label?: string , id?: string): TextTrack {
         // TODO: Implement this correctly
-        const textTrack = new TextTrack(kind, label, language, false, "showing", id);
+        const textTrack = new TextTrack(kind, "hidden", label, language, id);
         for (const cue of this.#cues) {
             cue.track = textTrack;
             textTrack.addCue(cue);

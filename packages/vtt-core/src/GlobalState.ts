@@ -119,6 +119,28 @@ export function removeTrack(element: HTMLMediaElement, track: TextTrack) {
     }));
 }
 
+export function addTextTrack(element: HTMLMediaElement, kind: TextTrackKind, label?: string, language?: string) {
+    const track = new TextTrack(kind, "hidden", label, language);
+    addTrack(element, track);
+    return track;
+}
+
+export function getTrackById(element: HTMLMediaElement, id: string) {
+    if (id === "") return undefined;
+    const context = trackContext.get(element);
+    if (!context) return;
+    return context.tracks.find(track => track.id === id);
+}
+
+export function getCueById(element: HTMLMediaElement, id: string) {
+    const context = trackContext.get(element);
+    if (!context) return;
+    for (const track of context.tracks) {
+        const cue = track.cues?.find(cue => cue.id === id);
+        if (cue) return cue;
+    }
+}
+
 if (globalThis?.window) {
     function timeLoop() {
         timeMarchesOn();
