@@ -442,7 +442,7 @@ function noOverlapsAndContained(boxes: HTMLElement, outputContainer: HTMLElement
     const children = outputContainer.children;
     for (let i = 0; i < children.length; i++) {
         const child = children[i];
-        if (child?.nodeName !== "DIV") continue;
+        if (!["DIV", "VTT-CUE-ROOT"].includes(child?.nodeName)) continue;
         const childRect = child.getBoundingClientRect();
         // AABB collision detection
         const collides =
