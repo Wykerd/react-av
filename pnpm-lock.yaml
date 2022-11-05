@@ -95,7 +95,6 @@ importers:
 
   packages/core:
     specifiers:
-      '@react-av/vtt-core': workspace:^
       '@rollup/plugin-node-resolve': ^15.0.0
       '@rollup/plugin-typescript': ^9.0.1
       '@types/react': ^18.0.21
@@ -109,7 +108,6 @@ importers:
       tslib: ^2.4.0
       typescript: ^4.8.4
     dependencies:
-      '@react-av/vtt-core': link:../vtt-core
       recoil: 0.7.6_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@rollup/plugin-node-resolve': 15.0.0_rollup@3.2.0

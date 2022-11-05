@@ -1,5 +1,11 @@
 # @react-av/vtt
 
+## 0.0.5
+
+### Patch Changes
+
+- Add useMediaTextTrackList hook for consuming list of all text tracks of the media element
+
 ## 0.0.4
 
 ### Patch Changes

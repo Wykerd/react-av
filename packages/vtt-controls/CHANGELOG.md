@@ -1,5 +1,12 @@
 # @react-av/vtt-controls
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @react-av/vtt@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
