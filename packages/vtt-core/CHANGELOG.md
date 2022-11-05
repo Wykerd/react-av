@@ -1,5 +1,11 @@
 # @react-av/vtt-core
 
+## 0.0.5
+
+### Patch Changes
+
+- Refactor VTT core global state
+
 ## 0.0.4
 
 ### Patch Changes
