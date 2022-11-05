@@ -1,5 +1,5 @@
 import React, { forwardRef, HTMLProps, useEffect, useRef, useState } from "react";
-import { Globals, VTTCue } from '@react-av/vtt-core';
+import { Globals, TextTrack, VTTCue } from '@react-av/vtt-core';
 import { useMediaElement } from "@react-av/core";
 
 declare module "react" {
@@ -48,6 +48,29 @@ export function useMediaTextTrack(id: string) {
     return [cues, activeCues] as const;
 }
 
+export function useMediaTextTrackList() {
+    const media = useMediaElement();
+
+    const [tracks, setTracks] = useState<TextTrack[]>();
+
+    useEffect(() => {
+        if (!media) return;
+        function update() {
+            if (!media) return;
+            const list = Globals.textTrackLists.get(media);
+            if (!list) return;
+            setTracks(list);
+        }
+
+        Globals.addOnTrackAdded(media, update);
+
+        return () => {
+            Globals.removeOnTrackAdded(media, update);
+        }
+    }, [media]);
+
+    return tracks;
+}
 
 export const Cue = forwardRef(function Cue<T extends keyof HTMLElementTagNameMap>({ as, cue, ...props }: { as: T, cue: VTTCue } & Omit<HTMLProps<HTMLElementTagNameMap[T]>, "children">, ref: React.Ref<HTMLElementTagNameMap[T]>) {
     const i_ref = useRef<HTMLElement>();
