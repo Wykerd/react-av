@@ -36,6 +36,7 @@ export function useMediaTextTrack(id: string) {
         VTT.getContext(media)?.tracksChanged.addEventListener("change", update);
         VTT.getContext(media)?.tracksChanged.addEventListener("cuechange", update);
         VTT.getContext(media)?.updateRules.add(update);
+        update();
 
         return () => {
             VTT.getContext(media)?.tracksChanged.removeEventListener("change", update);
@@ -64,6 +65,7 @@ export function useMediaTextTrackList() {
         }
 
         VTT.getContext(media)?.tracksChanged.addEventListener("change", update);
+        update();
 
         return () => {
             VTT.getContext(media)?.tracksChanged.removeEventListener("change", update);
