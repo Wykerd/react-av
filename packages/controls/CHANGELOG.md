@@ -1,5 +1,11 @@
 # @react-av/controls
 
+## 0.0.5
+
+### Patch Changes
+
+- Minor bug fixes
+
 ## 0.0.4
 
 ### Patch Changes
