@@ -10,7 +10,7 @@ export default function DemoTwo() {
             mediaComponent={<Video src='https://storage.wykerd.dev/react-av/sprite-fright.mp4' />}
             styling={{
                 timelineBaseReelContainer: 'border-b border-l border-gray-6',
-                timelineHeaderReelContainer: 'h-full',
+                timelineHeaderReelContainer: '',
                 timelinePlayheadLine: 'bg-prime-11 top-0 h-full w-0.5',
                 timelineDragElementBase: 'bg-primeA-4',
                 timelineDragElementSelected: 'bg-primeA-8 cursor-move',
