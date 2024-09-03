@@ -50,7 +50,7 @@ function Teleprompter() {
 
 export default function DemoThree() {
     return <Media.Root>
-        <Media.Audio src="https://storage.wykerd.dev/react-av/fine.mp3" />
+        <Media.Audio src="https://storage.wykerd.dev/react-av/fine.mp3#t=0.1" />
         <Track kind="subtitles" srclang="en" label="English" src="/fine.vtt" id="lyrics" />
         <div className="flex flex-col sm:flex-row w-full gap-4 relative max-w-4xl">
             <div className='absolute top-0 left-0 w-full h-full opacity-60 blur-3xl' style={{
