@@ -21,7 +21,7 @@ function StyledProgressBarTooltip() {
 export default function DemoOne() {
     return <Root>
         <Container className="max-w-2xl relative bg-black flex items-center justify-center shadow-[0_0px_50px_0px_rgb(255_232_168_/_0.125)] sm:rounded-lg overflow-hidden">
-            <Video src='https://storage.wykerd.dev/react-av/sprite-fright.mp4' className="max-w-full max-h-full grow" poster="/sprite-fright.jpg" />
+            <Video src='https://storage.wykerd.dev/react-av/sprite-fright.mp4#t=0.1' className="max-w-full max-h-full grow" poster="/sprite-fright.jpg" playsInline />
         </Container>
         <Track kind="subtitles" srclang="en" label="English" src="/sprite-fright.vtt" id="default" default />
         <Viewport className="absolute top-0 bottom-0 left-0 right-0 w-full h-full z-10" inactiveClassName="cursor-none">

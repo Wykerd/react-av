@@ -7,7 +7,7 @@ export default function DemoTwo() {
     return <Root>
         <Track kind="subtitles" srclang="en" label="English" src="/sprite-fright.vtt" id="default" default />
         <Editor
-            mediaComponent={<Video src='https://storage.wykerd.dev/react-av/sprite-fright.mp4' />}
+            mediaComponent={<Video src='https://storage.wykerd.dev/react-av/sprite-fright.mp4#t=0.1' playsInline />}
             styling={{
                 timelineBaseReelContainer: 'border-b border-l border-gray-6',
                 timelineHeaderReelContainer: '',
