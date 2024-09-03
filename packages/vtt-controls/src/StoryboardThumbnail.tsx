@@ -1,7 +1,12 @@
-import React, { forwardRef, HTMLAttributes, useEffect, useState } from "react";
+import { ComponentPropsWithRef, forwardRef, ForwardRefExoticComponent, RefAttributes, useEffect, useState } from "react";
 import { useMediaTextTrack } from "@react-av/vtt";
 
-const StoryboardThumbnail = forwardRef<HTMLImageElement, { timestamp: number, storyboardId: string } & Omit<HTMLAttributes<HTMLImageElement>, "src" | "srcSet">>(function StoryboardThumbnail({ timestamp, storyboardId, ...props }, ref) {
+export type StoryboardThumbnailProps = Omit<ComponentPropsWithRef<'img'>, "src" | "srcSet"> & { 
+    timestamp: number, 
+    storyboardId: string 
+}
+
+const StoryboardThumbnail = forwardRef<HTMLImageElement, StoryboardThumbnailProps>(function StoryboardThumbnail({ timestamp, storyboardId, ...props }, ref) {
     const [cues] = useMediaTextTrack(storyboardId);
 
     const [blob, setBlob] = useState<string>();

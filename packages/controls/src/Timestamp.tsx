@@ -1,4 +1,4 @@
-import React, { forwardRef, HTMLProps } from "react";
+import React, { ComponentProps, forwardRef } from "react";
 import { useMediaCurrentTime, useMediaDuration } from "@react-av/core";
 
 export function toTimestampString(timestampSeconds: number,  includeHours: boolean) {
@@ -10,7 +10,7 @@ export function toTimestampString(timestampSeconds: number,  includeHours: boole
     return `${hours.toString().padStart(1, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-export type TimestampProps = HTMLProps<HTMLSpanElement> & {
+export type TimestampProps = ComponentProps<"span"> & {
     type: "duration" | "remaining" | "elapsed";
 }
 

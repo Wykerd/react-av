@@ -9,7 +9,7 @@
     "build:cjs": "tsc --outDir dist/cjs --module commonjs",
     "build:esm": "tsc --outDir dist/esm --module esnext",
     "build": "pnpm build:cjs && pnpm build:esm",
-    "dev": "rollup --config rollup.config.js --watch"
+    "dev": "tsc --watch"
   },
   "keywords": [
     "video",
@@ -35,23 +35,23 @@
     "@react-av/vtt": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
     "@react-av/controls": "workspace:^",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.4"
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tslib": "^2.7.0",
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
     "@react-av/controls": "workspace:^",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "dependencies": {
     "use-resize-observer": "^9.1.0",
-    "phosphor-react": "^1.4.1"
+    "@phosphor-icons/react": "^2.1.7"
   }
 }

@@ -1,9 +1,11 @@
-import React, { HTMLProps, ReactNode } from "react";
+import React, { ComponentPropsWithoutRef, ReactNode } from "react";
 import { useMediaBuffered, useMediaCurrentTime, useMediaDuration } from "@react-av/core";
 
-export default function ProgressBarBufferedRanges({style, all, ...props}: HTMLProps<HTMLSpanElement> & {
-    all?: boolean,
-}) {
+export type ProgressBarBufferedRangesProps = ComponentPropsWithoutRef<'span'> & {
+    all?: boolean;
+}
+
+export default function ProgressBarBufferedRanges({style, all, ...props}: ProgressBarBufferedRangesProps) {
     const buffered = useMediaBuffered();
     const duration = useMediaDuration();
     const [ currentTime ] = useMediaCurrentTime();

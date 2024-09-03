@@ -1,12 +1,6 @@
-import React, { forwardRef, HTMLProps, useEffect, useRef, useState } from "react";
+import React, { ComponentPropsWithoutRef, forwardRef, useEffect, useRef, useState } from "react";
 import VTT, { TextTrack, VTTCue } from '@react-av/vtt-core';
 import { useMediaElement } from "@react-av/core";
-
-declare module "react" {
-    function forwardRef<T, P = {}>(
-      render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
-    ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
-}
 
 export function useMediaTextTrack(id: string) {
     const media = useMediaElement();
@@ -76,7 +70,11 @@ export function useMediaTextTrackList() {
     return tracks;
 }
 
-export const Cue = forwardRef(function Cue<T extends keyof HTMLElementTagNameMap>({ as, cue, ...props }: { as: T, cue: VTTCue } & Omit<HTMLProps<HTMLElementTagNameMap[T]>, "children">, ref: React.Ref<HTMLElementTagNameMap[T]>) {
+// TODO: this should be redone
+// see: https://www.benmvp.com/blog/forwarding-refs-polymorphic-react-component-typescript/
+// see: https://stackoverflow.com/questions/62238716/using-ref-current-in-react-forwardref (useImperativeHandle)
+
+export const Cue = forwardRef(function Cue<T extends keyof HTMLElementTagNameMap>({ as, cue, ...props }: { as: T, cue: VTTCue } & Omit<ComponentPropsWithoutRef<T>, "children">, ref: React.Ref<HTMLElementTagNameMap[T]>) {
     const i_ref = useRef<HTMLElement>();
     useEffect(() => {
         if (!i_ref.current) return;

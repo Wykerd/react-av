@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState 
 import VTT, { TextTrack, VTTCue } from "@react-av/vtt-core";
 import { useMediaTextTrackList } from "@react-av/vtt";
 import { TimelineTrack } from "./TimelineTrack";
-import { ClosedCaptioning } from "phosphor-react";
+import { ClosedCaptioning } from "@phosphor-icons/react";
 import { useTimelineEditorContext } from './TimelineEditor';
 import { TimelineEntryLabel } from './TimelineEntryLabel';
 

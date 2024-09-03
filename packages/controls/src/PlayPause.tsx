@@ -1,8 +1,8 @@
-import { Pause, Play, Spinner } from 'phosphor-react';
-import React, { forwardRef } from 'react';
+import { Pause, Play, Spinner } from '@phosphor-icons/react';
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes } from 'react';
 import { MediaReadyState, useMediaPlaying, useMediaReadyState } from '@react-av/core';
 
-export type PlayProps = React.HTMLAttributes<HTMLButtonElement> & {
+export type PlayProps = ComponentPropsWithoutRef<'button'> & {
     playIcon?: React.ReactNode;
     playingClassName?: string;
     pauseIcon?: React.ReactNode;
@@ -12,7 +12,7 @@ export type PlayProps = React.HTMLAttributes<HTMLButtonElement> & {
     defaultIconSize?: number;
 }
 
-const PlayPause = forwardRef<HTMLButtonElement, PlayProps>(function PlayPause(props, ref) {
+const PlayPause: React.ForwardRefExoticComponent<PlayProps & RefAttributes<HTMLButtonElement>> = forwardRef<HTMLButtonElement, PlayProps>(function PlayPause(props, ref) {
     const [playing, setPlaying] = useMediaPlaying();
     const readyState = useMediaReadyState();
 

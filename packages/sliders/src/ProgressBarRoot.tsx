@@ -2,7 +2,7 @@ import * as Slider from '@radix-ui/react-slider';
 const SliderRoot = Slider.Root;
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
-import React, { ComponentProps, createContext, forwardRef, HTMLAttributes, MouseEvent, RefObject, useContext, useEffect, useRef, useState } from 'react';
+import React, { ComponentProps, ComponentPropsWithoutRef, createContext, forwardRef, MouseEvent, RefAttributes, RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { useMediaCurrentTimeFine, useMediaDuration } from '@react-av/core';
 
 export interface ProgressBarTooltipContextState {
@@ -19,9 +19,9 @@ export function useMediaProgressBarTooltip() {
     return context;
 }
 
-export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min" | "step"> & HTMLAttributes<HTMLSpanElement>;
+export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min" | "step"> & ComponentPropsWithoutRef<'span'>;
 
-export const ProgressBarRoot = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, ...props}, ref) {
+export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, ...props}, ref) {
     const [currentTime, setCurrentTime] = useMediaCurrentTimeFine();
     const internalRef = useRef<HTMLSpanElement>(null);
     const duration = useMediaDuration();

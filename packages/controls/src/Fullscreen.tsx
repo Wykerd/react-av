@@ -1,8 +1,8 @@
-import { ArrowsInSimple, ArrowsOutSimple } from 'phosphor-react';
-import React, { forwardRef } from 'react';
+import { ArrowsInSimple, ArrowsOutSimple } from '@phosphor-icons/react';
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes } from 'react';
 import { useMediaFullscreen } from '@react-av/core';
 
-export type FullscreenProps = React.HTMLAttributes<HTMLButtonElement> & {
+export type FullscreenProps = ComponentPropsWithoutRef<'button'> & {
     fullscreenIcon?: React.ReactNode;
     fullscreenClassName?: string;
     exitFullscreenIcon?: React.ReactNode;
@@ -10,7 +10,7 @@ export type FullscreenProps = React.HTMLAttributes<HTMLButtonElement> & {
     defaultIconSize?: number;
 }
 
-const Fullscreen = forwardRef<HTMLButtonElement, FullscreenProps>(function Fullscreen(props, ref) {
+const Fullscreen: React.ForwardRefExoticComponent<FullscreenProps & RefAttributes<HTMLButtonElement>> = forwardRef<HTMLButtonElement, FullscreenProps>(function Fullscreen(props, ref) {
     const [fullscreen, setFullscreen] = useMediaFullscreen();
 
     const { 

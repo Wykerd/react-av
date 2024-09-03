@@ -1,7 +1,11 @@
-import React, { type HTMLAttributes, forwardRef } from "react";
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes } from "react";
 import { useEditorContext } from "./Editor";
 
-export const TimelineOverflowContainer = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { componentRole?: "timeline-header" | "timeline" }>(
+export type TimelineOverflowContainerProps = ComponentPropsWithoutRef<'div'> & { 
+    componentRole?: "timeline-header" | "timeline" 
+};
+
+export const TimelineOverflowContainer: React.ForwardRefExoticComponent<TimelineOverflowContainerProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, TimelineOverflowContainerProps>(
     function TimelineOverflowContainer({
         componentRole = "timeline",
         className,

@@ -20,6 +20,6 @@
     "url": "https://github.com/Wykerd/react-av.git"
   },
   "devDependencies": {
-    "typescript": "^4.8.4"
+    "typescript": "^5.5.4"
   }
 }

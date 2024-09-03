@@ -1,8 +1,8 @@
-import { SpeakerSimpleHigh, SpeakerSimpleNone, SpeakerSimpleX, SpeakerSimpleLow } from 'phosphor-react';
-import React, { forwardRef } from 'react';
+import { SpeakerSimpleHigh, SpeakerSimpleNone, SpeakerSimpleX, SpeakerSimpleLow } from '@phosphor-icons/react';
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes } from 'react';
 import { useMediaMuted, useMediaVolume } from '@react-av/core';
 
-export type MuteProps = React.HTMLAttributes<HTMLButtonElement> & {
+export type MuteProps = ComponentPropsWithoutRef<'button'> & {
     highIcon?: React.ReactNode;
     highClassName?: string;
     lowIcon?: React.ReactNode;
@@ -14,7 +14,7 @@ export type MuteProps = React.HTMLAttributes<HTMLButtonElement> & {
     defaultIconSize?: number;
 }
 
-const Mute = forwardRef<HTMLButtonElement, MuteProps>(function Mute(props, ref) {
+const Mute: React.ForwardRefExoticComponent<MuteProps & RefAttributes<HTMLButtonElement>> = forwardRef<HTMLButtonElement, MuteProps>(function Mute(props, ref) {
     const [volume] = useMediaVolume();
     const [muted, setMuted] = useMediaMuted();
 

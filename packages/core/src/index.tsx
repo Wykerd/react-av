@@ -1,5 +1,5 @@
 import { atom, DefaultValue, RecoilRoot, selector, useRecoilState, useRecoilTransaction_UNSTABLE, useRecoilValue, useSetRecoilState } from "recoil";
-import React, { createContext, forwardRef, HTMLAttributes, HTMLProps, RefObject, useContext, useEffect, useRef, useState } from "react";
+import React, { ComponentPropsWithoutRef, createContext, forwardRef, RefAttributes, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 export enum MediaNetworkState {
@@ -554,12 +554,14 @@ export function Root({ children, ...props }: React.ComponentProps<typeof MediaIn
     </RecoilRoot>
 }
 
+export type VideoProps = ComponentPropsWithoutRef<"video">;
+
 /**
  * The `Media.Video` component is a wrapper around the HTML5 `<video>` element. It accepts all props that a `video` element accepts.
  * 
  * @note The `Media.Video` component must be wrapped in a `Media.Container` component.
  */
-export const Video = forwardRef<HTMLVideoElement, HTMLProps<HTMLVideoElement>>(function Video({ children, ...props }, f_ref) {
+export const Video: React.ForwardRefExoticComponent<VideoProps & RefAttributes<HTMLVideoElement>> = forwardRef<HTMLVideoElement, VideoProps>(function Video({ children, ...props }, f_ref) {
     const ref = useRef<HTMLVideoElement>(null);
     const [, setElement] = useRecoilState(elementState_internal);
 
@@ -580,10 +582,12 @@ export const Video = forwardRef<HTMLVideoElement, HTMLProps<HTMLVideoElement>>(f
     </video>;
 });
 
+export type AudioProps = ComponentPropsWithoutRef<"audio">;
+
 /**
  * The `Media.Audio` component is a wrapper around the HTML5 `<audio>` element. It accepts all props that an `audio` element accepts.
  */
-export const Audio = forwardRef<HTMLAudioElement, HTMLProps<HTMLAudioElement>>(function Audio({ children, ...props }, f_ref) {
+export const Audio: React.ForwardRefExoticComponent<AudioProps & RefAttributes<HTMLAudioElement>> = forwardRef<HTMLAudioElement, AudioProps>(function Audio({ children, ...props }, f_ref) {
     const ref = useRef<HTMLAudioElement>(null);
     const [, setElement] = useRecoilState(elementState_internal);
 
@@ -602,13 +606,15 @@ export const Audio = forwardRef<HTMLAudioElement, HTMLProps<HTMLAudioElement>>(f
     </audio>;
 });
 
+export type ContainerProps = ComponentPropsWithoutRef<'div'>;
+
 /**
  * The `Media.Container` component is a wrapper around the video element. It is required by other parts of the React AV library 
  * to correctly render overlays and captions. It acts as a portal for both captions and the `Media.Viewport` component.
  *
  * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
  */
-export const Container = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(function Container({ children, style, ...props }, ref) {
+export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ContainerProps>(function Container({ children, style, ...props }, ref) {
     return <div {...props} style={{ position: 'relative', ...(style || {}) }} ref={ref} data-media-container="true">
         {children}
     </div>
@@ -620,13 +626,18 @@ export function useMediaViewportHover() {
     return useContext(ViewportHoverContext);
 }
 
+export type ViewportProps = Omit<ComponentPropsWithoutRef<'div'>, "onMouseMove"> & {
+    hoverInactiveTimeout?: number, 
+    inactiveClassName?: string 
+};
+
 /**
  * The `Media.Viewport` component allows you to overlay UI components on top of the video element. 
  * It portals the UI components to the `Media.Container` component.
  * 
  * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
  */
-export const Viewport = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivElement>, "onMouseMove"> & { hoverInactiveTimeout?: number, inactiveClassName?: string }>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, ...props }, ref) {
+export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, ...props }, ref) {
     const element = useMediaElement();
     const [ hover, setHover ] = useState(false);
     const [ hoverTimeout, setHoverTimeout ] = useState<any>();

@@ -1,14 +1,14 @@
-import React, { forwardRef, HTMLAttributes, useEffect, useRef } from "react";
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes, useEffect, useRef } from "react";
 import { useMediaProgressBarTooltip } from "./ProgressBarRoot";
 import useResizeObserver from "use-resize-observer";
 
-export type ProgressBarTooltipProps = HTMLAttributes<HTMLDivElement> & {
+export type ProgressBarTooltipProps = ComponentPropsWithoutRef<'div'> & {
     showingClassName?: string;
     position?: "center" | "left" | "right";
     onShowChange?: (showing: boolean) => void;
 };
 
-export const ProgressBarTooltip = forwardRef<HTMLDivElement, ProgressBarTooltipProps>(function ProgressBarTooltip({ 
+export const ProgressBarTooltip: React.ForwardRefExoticComponent<ProgressBarTooltipProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ProgressBarTooltipProps>(function ProgressBarTooltip({ 
     style, showingClassName = "", className="", position = "center", onShowChange, children, ...props 
 }, ref) {
     const {

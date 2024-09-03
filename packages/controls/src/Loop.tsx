@@ -1,14 +1,14 @@
-import { Repeat } from 'phosphor-react';
-import React, { forwardRef } from 'react';
+import { Repeat } from '@phosphor-icons/react';
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes } from 'react';
 import { useMediaLoop } from '@react-av/core';
 
-export type LoopProps = React.HTMLAttributes<HTMLButtonElement> & {
+export type LoopProps = ComponentPropsWithoutRef<'button'> & {
     icon?: React.ReactNode;
     activeClassName?: string;
     defaultIconSize?: number;
 }
 
-const Loop = forwardRef<HTMLButtonElement, LoopProps>(function Loop(props, ref) {
+const Loop: React.ForwardRefExoticComponent<LoopProps & RefAttributes<HTMLButtonElement>> = forwardRef<HTMLButtonElement, LoopProps>(function Loop(props, ref) {
     const [loop, setLoop] = useMediaLoop();
 
     const { 

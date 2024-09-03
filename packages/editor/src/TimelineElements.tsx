@@ -1,7 +1,7 @@
-import React, { type HTMLAttributes, forwardRef, CSSProperties } from "react";
+import React, { forwardRef, CSSProperties, ComponentPropsWithoutRef } from "react";
 import { useEditorContext } from "./Editor";
 
-export type DragElementProps = HTMLAttributes<HTMLDivElement> & { selected?: boolean, base?: string | CSSProperties };
+export type DragElementProps = ComponentPropsWithoutRef<'div'> & { selected?: boolean, base?: string | CSSProperties };
 
 export const DragElement = forwardRef<HTMLDivElement, DragElementProps>(
     function DragElement({
@@ -89,7 +89,7 @@ export const TimelineElement = forwardRef<HTMLDivElement, DragElementProps>(
     }
 );
 
-export const PlayheadLine = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+export const PlayheadLine = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(
     function PlayheadLine({
         className,
         children,

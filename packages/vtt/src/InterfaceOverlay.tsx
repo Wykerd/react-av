@@ -1,8 +1,8 @@
-import React, { forwardRef, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
+import React, { ComponentPropsWithoutRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { Renderer, WebVTTUpdateTextTracksDisplay } from '@react-av/vtt-core';
 import { useMediaElement, useMediaPlaying, useMediaViewportHover } from "@react-av/core";
 
-const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<HTMLAttributes<HTMLDivElement>, "tabIndex"> & { persistent?: boolean, inactiveClassName?: string }>(function InterfaceOverlay({ children, persistent, inactiveClassName, className, onMouseEnter, onMouseLeave, onFocus, onBlur, ...props }, f_ref) {
+const InterfaceOverlay = forwardRef<HTMLDivElement, Omit<ComponentPropsWithoutRef<'div'>, "tabIndex"> & { persistent?: boolean, inactiveClassName?: string }>(function InterfaceOverlay({ children, persistent, inactiveClassName, className, onMouseEnter, onMouseLeave, onFocus, onBlur, ...props }, f_ref) {
     const element = useMediaElement();
     const hover = useMediaViewportHover();
     const ref = useRef<HTMLDivElement>(null);

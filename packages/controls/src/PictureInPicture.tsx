@@ -1,13 +1,13 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes, useEffect, useState } from 'react';
 import { useMediaElement } from '@react-av/core';
-import { PictureInPicture as PIPIcon } from 'phosphor-react';
+import { PictureInPicture as PIPIcon } from '@phosphor-icons/react';
 
-export type PIPProps =  React.HTMLAttributes<HTMLButtonElement> & {
+export type PIPProps = ComponentPropsWithoutRef<'button'> & {
     icon?: React.ReactNode;
     defaultIconSize?: number;
 }
 
-const PictureInPicture = forwardRef<HTMLButtonElement, PIPProps>(function PictureInPicture(props, ref) {
+const PictureInPicture: React.ForwardRefExoticComponent<PIPProps & RefAttributes<HTMLButtonElement>> = forwardRef<HTMLButtonElement, PIPProps>(function PictureInPicture(props, ref) {
     const element = useMediaElement();
     const [ pipSupported, setPipSupported ] = useState(false);
 
