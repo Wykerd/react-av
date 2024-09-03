@@ -6,4 +6,4 @@ Fully-featured, headless, hooks-based, and declarative media player framework fo
 
 ## Documentation
 
-[Check our documentation](https://react-av.vercel.app/)
+[Check our documentation](https://react-av.wykerd.dev/)

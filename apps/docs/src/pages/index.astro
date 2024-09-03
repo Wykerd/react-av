@@ -1,5 +1,8 @@
 ---
-import Examples from "../components/Examples";
+import DemoOne from "../components/demos/DemoOne";
+import DemoThree from "../components/demos/DemoThree";
+import DemoTwo from "../components/demos/DemoTwo";
+import DemoTwoCodeSnippet from "../components/demos/DemoTwoCodeSnippet";
 ---
 
 <html lang="en">
@@ -11,27 +14,96 @@ import Examples from "../components/Examples";
 		/>
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Set the language and utf8 encoding -->
+        <meta charset="utf-8">
+        <meta name="language" content="en">
+        <meta name="color-scheme" content="only dark">
 	</head>
-	<body>
-		<main class="flex flex-col items-center justify-center">
-            <section class="text-center px-8 py-16">
-                <span class="py-1 px-3 rounded-full bg-orange-500 text-white">
-                    Experimental Release
-                </span>
-                <h1 class="font-black text-6xl sm:text-7xl text-slate-900">
+	<body class="dark bg-gray-1 text-white">
+		<main class='py-8'>
+            <section class='pb-24 pt-16 flex flex-col items-center text-center mx-4'>
+                <h1 class='text-6xl font-black bg-gradient-to-tr pb-16 -mb-16 from-prime-12 to-prime-10 text-transparent bg-clip-text'>
                     React AV
                 </h1>
-                <h2 class="text-4xl text-slate-800">
+                <h2 class='text-xl mb-4 text-gray-12'>
                     Build modern media players with React.
                 </h2>
-                <p class="mt-4 text-xl text-slate-600">
+                <p class='text-gray-11'>
                     Fully-featured, headless, hooks-based, and declarative media player framework for React.
                 </p>
-				<a class="mt-8 mx-auto rounded-full block w-fit py-2 px-8 bg-red-500 text-lg text-white" href="/en/introduction">
-					Get Started
-				</a>
+                <a href="/en/introduction" class='mt-12 text-xl font-bold rounded bg-prime-9 hover:bg-prime-10 transition-colors py-2 px-8 shadow-[0_0px_50px_0px_rgb(245_202_115_/_0.25)]'>
+                    Get Started
+                </a>
             </section>
-			<Examples client:only="react" />
-		</main>
+            <section class='flex flex-col text-center items-center justify-center gap-8'>
+                <div class='text-center flex flex-col items-center mx-4'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" viewBox="0 0 256 256"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"></path></svg>
+                    <h3 class='text-3xl font-bold'>
+                        Full-Featured Doesn't Mean Complex
+                    </h3>
+                    <p class='max-w-3xl text-gray-12 text-base'>
+                        Experience how straightforward it is to integrate media playback into your React applications without sacrificing features. React AV provides everything you'll need: from basic playback controls to advanced features like subtitles, storyboard thumbnails, and more.
+                    </p>
+                </div>
+                <DemoOne client:only="react" />
+            </section>
+            <section class='flex flex-col gap-8 items-center mt-16'>
+                <div class='text-center flex flex-col items-center mx-4'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" viewBox="0 0 256 256"><path d="M224,64H176V56a24,24,0,0,0-24-24H104A24,24,0,0,0,80,56v8H32A16,16,0,0,0,16,80V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V80A16,16,0,0,0,224,64ZM96,56a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96ZM224,80v32H192v-8a8,8,0,0,0-16,0v8H80v-8a8,8,0,0,0-16,0v8H32V80Zm0,112H32V128H64v8a8,8,0,0,0,16,0v-8h96v8a8,8,0,0,0,16,0v-8h32v64Z"></path></svg>
+                    <h3 class='text-3xl font-bold'>
+                        Complete Composable Toolkit
+                    </h3>
+                    <p class='max-w-3xl text-gray-12 text-base'>
+                        React AV is designed for developers who need more than just a basic media player. It's a versatile, component-based framework that adapts to your needs - whether you're building a simple player or a full-featured media application.
+                    </p>
+                </div>
+                <div class='flex flex-col xl:flex-row items-center'>
+                    <div class='border-x border-y border-gray-6 max-w-2xl shrink-0'>
+                        <DemoTwo client:only="react" />
+                    </div>
+                    <div class='bg-black flex flex-row gap-4 pl-4 sm:pl-8 py-2 pr-4 sm:pr-12 rounded-b-xl xl:rounded-r-xl'>
+                        <DemoTwoCodeSnippet />
+                    </div>
+                </div>
+            </section>
+            <section class='flex flex-col text-center items-center justify-center gap-8 mt-16'>
+                <div class='text-center flex flex-col items-center mx-4'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" viewBox="0 0 256 256"><path d="M215.12,123.64a8,8,0,1,0-14.24-7.28,79.58,79.58,0,0,1-33.08,33.5l-16.58-37.32A40,40,0,0,0,136,40.8V24a8,8,0,0,0-16,0V40.8a40,40,0,0,0-15.22,71.74L56.69,220.75a8,8,0,1,0,14.62,6.5l25.14-56.56A95.48,95.48,0,0,0,128,176a99.13,99.13,0,0,0,31.6-5.21l25.09,56.46a8,8,0,0,0,14.62-6.5l-25-56.25A95.81,95.81,0,0,0,215.12,123.64ZM128,56a24,24,0,1,1-24,24A24,24,0,0,1,128,56Zm0,104a79.52,79.52,0,0,1-25-4l16.42-36.94a39.81,39.81,0,0,0,17.2,0l16.48,37.06A83.21,83.21,0,0,1,128,160Z"></path></svg>
+                    <h3 class='text-3xl font-bold'>
+                        Declarative and Hooks-Based API
+                    </h3>
+                    <p class='max-w-3xl text-gray-12 text-base'>
+                        Say goodbye to the headaches of browser APIs and state management. With React AV's declarative and hooks-based approach, you can effortlessly sync media playback with dynamic content like lyrics or captions, letting you focus on creating amazing experiences.
+                    </p>
+                </div>
+                <DemoThree client:only="react" />
+            </section>
+            <footer class='pt-24 px-8'>
+                <div class='m-auto max-w-7xl flex flex-col-reverse md:flex-row gap-4 md:gap-2 justify-between border-t border-gray-6 pt-8'>
+                    <div>
+                        <span class='font-extrabold text-xl'>
+                            React AV
+                        </span>
+                        <p class='text-gray-11 text-xs md:text-sm'>
+                            By <a href='https://wykerd.dev' class="text-prime-11 hover:text-prime-12 transition-colors">Daniel Wykerd</a> and <a href='https://github.com/Wykerd/react-av/graphs/contributors' class="text-prime-11 hover:text-prime-12 transition-colors">contributors</a>
+                        </p>
+                        <p class='text-gray-11 text-xs md:text-sm'>
+                            Licensed under the <a href='https://github.com/Wykerd/react-av/blob/main/LICENSE' class="text-prime-11 hover:text-prime-12 transition-colors">MIT License</a>
+                        </p>
+                    </div>
+                    <div class='text-end'>
+                        <span class='font-extrabold text-xl text-gray-11'>
+                            Demos
+                        </span>
+                        <p class='text-gray-11 text-xs md:text-sm'>
+                            <a href='https://www.youtube.com/watch?v=_cMxraX_5RE' class="text-prime-11 hover:text-prime-12 transition-colors">Sprite Fright</a> is licensed under <a href='https://creativecommons.org/licenses/by/1.0/' class="text-prime-11 hover:text-prime-12 transition-colors">CC BY 1.0</a> by <a href='https://studio.blender.org/' class="text-prime-11 hover:text-prime-12 transition-colors">Blender Foundation</a>
+                        </p>
+                        <p class='text-gray-11 text-xs md:text-sm'>
+                            <a href='https://lemondemon.bandcamp.com/album/dinosaurchestra' class="text-prime-11 hover:text-prime-12 transition-colors">Fine</a> is licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/3.0/' class="text-prime-11 hover:text-prime-12 transition-colors">CC BY-NC-SA 3.0</a> by <a href='http://www.neilcic.com/' class="text-prime-11 hover:text-prime-12 transition-colors">Neil Cicierega (Lemon Demon)</a>
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </main>
 	</body>
 </html>
