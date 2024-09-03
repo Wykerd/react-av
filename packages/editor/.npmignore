@@ -1,0 +1,7 @@
+node_modules/
+.turbo
+dist/
+.next/
+build/
+.DS_Store/
+.turbo/

@@ -1,0 +1,57 @@
+{
+  "name": "@react-av/editor",
+  "private": false,
+  "version": "0.0.0",
+  "description": "Editor Timeline Components built on React AV.",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "scripts": {
+    "build:cjs": "tsc --outDir dist/cjs --module commonjs",
+    "build:esm": "tsc --outDir dist/esm --module esnext",
+    "build": "pnpm build:cjs && pnpm build:esm",
+    "dev": "rollup --config rollup.config.js --watch"
+  },
+  "keywords": [
+    "video",
+    "editor",
+    "timeline",
+    "react",
+    "react-av",
+    "subtitles",
+    "captions",
+    "audio",
+    "media",
+    "player"
+  ],
+  "author": "Daniel Wykerd <daniel@wykerd.dev>",
+  "license": "MIT",
+  "repository": {
+    "directory": "packages/editor",
+    "type": "git",
+    "url": "https://github.com/Wykerd/react-av.git"
+  },
+  "devDependencies": {
+    "@react-av/core": "workspace:^",
+    "@react-av/vtt": "workspace:^",
+    "@react-av/vtt-core": "workspace:^",
+    "@react-av/controls": "workspace:^",
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4"
+  },
+  "peerDependencies": {
+    "@react-av/core": "workspace:^",
+    "@react-av/vtt": "workspace:^",
+    "@react-av/vtt-core": "workspace:^",
+    "@react-av/controls": "workspace:^",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "use-resize-observer": "^9.1.0",
+    "phosphor-react": "^1.4.1"
+  }
+}
