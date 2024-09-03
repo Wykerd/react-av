@@ -9,8 +9,12 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   integrations: [
   // Enable Preact to support Preact JSX components.
-  preact(),
+  preact({
+    include: ['src/components/**/*.tsx'],
+  }),
   // Enable React for the Algolia search component.
-  react(), tailwind()],
+  react({
+    include: ['src/demos/**/*.tsx'],
+  }), tailwind()],
   site: `http://astro.build`
 });
