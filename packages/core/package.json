@@ -19,15 +19,12 @@
     "type": "git",
     "url": "https://github.com/Wykerd/react-av.git"
   },
-  "dependencies": {
-    "recoil": "^0.7.6"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "recoil": "^0.7.6",
     "tslib": "^2.7.0",
     "typescript": "^5.5.4"
   },
