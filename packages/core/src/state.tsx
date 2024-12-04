@@ -83,15 +83,19 @@ function timeRangesCompare(a: TimeRanges, b: TimeRanges) {
 
 function createMutedStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('volumechange', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('volumechange', handler);
         };
     }
@@ -120,8 +124,11 @@ function createMutedStore(mediaElement: StateStore<HTMLMediaElement | null>): St
 
 function createMediaReadyStateStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<MediaReadyState> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -141,7 +148,8 @@ function createMediaReadyStateStore(mediaElement: StateStore<HTMLMediaElement | 
         element.addEventListener('seeking', handler);
         element.addEventListener('seeked', handler);
         element.addEventListener('ended', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('abort', handler);
             element.removeEventListener('canplay', handler);
             element.removeEventListener('canplaythrough', handler);
@@ -183,8 +191,11 @@ function createMediaReadyStateStore(mediaElement: StateStore<HTMLMediaElement | 
 function createMediaNetworkStateStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<MediaNetworkState> {
     const listeners = new Set<StoreListener>();
     let lastState: MediaNetworkState | null = null;
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -208,7 +219,8 @@ function createMediaNetworkStateStore(mediaElement: StateStore<HTMLMediaElement 
         element.addEventListener('seeked', handler);
         element.addEventListener('ended', handler);
         element.addEventListener('progress', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('loadstart', handler);
             element.removeEventListener('suspend', handler);
             element.removeEventListener('abort', handler);
@@ -250,15 +262,19 @@ function createMediaNetworkStateStore(mediaElement: StateStore<HTMLMediaElement 
 
 function createMediaErrorStateStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<MediaError | null> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('error', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('error', handler);
         };
     }
@@ -286,8 +302,11 @@ function createMediaErrorStateStore(mediaElement: StateStore<HTMLMediaElement | 
 
 function createMediaEndedStateStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -297,7 +316,8 @@ function createMediaEndedStateStore(mediaElement: StateStore<HTMLMediaElement | 
         element.addEventListener('seeked', handler);
         element.addEventListener('play', handler);
         element.addEventListener('durationchange', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('ended', handler);
             element.removeEventListener('seeked', handler);
             element.removeEventListener('play', handler);
@@ -329,8 +349,11 @@ function createMediaEndedStateStore(mediaElement: StateStore<HTMLMediaElement | 
 function createMediaBufferedStateStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<TimeRanges | null> {
     const listeners = new Set<StoreListener>();
     let lastRanges: TimeRanges | null = null;
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -341,7 +364,8 @@ function createMediaBufferedStateStore(mediaElement: StateStore<HTMLMediaElement
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('progress', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('progress', handler);
         };
     }
@@ -370,8 +394,11 @@ function createMediaBufferedStateStore(mediaElement: StateStore<HTMLMediaElement
 export function createMediaSeekingStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
     let lastSeeking: boolean = false;
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -381,7 +408,8 @@ export function createMediaSeekingStore(mediaElement: StateStore<HTMLMediaElemen
         };
         element.addEventListener('seeking', handler);
         element.addEventListener('seeked', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('seeking', handler);
             element.removeEventListener('seeked', handler);
         };
@@ -411,8 +439,11 @@ export function createMediaSeekingStore(mediaElement: StateStore<HTMLMediaElemen
 export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<TimeRanges | null> {
     const listeners = new Set<StoreListener>();
     let lastRanges: TimeRanges | null = null;
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -427,7 +458,8 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
         element.addEventListener('progress', handler);
         element.addEventListener('canplay', handler);
         element.addEventListener('canplaythrough', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('seeking', handler);
             element.removeEventListener('seeked', handler);
             element.removeEventListener('progress', handler);
@@ -460,8 +492,11 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
 function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
     let lastPlaying: boolean = false;
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
@@ -471,7 +506,8 @@ function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | nul
         };
         element.addEventListener('play', handler);
         element.addEventListener('pause', handler);
-        return () => {
+
+        cleanup = () => {
             element.removeEventListener('play', handler);
             element.removeEventListener('pause', handler);
         };
@@ -528,15 +564,19 @@ function createMediaLoopStore(mediaElement: StateStore<HTMLMediaElement | null>)
 
 function createMediaVolumeStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<number> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('volumechange', handler);
-        return () => {
+
+        cleanup = () => {
             element.removeEventListener('volumechange', handler);
         };
     }
@@ -567,15 +607,19 @@ function createMediaVolumeStore(mediaElement: StateStore<HTMLMediaElement | null
 
 function createMediaPlaybackRateStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<number> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('ratechange', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('ratechange', handler);
         };
     }
@@ -606,15 +650,19 @@ function createMediaPlaybackRateStore(mediaElement: StateStore<HTMLMediaElement 
 
 function createMediaDurationStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<number> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('durationchange', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('durationchange', handler);
         };
     }
@@ -642,15 +690,19 @@ function createMediaDurationStore(mediaElement: StateStore<HTMLMediaElement | nu
 
 function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<number> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('timeupdate', handler);
-        return () => {
+        
+        cleanup = () => {
             element.removeEventListener('timeupdate', handler);
         };
     }
@@ -683,8 +735,11 @@ function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement |
 
 function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
+    let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        cleanup();
+
         function handler() {
             listeners.forEach((listener) => listener());
         }
@@ -695,15 +750,14 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
         document.addEventListener('mozfullscreenchange', handler);
         document.addEventListener('MSFullscreenChange', handler);
 
-        return () => {
+        cleanup = () => {
             document.removeEventListener('fullscreenchange', handler);
             document.removeEventListener('webkitfullscreenchange', handler);
             document.removeEventListener('mozfullscreenchange', handler);
             document.removeEventListener('MSFullscreenChange', handler);
         };
     }
-
-    mediaElement.subscribe(detectChanges);
+    
     detectChanges();
 
     return {
