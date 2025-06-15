@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  shaka-player@4.15.2:
+    hash: b825cbd8ae53c4700a2e478267a1da1c4d6c1e66a6490e3d36abfccbf601e635
+    path: patches/shaka-player@4.15.2.patch
+
 importers:
 
   .:
@@ -53,9 +58,9 @@ importers:
       '@react-av/editor':
         specifier: workspace:^
         version: link:../../packages/editor
-      '@react-av/hls':
+      '@react-av/shaka':
         specifier: workspace:^
-        version: link:../../packages/hls
+        version: link:../../packages/shaka
       '@react-av/sliders':
         specifier: workspace:^
         version: link:../../packages/sliders
@@ -92,6 +97,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      shaka-player:
+        specifier: ^4.15.2
+        version: 4.15.2(patch_hash=b825cbd8ae53c4700a2e478267a1da1c4d6c1e66a6490e3d36abfccbf601e635)
       tailwindcss:
         specifier: ^3.0.24
         version: 3.4.10
@@ -128,10 +136,6 @@ importers:
         version: 5.5.4
 
   packages/core:
-    dependencies:
-      recoil:
-        specifier: ^0.7.6
-        version: 0.7.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.3.5
@@ -192,11 +196,7 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
-  packages/hls:
-    dependencies:
-      hls.js:
-        specifier: ^1.2.4
-        version: 1.5.15
+  packages/shaka:
     devDependencies:
       '@react-av/core':
         specifier: workspace:^
@@ -213,6 +213,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      shaka-player:
+        specifier: 4.15.2
+        version: 4.15.2(patch_hash=b825cbd8ae53c4700a2e478267a1da1c4d6c1e66a6490e3d36abfccbf601e635)
       tslib:
         specifier: ^2.7.0
         version: 2.7.0
@@ -1594,6 +1597,9 @@ packages:
   electron-to-chromium@1.5.13:
     resolution: {integrity: sha512-lbBcvtIJ4J6sS4tb5TLp1b4LyfCdMkwStzXPyAgVgTRAsep4bvrAGaBOP7ZJtQMNJpSQ9SqG4brWOroNaQtm7Q==}
 
+  eme-encryption-scheme-polyfill@2.2.3:
+    resolution: {integrity: sha512-N0nlJZVaBqGWzvvFb6ZAxvTVeZ4v9cXCzrSFE0zCbNbviiygWI0gDJiRc4o5SqFrPVYBSQr5z5SzKjIvvxL+Vw==}
+
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
 
@@ -1750,9 +1756,6 @@ packages:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
 
-  hamt_plus@1.0.2:
-    resolution: {integrity: sha512-t2JXKaehnMb9paaYA7J0BX8QQAY8lwfQ9Gjf4pg/mk4krt+cmwmU652HOoWonf+7+EQV97ARPMhhVgU1ra2GhA==}
-
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -1794,9 +1797,6 @@ packages:
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
-
-  hls.js@1.5.15:
-    resolution: {integrity: sha512-6cD7xN6bycBHaXz2WyPIaHn/iXFizE5au2yvY5q9aC4wfihxAr16C9fUy4nxh2a3wOw0fEgLRa9dN6wsYjlpNg==}
 
   html-escaper@3.0.3:
     resolution: {integrity: sha512-RuMffC89BOWQoY0WKGpIhn5gX3iI54O6nRA0yC124NYVtzjmFWBIiFd8M0x+ZdX0P9R4lADg1mgP8C7PxGOWuQ==}
@@ -2404,18 +2404,6 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
-  recoil@0.7.7:
-    resolution: {integrity: sha512-8Og5KPQW9LwC577Vc7Ug2P0vQshkv1y3zG3tSSkWMqkWSwHmE+by06L8JtnGocjW6gcCvfwB3YtrJG6/tWivNQ==}
-    peerDependencies:
-      react: '>=16.13.1'
-      react-dom: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-
   regenerator-runtime@0.14.1:
     resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
 
@@ -2504,6 +2492,10 @@ packages:
     resolution: {integrity: sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==}
     engines: {node: '>=10'}
     hasBin: true
+
+  shaka-player@4.15.2:
+    resolution: {integrity: sha512-QbGzJY21PYLsrZseD1/rZYnwunasEVSh5pg+QHYZAem/Zs/WoH3fqdVUXimh2X3a7tRj8lnfTn9CY+ALpikhIg==}
+    engines: {node: '>=18'}
 
   sharp@0.33.5:
     resolution: {integrity: sha512-haPVm1EkS9pgvHrQ/F3Xy+hgcuMV0Wm9vfIBSiwZ05k+xgb0PkBQpGsAA/oWdDobNaZTH5ppvHtzCFbnSEwHVw==}
@@ -4343,6 +4335,8 @@ snapshots:
 
   electron-to-chromium@1.5.13: {}
 
+  eme-encryption-scheme-polyfill@2.2.3: {}
+
   emoji-regex@10.4.0: {}
 
   emoji-regex@8.0.0: {}
@@ -4516,8 +4510,6 @@ snapshots:
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
 
-  hamt_plus@1.0.2: {}
-
   has-flag@3.0.0: {}
 
   hasown@2.0.2:
@@ -4612,8 +4604,6 @@ snapshots:
       space-separated-tokens: 2.0.2
 
   he@1.2.0: {}
-
-  hls.js@1.5.15: {}
 
   html-escaper@3.0.3: {}
 
@@ -5337,13 +5327,6 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
-  recoil@0.7.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      hamt_plus: 1.0.2
-      react: 18.3.1
-    optionalDependencies:
-      react-dom: 18.3.1(react@18.3.1)
-
   regenerator-runtime@0.14.1: {}
 
   rehype-parse@9.0.0:
@@ -5494,6 +5477,10 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.6.3: {}
+
+  shaka-player@4.15.2(patch_hash=b825cbd8ae53c4700a2e478267a1da1c4d6c1e66a6490e3d36abfccbf601e635):
+    dependencies:
+      eme-encryption-scheme-polyfill: 2.2.3
 
   sharp@0.33.5:
     dependencies:

@@ -1,8 +1,8 @@
 {
-  "name": "@react-av/hls",
+  "name": "@react-av/shaka",
   "private": false,
   "version": "0.0.4",
-  "description": "HLS media elements for React AV.",
+  "description": "Shaka media elements for React AV to play DASH and HLS content.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
   "repository": {
-    "directory": "packages/hls",
+    "directory": "packages/shaka",
     "type": "git",
     "url": "https://github.com/Wykerd/react-av.git"
   },
@@ -26,14 +26,13 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tslib": "^2.7.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "shaka-player": "4.15.2"
   },
   "peerDependencies": {
     "@react-av/core": "workspace:^",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "dependencies": {
-    "hls.js": "^1.2.4"
+    "react-dom": "^18.3.1",
+    "shaka-player": "4.15.2"
   }
 }
