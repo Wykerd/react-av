@@ -1,6 +1,6 @@
-import React, { ComponentProps, forwardRef, useEffect, useRef, useImperativeHandle, useCallback } from "react";
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useCallback } from "react";
 import shaka from 'shaka-player/dist/shaka-player.compiled'
-import { Video, Audio, useMediaOpaque } from "@react-av/core";
+import { Video, Audio, useMediaOpaque, VideoProps, AudioProps } from "@react-av/core";
 
 export interface ShakaPlayerRef {
     player: unknown;
@@ -151,13 +151,16 @@ export function useMediaShaka() {
     return useMediaOpaque('react-av:shaka-player')[0];
 }
 
+type ShakaVideoProps = VideoProps & ShakaPlayerProps;
+type ShakaAudioProps = AudioProps & ShakaPlayerProps;
+
 /**
  * The `ShakaVideo` component provides adaptive streaming video playback using Shaka Player.
  * It supports HLS and DASH formats with automatic format detection and native fallback.
  * 
  * @note The `ShakaVideo` component must be wrapped in a `Media.Container` component.
  */
-const ShakaVideo = forwardRef<ShakaPlayerRef, ComponentProps<typeof Video> & ShakaPlayerProps>(
+const ShakaVideo = forwardRef<ShakaPlayerRef, ShakaVideoProps>(
     function ShakaVideo({ src, children, format = 'auto', onPlayerReady, shakaConfig, ...props }, ref) {
         const videoRef = useRef<HTMLVideoElement>(null);
         const [shakaPlayer, setShakaInstance] = useMediaShakaInternal() as [shaka.Player | null, (player: shaka.Player | null) => void];
@@ -215,7 +218,7 @@ const ShakaVideo = forwardRef<ShakaPlayerRef, ComponentProps<typeof Video> & Sha
  * The `ShakaAudio` component provides adaptive streaming audio playback using Shaka Player.
  * It supports HLS and DASH formats with automatic format detection and native fallback.
  */
-const ShakaAudio = forwardRef<ShakaPlayerRef, ComponentProps<typeof Audio> & ShakaPlayerProps>(
+const ShakaAudio = forwardRef<ShakaPlayerRef, ShakaAudioProps>(
     function ShakaAudio({ src, children, format = 'auto', onPlayerReady, shakaConfig, ...props }, ref) {
         const audioRef = useRef<HTMLAudioElement>(null);
         const [shakaPlayer, setShakaInstance] = useMediaShakaInternal() as [shaka.Player | null, (player: shaka.Player | null) => void];
