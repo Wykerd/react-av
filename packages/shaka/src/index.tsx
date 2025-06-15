@@ -139,12 +139,16 @@ const createShakaPlayer = (
     return player;
 };
 
+function useMediaShakaInternal(): readonly [unknown, (player: unknown) => void] {
+    return useMediaOpaque('react-av:shaka-player') as readonly [unknown, (player: unknown) => void];
+}
+
 /**
  * Hook to access the Shaka Player instance from anywhere within the media context.
  * Returns the current Shaka Player instance or null if using native playback.
  */
-export function useMediaShaka(): readonly [unknown, (player: unknown) => void] {
-    return useMediaOpaque('react-av:shaka-player') as readonly [unknown, (player: unknown) => void];
+export function useMediaShaka() {
+    return useMediaOpaque('react-av:shaka-player')[0];
 }
 
 /**
@@ -156,7 +160,7 @@ export function useMediaShaka(): readonly [unknown, (player: unknown) => void] {
 const ShakaVideo = forwardRef<ShakaPlayerRef, ComponentProps<typeof Video> & ShakaPlayerProps>(
     function ShakaVideo({ src, children, format = 'auto', onPlayerReady, shakaConfig, ...props }, ref) {
         const videoRef = useRef<HTMLVideoElement>(null);
-        const [shakaPlayer, setShakaInstance] = useMediaShaka() as [shaka.Player | null, (player: shaka.Player | null) => void];
+        const [shakaPlayer, setShakaInstance] = useMediaShakaInternal() as [shaka.Player | null, (player: shaka.Player | null) => void];
 
         const retry = useCallback(async () => {
             if (shakaPlayer && src) {
@@ -214,7 +218,7 @@ const ShakaVideo = forwardRef<ShakaPlayerRef, ComponentProps<typeof Video> & Sha
 const ShakaAudio = forwardRef<ShakaPlayerRef, ComponentProps<typeof Audio> & ShakaPlayerProps>(
     function ShakaAudio({ src, children, format = 'auto', onPlayerReady, shakaConfig, ...props }, ref) {
         const audioRef = useRef<HTMLAudioElement>(null);
-        const [shakaPlayer, setShakaInstance] = useMediaShaka() as [shaka.Player | null, (player: shaka.Player | null) => void];
+        const [shakaPlayer, setShakaInstance] = useMediaShakaInternal() as [shaka.Player | null, (player: shaka.Player | null) => void];
 
         const retry = useCallback(async () => {
             if (shakaPlayer && src) {
