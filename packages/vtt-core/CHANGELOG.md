@@ -1,5 +1,11 @@
 # @react-av/vtt-core
 
+## 0.0.8
+
+### Patch Changes
+
+- 86fb2c9: Removed rollup bundling. Library users should use their own bundler.
+
 ## 0.0.7
 
 ### Patch Changes

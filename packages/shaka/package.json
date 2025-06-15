@@ -1,7 +1,7 @@
 {
   "name": "@react-av/shaka",
   "private": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Shaka media elements for React AV to play DASH and HLS content.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

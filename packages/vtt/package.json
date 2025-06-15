@@ -1,7 +1,7 @@
 {
   "name": "@react-av/vtt",
   "private": false,
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "WebVTT support for React AV.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

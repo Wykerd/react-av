@@ -1,7 +1,7 @@
 {
   "name": "@react-av/editor",
   "private": false,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Editor Timeline Components built on React AV.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

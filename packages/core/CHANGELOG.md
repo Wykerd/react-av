@@ -1,5 +1,12 @@
 # @react-av/core
 
+## 0.0.5
+
+### Patch Changes
+
+- 2b4fe98: Removed recoil. Implemented own internal state management.
+- 86fb2c9: Removed rollup bundling. Library users should use their own bundler.
+
 ## 0.0.4
 
 ### Patch Changes

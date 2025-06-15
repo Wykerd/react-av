@@ -1,5 +1,14 @@
 # @react-av/controls
 
+## 0.0.6
+
+### Patch Changes
+
+- 86fb2c9: Removed rollup bundling. Library users should use their own bundler.
+- Updated dependencies [2b4fe98]
+- Updated dependencies [86fb2c9]
+  - @react-av/core@0.0.5
+
 ## 0.0.5
 
 ### Patch Changes
