@@ -2495,7 +2495,6 @@ packages:
 
   shaka-player@4.15.2:
     resolution: {integrity: sha512-QbGzJY21PYLsrZseD1/rZYnwunasEVSh5pg+QHYZAem/Zs/WoH3fqdVUXimh2X3a7tRj8lnfTn9CY+ALpikhIg==}
-    engines: {node: '>=18'}
 
   sharp@0.33.5:
     resolution: {integrity: sha512-haPVm1EkS9pgvHrQ/F3Xy+hgcuMV0Wm9vfIBSiwZ05k+xgb0PkBQpGsAA/oWdDobNaZTH5ppvHtzCFbnSEwHVw==}
