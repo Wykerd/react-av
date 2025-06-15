@@ -1,5 +1,11 @@
 # @react-av/sliders
 
+## 0.0.6
+
+### Patch Changes
+
+- Fix use-resize-observer dependency to not be a devDependency after rollup bundling was removed
+
 ## 0.0.5
 
 ### Patch Changes

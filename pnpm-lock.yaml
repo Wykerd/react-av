@@ -231,6 +231,9 @@ importers:
       '@react-aria/utils':
         specifier: ^3.14.0
         version: 3.25.2(react@18.3.1)
+      use-resize-observer:
+        specifier: ^9.0.2
+        version: 9.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@radix-ui/react-slider':
         specifier: ^1.0.0
@@ -256,9 +259,6 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
-      use-resize-observer:
-        specifier: ^9.0.2
-        version: 9.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   packages/vtt:
     devDependencies:
