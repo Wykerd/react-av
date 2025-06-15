@@ -126,8 +126,8 @@ If used outside of a viewport component, this will return `undefined`.
 
 ## useMediaOpaque(key)
 
-If you need to store additional state for your media element, you can use the `useMediaOpaque<T>(key: string)` hook. The key is scoped to the media element. It is recommended to namespace the key to avoid collisions.
+If you need to store additional state for your media element, you can use the `useMediaOpaque(key: string)` hook. The key is scoped to the media element. It is recommended to namespace the key to avoid collisions.
 
 This hook is useful for component libraries using React AV. For example, our HLS module uses this hook to store the HLS instance and allow other components to access it via the `useMediaHLS()` hook.
 
-**Returns:** `[T, (value: T) => void]`
+**Returns:** `[unknown, (value: unknown) => void]`

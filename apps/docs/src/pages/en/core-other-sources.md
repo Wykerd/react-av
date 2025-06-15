@@ -4,56 +4,52 @@ description: Add HLS and DASH support to React AV.
 layout: ../../layouts/MainLayout.astro
 ---
 
-We provide two additional packages to add HLS and DASH support to React AV using [hls.js](https://github.com/video-dev/hls.js/) and [dash.js](https://github.com/Dash-Industry-Forum/dash.js/).
+We provide support for HLS and DASH through [Shaka Player](https://github.com/shaka-project/shaka-player) as integrated into the `@react-av/shaka` package.
 
-## HLS
+## Shaka
 
-The `@react-av/hls` package provides a `HLSVideo` and `HLSAudio` components that can be used to play HLS streams.
+The `@react-av/shaka` package provides a `Video` and `Audio` components that can be used to play both HLS and DASH streams.
 
 ```bash
-npm i @react-av/hls
+npm i @react-av/shaka shaka-player
 ```
 
-### HLSVideo
+### Video
 
-The `HLSVideo` component is built on top of the `Media.Video` component and can be used in the same way. You should provide the HLS stream URL as the `src` prop.
+The `Shaka.Video` component is built on top of the `Media.Video` component and can be used in the same way. You should provide the HLS stream URL as the `src` prop.
 
 ```jsx
 import * as Media from '@react-av/core';
-import { HLSVideo } from '@react-av/hls';
+import * as Shaka from '@react-av/shaka';
 
 () => (
   <Media.Root>
     <Media.Container>
-      <HLSVideo src="https://example.com/video.m3u8" />
+      <Shaka.Video src="https://example.com/video.m3u8" />
     </Media.Container>
   </Media.Root>
 );
 ```
 
-### HLSAudio
+### Audio
 
-Similarly, the `HLSAudio` component is built on top of the `Media.Audio` component and can be used in the same way. You should provide the HLS stream URL as the `src` prop.
+Similarly, the `Shaka.Audio` component is built on top of the `Media.Audio` component and can be used in the same way. You should provide the HLS stream URL as the `src` prop.
 
 ```jsx
 import * as Media from '@react-av/core';
-import { HLSAudio } from '@react-av/hls';
+import * as Shaka from '@react-av/shaka';
 
 () => (
   <Media.Root>
-    <HLSAudio src="https://example.com/audio.m3u8" />
+    <Shaka.Audio src="https://example.com/audio.m3u8" />
   </Media.Root>
 );
 ```
 
-### useMediaHLS()
+### useMediaShaka()
 
-The `useMediaHLS()` hook can be used to access the underlying `hls.js` instance. This can be useful for customizing the player.
+The `useMediaShaka()` hook can be used to access the underlying `shaka-player` instance. This can be useful for customizing the player.
 
-If the HLS stream is supported natively, like it is in Safari, the hook will return `undefined`.
+If the stream is natively supported, the hook returns `null`.
 
-**Returns:** `Hls | undefined`
-
-## DASH
-
-Coming soon!
+**Returns:** `unknown` - shaka player has some issue exporting the TypeScript types correctly so type inference is not available.
