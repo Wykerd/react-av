@@ -71,6 +71,7 @@ export interface MediaStore {
     duration: StateStore<number>;
     currentTime: StateStore<number>;
     fullscreen: StateStore<boolean>;
+    opaque: (key: string) => StateStore<unknown>;
 }
 
 function timeRangesCompare(a: TimeRanges, b: TimeRanges) {
@@ -800,6 +801,9 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
 
 export function createMediaStore(): MediaStore {
     const mediaElement = createStateStore<HTMLMediaElement | null>(null);
+
+    const opaqueStores = new Map<string, StateStore<unknown>>();
+
     return {
         mediaElement,
         audioOnly: {
@@ -827,7 +831,16 @@ export function createMediaStore(): MediaStore {
         playbackRate: createMediaPlaybackRateStore(mediaElement),
         duration: createMediaDurationStore(mediaElement),
         currentTime: createMediaCurrentTimeStore(mediaElement),
-        fullscreen: createMediaFullscreenStore(mediaElement)
+        fullscreen: createMediaFullscreenStore(mediaElement),
+        opaque: (key: string) => {
+            if (opaqueStores.has(key)) 
+                return opaqueStores.get(key)!;
+
+            const store = createStateStore<unknown>(null);
+            opaqueStores.set(key, store);
+
+            return store;
+        }
     }
 }
 
@@ -850,6 +863,12 @@ export function useStateStoreValue<T>(store: StateStore<T>): T {
 
 export function useStateStore<T>(store: StateStore<T>): readonly [T, (value: T) => void] {
     return [useStateStoreValue(store), store.setState] as const;
+}
+
+export function useMediaOpaque(key: string) {
+    const store = useMediaStore();
+
+    return useStateStore(store.opaque(key));
 }
 
 export function useMediaElement() {
