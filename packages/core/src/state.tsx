@@ -359,8 +359,7 @@ function createMediaBufferedStateStore(mediaElement: StateStore<HTMLMediaElement
         if (!element) return;
         function handler () {
             if (!element?.buffered) return;
-            if (!lastRanges) return;
-            if (timeRangesCompare(element.buffered, lastRanges)) return;
+            if (lastRanges && timeRangesCompare(element.buffered, lastRanges)) return;
             lastRanges = element?.buffered ?? null;
             listeners.forEach((listener) => listener());
         };
