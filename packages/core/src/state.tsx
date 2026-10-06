@@ -1005,19 +1005,41 @@ export function useMediaCurrentTimeFine() {
 
     useEffect(() => {
         if (!element) return;
-        let handle = 0;
-        function tick() {
-            if (!element) return;
-            if (!Number.isNaN(element.currentTime) && Number.isFinite(element.currentTime))
-                setCurrentTime(element.currentTime);
-            handle = requestAnimationFrame(tick);
+        const media = element;
+        let handle: number | undefined;
+
+        function updateTime() {
+            if (Number.isFinite(media.currentTime))
+                setCurrentTime(media.currentTime);
         }
-        tick();
+
+        function tick() {
+            updateTime();
+            handle = undefined;
+            if (!media.paused && !media.ended)
+                handle = requestAnimationFrame(tick);
+        }
+
+        function handlePlaybackChange() {
+            if (handle !== undefined) cancelAnimationFrame(handle);
+            tick();
+        }
+
+        function handleTimeChange() {
+            if (media.paused) updateTime();
+        }
+
+        const events = ['play', 'pause', 'ended'];
+        events.forEach(event => media.addEventListener(event, handlePlaybackChange));
+        const unsubscribe = store.currentTime.subscribe(handleTimeChange);
+        handlePlaybackChange();
 
         return () => {
-            cancelAnimationFrame(handle);
+            if (handle !== undefined) cancelAnimationFrame(handle);
+            unsubscribe();
+            events.forEach(event => media.removeEventListener(event, handlePlaybackChange));
         }
-    }, [element]);
+    }, [element, store]);
 
     return [currentTime, store.currentTime.setState] as const;
 }
