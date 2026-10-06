@@ -94,7 +94,7 @@ Control the playback rate of the media element. Returns the state and a setter f
 
 ## useMediaDuration()
 
-Get the duration of the media element. This is the same as `HTMLMediaElement#duration` except that it is reactive. Returns a read only state.
+Get the duration of the media element. This is the same as `HTMLMediaElement#duration` except that it is reactive and returns `0` until the duration is known. Returns a read only state.
 
 **Returns:** `number`
 
