@@ -86,10 +86,6 @@
 	padding: 1rem;
 }
 
-.deferred-demo-player .demo-placeholder {
-	height: calc(56.25cqw + 51px);
-}
-
 .deferred-demo-editor .demo-placeholder {
 	height: calc(56.25cqw + 190px);
 }
