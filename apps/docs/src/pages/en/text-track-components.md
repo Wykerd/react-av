@@ -1,6 +1,6 @@
 ---
-title: Text Track Components
-description: React Components for working with text tracks in React AV.
+title: React Text Track Components
+description: Load WebVTT tracks, render caption cues as React elements, and position media controls around subtitles with Track, Cue, and InterfaceOverlay.
 layout: ../../layouts/MainLayout.astro
 ---
 

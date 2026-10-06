@@ -1,6 +1,6 @@
 ---
-title: VTT Controls
-description: React Components for interacting with chapter and storyboard VTT files.
+title: React Video Thumbnail Previews
+description: Show storyboard thumbnail previews at a video's playback position using WebVTT metadata and the React AV StoryboardThumbnail component.
 layout: ../../layouts/MainLayout.astro
 ---
 

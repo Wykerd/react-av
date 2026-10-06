@@ -1,6 +1,6 @@
 ---
-title: Controls Introduction
-description: Introduction to the React AV control components.
+title: Build Custom React Media Controls
+description: Choose unstyled React AV controls and sliders to add playback, volume, seeking, fullscreen, and picture-in-picture to your media player.
 layout: ../../layouts/MainLayout.astro
 ---
 

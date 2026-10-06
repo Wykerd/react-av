@@ -6,13 +6,11 @@ import '../styles/landing.css';
 import { Code } from 'astro:components';
 import Schematic from '../components/Landing/Schematic.astro';
 import Logo from '../components/Landing/Logo.astro';
-import PlayerDemo from '../demos/PlayerDemo';
-import EditorDemo from '../demos/EditorDemo';
-import LyricsDemo from '../demos/LyricsDemo';
+import DeferredDemo from '../demos/DeferredDemo';
 import ink from '../styles/shiki-ink.mjs';
 import { SITE } from '../config';
 
-const title = `${SITE.title} · Headless audio and video for React`;
+const title = `${SITE.title} · Headless React audio and video players`;
 const canonicalUrl = new URL('/', Astro.site);
 const socialImage = new URL('/og-image.png', Astro.site);
 
@@ -57,7 +55,7 @@ const packages = [
 	{ name: 'vtt', text: 'Tracks, cues and caption overlays.', href: '/en/text-track-introduction' },
 	{ name: 'vtt-controls', text: 'Storyboard thumbnails from WebVTT.', href: '/en/vtt-controls' },
 	{ name: 'shaka', text: 'HLS and DASH playback via Shaka Player.', href: '/en/core-other-sources' },
-	{ name: 'editor', text: 'Timeline and subtitle editing components.', href: 'https://github.com/Wykerd/react-av/tree/master/packages/editor' },
+	{ name: 'editor', text: 'Timeline and subtitle editing components.', href: '/en/subtitle-editor' },
 ];
 
 const github = 'https://github.com/Wykerd/react-av';
@@ -70,6 +68,8 @@ const github = 'https://github.com/Wykerd/react-av';
 		<title>{title}</title>
 		<meta name="description" content={SITE.description} />
 		<link rel="canonical" href={canonicalUrl} />
+		<link rel="sitemap" href="/sitemap.xml" />
+		<link rel="describedby" href="/llms.txt" type="text/plain" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="theme-color" content="#f3f1ea" />
 		<meta name="color-scheme" content="light" />
@@ -88,7 +88,7 @@ const github = 'https://github.com/Wykerd/react-av';
 					<span class="text-[15px] font-semibold tracking-tight">React AV</span>
 				</a>
 				<nav class="flex items-center gap-5 font-mono text-[10px] uppercase tracking-[0.14em] sm:gap-7">
-					<a href="/en/introduction" class="underline-offset-4 hover:underline">Docs</a>
+					<a href="/en/introduction/" class="underline-offset-4 hover:underline">Docs</a>
 					<a href={github} class="underline-offset-4 hover:underline">GitHub</a>
 					<a href="https://www.npmjs.com/package/@react-av/core" class="max-sm:hidden underline-offset-4 hover:underline">npm</a>
 				</nav>
@@ -112,7 +112,7 @@ const github = 'https://github.com/Wykerd/react-av';
 							</button>
 						</div>
 						<div class="rise mt-4 flex flex-wrap gap-3" style="--delay: 320ms">
-							<a href="/en/introduction" class="bg-ink px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-signal">Read the docs</a>
+							<a href="/en/introduction/" class="bg-ink px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-signal">Read the docs</a>
 							<a href={github} class="border border-ink px-5 py-3 text-sm font-medium transition-colors hover:bg-paper-deep">View on GitHub</a>
 						</div>
 					</div>
@@ -141,9 +141,10 @@ const github = 'https://github.com/Wykerd/react-av';
 						<span class="eyebrow">01 · Player</span>
 						<h2 class="text-3xl font-semibold leading-tight tracking-tight">One player.<br />Any skin.</h2>
 						<p class="text-[15px] leading-relaxed text-ink-soft">Three skins on one <code class="font-mono text-[12px] text-ink">&lt;Media.Root&gt;</code>. Switch while it plays: position, volume and captions carry over because only the markup changes.</p>
+						<a href="/en/core-other-sources/" class="text-sm underline underline-offset-4">Build an HLS or DASH player →</a>
 					</div>
 					<div class="reveal">
-						<PlayerDemo client:only="react" />
+						<DeferredDemo demo="player" label="Interactive React video player" client:visible={{ rootMargin: '200px' }} />
 					</div>
 				</section>
 
@@ -153,9 +154,10 @@ const github = 'https://github.com/Wykerd/react-av';
 						<h2 class="text-3xl font-semibold leading-tight tracking-tight">A timeline editor you can ship.</h2>
 						<p class="text-[15px] leading-relaxed text-ink-soft">Subtitle editing as composable parts. Restyle it for a studio tool or a course builder without forking a line.</p>
 						<p class="text-[15px] leading-relaxed text-ink-soft">Select a cue to edit it, drag across the track to add one, or use the arrow keys to nudge timing.</p>
+						<a href="/en/subtitle-editor/" class="text-sm underline underline-offset-4">Build a React subtitle editor →</a>
 					</div>
 					<div class="reveal flex min-w-0 flex-col gap-6">
-						<EditorDemo client:only="react" />
+						<DeferredDemo demo="editor" label="Interactive React subtitle editor" client:visible={{ rootMargin: '200px' }} />
 						<div class="code-block ticks">
 							<p class="eyebrow border-b border-line px-6 py-3">editor.tsx</p>
 							<Code code={editorSnippet} lang="tsx" theme={ink} />
@@ -168,9 +170,10 @@ const github = 'https://github.com/Wykerd/react-av';
 						<span class="eyebrow">03 · Hooks</span>
 						<h2 class="text-3xl font-semibold leading-tight tracking-tight">Sync anything to playback.</h2>
 						<p class="text-[15px] leading-relaxed text-ink-soft">Every piece of media state is a hook. Lyrics, transcripts, quizzes, chapter lists: read the clock, render what you like.</p>
+						<a href="/en/text-track-introduction/" class="text-sm underline underline-offset-4">Add WebVTT captions to React →</a>
 					</div>
 					<div class="reveal flex min-w-0 flex-col gap-10">
-						<LyricsDemo client:only="react" />
+						<DeferredDemo demo="lyrics" label="Interactive lyrics and audio player" client:visible={{ rootMargin: '200px' }} />
 						<div class="code-block ticks">
 							<p class="eyebrow border-b border-line px-6 py-3">lyrics.tsx</p>
 							<Code code={hookSnippet} lang="tsx" theme={ink} />
@@ -184,13 +187,13 @@ const github = 'https://github.com/Wykerd/react-av';
 							<span class="eyebrow">04 · Packages</span>
 							<h2 class="text-3xl font-semibold leading-tight tracking-tight">Take only what you need.</h2>
 						</div>
-						<a href="/en/introduction" class="font-mono text-[10px] uppercase tracking-[0.14em] underline-offset-4 hover:underline">All documentation →</a>
+						<a href="/en/introduction/" class="font-mono text-[10px] uppercase tracking-[0.14em] underline-offset-4 hover:underline">All documentation →</a>
 					</div>
 					<ul class="reveal grid border-l border-t border-ink sm:grid-cols-2 lg:grid-cols-4">
 						{
 							packages.map(item => (
 								<li class="border-b border-r border-ink">
-									<a href={item.href} class="group flex h-full flex-col gap-6 p-5 transition-colors hover:bg-ink hover:text-paper">
+									<a href={`${item.href}/`} class="group flex h-full flex-col gap-6 p-5 transition-colors hover:bg-ink hover:text-paper">
 										<span class="font-mono text-[11px]">
 											<span class="text-ink-soft group-hover:text-paper/60">@react-av/</span>{item.name}
 										</span>

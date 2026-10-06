@@ -1,6 +1,6 @@
 ---
-title: Introduction
-description: WebVTT Introduction for React AV.
+title: React Subtitles and WebVTT Captions
+description: Add WebVTT subtitles, styled captions, chapter data, and storyboard previews to React video players with React AV text tracks.
 layout: ../../layouts/MainLayout.astro
 ---
 
@@ -16,15 +16,29 @@ You can install it using your package manager of choice:
 npm i @react-av/vtt-core @react-av/vtt
 ```
 
-For more info on the `@react-av/vtt-core` package, see the [Text Track Implementation](/en/webvtt) page of the docs.
+For more info on the `@react-av/vtt-core` package, see the [Text Track Implementation](/en/webvtt/) page of the docs.
 
 ## WebVTT Subtitles
+
+Create a UTF-8 file named `captions.vtt` in your application's public directory:
+
+```text
+WEBVTT
+
+00:00:00.000 --> 00:00:04.000
+Welcome to the lesson.
+
+00:00:04.000 --> 00:00:08.000
+These captions follow the video's playback position.
+```
+
+Serve the file from the same origin as the player, or configure the caption server to allow cross-origin requests. The following example expects `/captions.vtt` and your own `/video.mp4`.
 
 React AV implements the WebVTT rendering algorithm as defined in the [W3C WebVTT specification](https://www.w3.org/TR/webvtt1/). This means that you can use any WebVTT file to render subtitles and captions. Your captions should render the same way on all browsers and devices.
 
 To use WebVTT subtitles, you should not use the native browser `<track>` element. Instead, you should use our `Track` component provided by `@react-av/vtt`. This component accepts a `src` prop which should be a URL to your WebVTT file.
 
-Our HLS and DASH modules also correctly pass along any WebVTT tracks that are included in the manifest to the vtt module if it is installed. **(Coming soon)**
+For captions managed by React AV, provide an explicit WebVTT file to `Track` alongside your media component.
 
 ```jsx
 import * as Media from '@react-av/core';
@@ -33,9 +47,9 @@ import { Track } from '@react-av/vtt';
 () => (
   <Media.Root>
     <Media.Container>
-      <Media.Video src="https://example.com/video.mp4" />
+      <Media.Video src="/video.mp4" controls playsInline />
     </Media.Container>
-    <Track src="https://example.com/subtitles.vtt" />
+    <Track src="/captions.vtt" kind="subtitles" srclang="en" label="English" default />
   </Media.Root>
 );
 ```
@@ -44,7 +58,7 @@ The `Track` component accepts a `kind` prop which can be used to specify the typ
 
 <!-- TODO: more detailed props explaination -->
 
-Additionally it is suggested to provide a `label` prop to provide a human readable name for the track, as well as a `language` prop to identify the language of the track. This is useful for accessibility and for users to select the correct track.
+Provide a `label` prop for the track's human-readable name and `srclang` for its language. Use `default` to show the track when it loads.
 
 If you wish to programmatically access the text track, provide it a `id` prop. This will allow you to access the track using the `useMediaTextTrack(id)` hook.
 
@@ -52,7 +66,7 @@ If you wish to programmatically access the text track, provide it a `id` prop. T
 
 WebVTT supports styling of captions and subtitles using CSS. This allows you to customize the look and feel of your captions and subtitles.
 
-Our implementation does not yet support this, but will **very soon**.
+Our implementation does not currently support WebVTT style blocks.
 
 ## WebVTT Chapters
 
@@ -60,7 +74,7 @@ WebVTT also supports the rendering of chapters. This allows you to provide a lis
 
 <!-- TODO: once our chapter support is done, include more docs here -->
 
-Our underlying implementation in `@react-av/vtt-core` does support chapters, but we do not yet have a prebuilt component to render them. This will be added **very soon**.
+Our underlying implementation in `@react-av/vtt-core` supports chapters. Render your own chapter list using the [text track hooks](/en/text-track-hooks/); a prebuilt chapter-list component is not included.
 
 ## WebVTT Storyboards
 
@@ -68,7 +82,7 @@ WebVTT allows for timed metadata to be included. This can be used to provide sto
 
 Your WebVTT file should consist of a series of cues each containing a URL to a resource. The resource should be an image. The URL should also contain the X, Y, width and height of the specific thumbnail in the grid. This is done using the `xywh` parameter in the hash of the URL. See the example below for an example.
 
-```webvtt
+```text
 WEBVTT
 
 00:00:00.000 --> 00:00:02.000
@@ -91,3 +105,5 @@ https://example.com/thumbnails.png#xywh=200,100,100,100
 ```
 
 React AV provides components to render the thumbnail at a specific time using the `StoryboardThumbnail` component provided by `@react-av/vtt-controls`.
+
+To let users edit caption text and timing, follow the [React subtitle editor guide](/en/subtitle-editor/). For lower-level parsing and rendering, see the [WebVTT API](/en/webvtt/).

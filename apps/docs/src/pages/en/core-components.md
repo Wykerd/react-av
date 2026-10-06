@@ -1,6 +1,6 @@
 ---
-title: Core Components
-description: React Components in the core library.
+title: React Audio and Video Components
+description: Compose React media players with Media.Root, Video, Audio, Container, and Viewport. Learn how state, media elements, and overlays fit together.
 layout: ../../layouts/MainLayout.astro
 ---
 
