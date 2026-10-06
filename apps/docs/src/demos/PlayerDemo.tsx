@@ -162,7 +162,9 @@ export default function PlayerDemo() {
                     src="https://storage.wykerd.dev/react-av/sprite-fright.mp4#t=0.1"
                     poster="/sprite-fright.jpg"
                     playsInline
-                    className="block aspect-video w-full"
+                    width={2048}
+                    height={858}
+                    className="block h-auto w-full"
                 />
             </Media.Container>
             <Track kind="subtitles" srclang="en" label="English" src="/sprite-fright.vtt" id="player-captions" default />
