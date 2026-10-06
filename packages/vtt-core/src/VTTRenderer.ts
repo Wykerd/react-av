@@ -353,25 +353,23 @@ function applyCueSettings(cue: VTTCue, nodes: WebVTTNodeList, viewRect: DOMRect,
             if (fits && !collides) return boxes;
             // 14. Horizontal: If step is negative and the top of the first line box in boxes is now above the top of the title area, or if step is positive and the bottom of the first line box in boxes is now below the bottom of the title area, jump to the step labeled switch direction.
             // Vertical: If step is negative and the left edge of the first line box in boxes is now to the left of the left edge of the title area, or if step is positive and the right edge of the first line box in boxes is now to the right of the right edge of the title area, jump to the step labeled switch direction.
-            if (step < 0) {
-                const shouldSwitchDirection = 
-                    (horizontal && (step < 0 && aboveView || step > 0 && belowView)) || 
-                    (!horizontal && (step < 0 && leftOfView || step > 0 && rightOfView));
-                if (shouldSwitchDirection) {
-                    // 17. Switch direction: If switched is true, then remove all the boxes in boxes, and jump to the step labeled done positioning below.
-                    if (switched) {
-                        return document.createElement('vtt-cue-root');
-                    }
-                    // 18. Otherwise, move all the boxes in boxes back to their specified position as determined in the earlier step.
-                    boxes.style.top = specifiedTop;
-                    boxes.style.left = specifiedLeft;
-                    // 19. Negate step.
-                    step = -step;
-                    // 20. Set switched to true.
-                    switched = true;
-                    // 21. Jump to the step labeled step loop.
-                    continue;
+            const shouldSwitchDirection = 
+                (horizontal && (step < 0 && aboveView || step > 0 && belowView)) || 
+                (!horizontal && (step < 0 && leftOfView || step > 0 && rightOfView));
+            if (shouldSwitchDirection) {
+                // 17. Switch direction: If switched is true, then remove all the boxes in boxes, and jump to the step labeled done positioning below.
+                if (switched) {
+                    return document.createElement('vtt-cue-root');
                 }
+                // 18. Otherwise, move all the boxes in boxes back to their specified position as determined in the earlier step.
+                boxes.style.top = specifiedTop;
+                boxes.style.left = specifiedLeft;
+                // 19. Negate step.
+                step = -step;
+                // 20. Set switched to true.
+                switched = true;
+                // 21. Jump to the step labeled step loop.
+                continue;
             }
             // 15. Horizontal: Move all the boxes in boxes down by the distance given by step. (If step is negative, then this will actually result in an upwards movement of the boxes in absolute terms.)
             // Vertical: Move all the boxes in boxes right by the distance given by step. (If step is negative, then this will actually result in a leftwards movement of the boxes in absolute terms.)
