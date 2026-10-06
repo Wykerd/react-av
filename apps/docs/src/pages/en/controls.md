@@ -12,6 +12,8 @@ Like the core library, all components are unstyled and are meant to be used with
 
 The `Controls.PlayPause` component is a button that toggles the media player between playing and paused states.
 
+Play remains available before media data loads, including with `preload="none"`. This lets a tap start playback on iOS, where loading can depend on a user gesture. The loading icon appears while playback is requested but data is still buffering; the button remains usable to pause.
+
 It is a `HTMLButtonElement` and accepts all props that a `button` element accepts.
 
 Additionally, it accepts the following props for icons:
@@ -53,6 +55,8 @@ import * as Controls from '@react-av/controls';
 
 The `Controls.PictureInPicture` component is a button that toggles the media player between picture-in-picture and normal states.
 
+It uses the standard Picture-in-Picture API or Safari's presentation-mode API and is hidden when neither is available. Availability depends on the device, browser, and video; iOS simulators may not support it.
+
 It is a `HTMLButtonElement` and accepts all props that a `button` element accepts.
 
 Additionally, it accepts the following props for icon:
@@ -87,7 +91,7 @@ import * as Controls from '@react-av/controls';
 
 The `Controls.Fullscreen` component is a button that toggles the media player between fullscreen and normal states. 
 
-The `Media.Container` component is the element that is toggled between fullscreen and normal states. Thus all your media player controls should be available in fullscreen mode as long as you use the `Media.Viewport` component to wrap them.
+When container fullscreen is supported, the `Media.Container` enters fullscreen and includes controls placed in `Media.Viewport`. On iPhone Safari, the button falls back to native video fullscreen. That mode uses the system video interface; custom HTML controls and rendered caption overlays remain in the page. Use native `<track>` children for captions in the system player. The button is disabled when neither fullscreen API is available.
 
 It is a `HTMLButtonElement` and accepts all props that a `button` element accepts.
 

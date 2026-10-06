@@ -106,7 +106,7 @@ Control the current time of the media element. Returns the state and a setter fu
 
 ## useMediaCurrentTimeFine()
 
-Get the current time of the media element at a higher refresh rate. This uses `window.requestAnimationFrame` and should be used sparingly to prevent performance issues. Returns the state and a setter function.
+Get the current time of the media element at a higher refresh rate. This uses `window.requestAnimationFrame` during playback, stops while paused, buffering, or hidden, and still updates after a paused seek. Returns the state and a setter function.
 
 **Returns:** `[number, (currentTime: number) => void]`
 
@@ -115,6 +115,12 @@ Get the current time of the media element at a higher refresh rate. This uses `w
 Control whether the media element is fullscreen. Returns the state and a setter function.
 
 **Returns:** `[boolean, (fullscreen: boolean) => void]`
+
+## useMediaFullscreenSupported()
+
+Check whether container fullscreen or native video fullscreen is currently available. On iOS, native fullscreen may become available only after video metadata loads.
+
+**Returns:** `boolean`
 
 ## useViewportHover() 
 

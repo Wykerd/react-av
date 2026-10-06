@@ -25,38 +25,39 @@ const PlayPause: React.ForwardRefExoticComponent<PlayProps & RefAttributes<HTMLB
         playingClassName = "",
         pausedClassName = "",
         loadingClassName = "",
+        disabled,
+        onClick,
         ...btnProps
     } = props;
 
-    const playingState = readyState >= MediaReadyState.HAVE_CURRENT_DATA ?
-        playing ?
-            "playing" : 
-            "paused" :
-        "loading";
+    let playingState = "paused";
+    let stateClassName = pausedClassName;
+    let icon = playIcon;
+    if (playing) {
+        playingState = "playing";
+        stateClassName = playingClassName;
+        icon = pauseIcon;
+        if (readyState < MediaReadyState.HAVE_FUTURE_DATA) {
+            playingState = "loading";
+            stateClassName = loadingClassName;
+            icon = loadingIcon;
+        }
+    }
 
     return <button 
         data-media-play-state={playingState} 
-        onClick={() => setPlaying(!playing)}
         ref={ref}
         {...btnProps}
-        className={
-            (className + " " + (readyState >= MediaReadyState.HAVE_CURRENT_DATA ?
-                playing ?
-                    playingClassName :
-                    pausedClassName :
-                loadingClassName)).trim() || undefined
-        }
+        onClick={event => {
+            onClick?.(event);
+            if (!event.defaultPrevented) setPlaying(!playing);
+        }}
+        className={`${className} ${stateClassName}`.trim() || undefined}
         type="button"
-        disabled={playingState === "loading"}
+        disabled={disabled}
         aria-label={playing ? "Pause" : "Play"}
     >
-        {
-            readyState >= MediaReadyState.HAVE_CURRENT_DATA ?
-                playing ?
-                    pauseIcon : 
-                    playIcon :
-                loadingIcon
-        }
+        {icon}
     </button>
 });
 

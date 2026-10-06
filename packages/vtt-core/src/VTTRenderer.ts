@@ -39,6 +39,7 @@ export default function WebVTTUpdateTextTracksDisplay(
     if (!textTrackContainer) {
         textTrackContainer = document.createElement('vtt-texttrackcontainer');
         textTrackContainer.style.position = 'absolute';
+        textTrackContainer.style.pointerEvents = 'none';
         container.append(textTrackContainer);
     }
     // make sure the container is positioned relative
