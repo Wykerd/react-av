@@ -9,8 +9,6 @@
 - Report measured results and remaining gaps. Never claim no performance issues from source inspection alone.
 
 ## Delivery
-- Push feature branches directly to `Wykerd/react-av`. Use forks only when explicitly requested.
 - Keep PRs focused and small; document public API changes and add a changeset.
 - Include matched before/after recordings for interaction changes. Never commit evidence files.
 - GitHub Actions is for releases/deployment only; run development checks locally.
-- Get explicit approval before publishing or deploying unless already authorized.
