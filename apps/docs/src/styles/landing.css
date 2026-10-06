@@ -77,6 +77,19 @@
 	container-type: inline-size;
 }
 
+.player-demo:is(:fullscreen, :-webkit-full-screen) {
+	display: flex;
+	flex-direction: column;
+	border-radius: 0;
+}
+
+.player-demo:is(:fullscreen, :-webkit-full-screen) video {
+	flex: 1;
+	min-height: 0;
+	height: 0;
+	object-fit: contain;
+}
+
 .demo-placeholder {
 	display: grid;
 	place-items: center;

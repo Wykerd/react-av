@@ -19,6 +19,7 @@ export default function DeferredDemo({ demo, label }: { demo: keyof typeof demos
 			<PlayerDemoHeader />
 			<div className="overflow-hidden border border-ink bg-ink">
 				<img src="/sprite-fright.jpg" alt="" width={2048} height={858} className="block aspect-[2048/858] w-full object-cover" />
+				<div className="h-[45px] border-t border-ink bg-paper" />
 			</div>
 			<noscript>Enable JavaScript to try this demo.</noscript>
 		</div>;

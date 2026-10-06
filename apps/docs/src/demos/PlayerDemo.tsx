@@ -30,9 +30,8 @@ const INK_BUTTON = "grid size-8 place-items-center border border-ink/0 text-ink 
 function InkControls() {
     const duration = Media.useMediaDuration();
     const icon = { weight: "light", size: 18 } as const;
-    return <InterfaceOverlay
-        className="absolute inset-x-0 bottom-0 flex items-center gap-2 border-t border-ink bg-paper px-2 py-1.5 text-ink transition-opacity duration-300"
-        inactiveClassName="opacity-0"
+    return <div
+        className="flex shrink-0 items-center gap-2 border-t border-ink bg-paper px-2 py-1.5 text-ink"
     >
         <PlayPause
             className={INK_BUTTON}
@@ -60,7 +59,7 @@ function InkControls() {
         />
         <PictureInPicture className={`${INK_BUTTON} max-sm:hidden`} icon={<PipIcon {...icon} />} />
         <Fullscreen className={INK_BUTTON} fullscreenIcon={<ArrowsOut {...icon} />} exitFullscreenIcon={<ArrowsIn {...icon} />} />
-    </InterfaceOverlay>;
+    </div>;
 }
 
 const STUDIO_BUTTON = "grid size-9 place-items-center rounded-full text-white/90 transition hover:bg-white/15 focus-visible:bg-white/15 focus-visible:outline-none";
@@ -147,7 +146,7 @@ export default function PlayerDemo() {
     return <div className="flex flex-col gap-4">
         <PlayerDemoHeader skin={skin} onChange={setSkin} />
         <Media.Root>
-            <Media.Container className={`relative overflow-hidden bg-ink transition-[border-radius,box-shadow] duration-500 ${CONTAINER_CLASSES[skin]}`}>
+            <Media.Container className={`player-demo relative overflow-hidden bg-ink transition-[border-radius,box-shadow] duration-500 ${CONTAINER_CLASSES[skin]}`}>
                 <Media.Video
                     src="https://storage.wykerd.dev/react-av/sprite-fright.mp4#t=0.1"
                     poster="/sprite-fright.jpg"
@@ -156,13 +155,13 @@ export default function PlayerDemo() {
                     height={858}
                     className="block h-auto w-full"
                 />
+                {skin === "ink" && <InkControls />}
             </Media.Container>
             <Track kind="subtitles" srclang="en" label="English" src="/sprite-fright.vtt" id="player-captions" default />
-            <Media.Viewport className="absolute inset-0 z-10" inactiveClassName="cursor-none">
-                {skin === "ink" && <InkControls />}
+            {skin !== "ink" && <Media.Viewport className="absolute inset-0 z-10" inactiveClassName="cursor-none">
                 {skin === "studio" && <StudioControls />}
                 {skin === "broadcast" && <BroadcastControls />}
-            </Media.Viewport>
+            </Media.Viewport>}
         </Media.Root>
     </div>;
 }
