@@ -17,21 +17,16 @@ type Commit = {
 
 async function getCommits(url: string) {
 	try {
-		const token = import.meta.env.SNOWPACK_PUBLIC_GITHUB_TOKEN ?? 'hello';
-		if (!token) {
-			throw new Error(
-				'Cannot find "SNOWPACK_PUBLIC_GITHUB_TOKEN" used for escaping rate-limiting.'
-			);
-		}
-
-		const auth = `Basic ${Buffer.from(token, 'binary').toString('base64')}`;
+		const token = import.meta.env.GITHUB_TOKEN;
+		const headers: Record<string, string> = {
+			Accept: 'application/vnd.github+json',
+			'User-Agent': 'react-av-docs',
+		};
+		if (token) headers.Authorization = `Bearer ${token}`;
 
 		const res = await fetch(url, {
 			method: 'GET',
-			headers: {
-				Authorization: auth,
-				'User-Agent': 'astro-docs/1.0',
-			},
+			headers,
 		});
 
 		const data = await res.json();
