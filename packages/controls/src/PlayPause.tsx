@@ -25,8 +25,6 @@ const PlayPause: React.ForwardRefExoticComponent<PlayProps & RefAttributes<HTMLB
         playingClassName = "",
         pausedClassName = "",
         loadingClassName = "",
-        disabled,
-        onClick,
         ...btnProps
     } = props;
 
@@ -46,15 +44,11 @@ const PlayPause: React.ForwardRefExoticComponent<PlayProps & RefAttributes<HTMLB
 
     return <button 
         data-media-play-state={playingState} 
+        onClick={() => setPlaying(!playing)}
         ref={ref}
         {...btnProps}
-        onClick={event => {
-            onClick?.(event);
-            if (!event.defaultPrevented) setPlaying(!playing);
-        }}
         className={`${className} ${stateClassName}`.trim() || undefined}
         type="button"
-        disabled={disabled}
         aria-label={playing ? "Pause" : "Play"}
     >
         {icon}
