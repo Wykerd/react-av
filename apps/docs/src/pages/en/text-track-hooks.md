@@ -1,6 +1,6 @@
 ---
-title: Text Track Hooks
-description: React Hooks API for working with text tracks in React AV.
+title: React Caption and Text Track Hooks
+description: Read text tracks and active WebVTT cues in React to build synchronised lyrics, transcripts, captions, and chapter navigation.
 layout: ../../layouts/MainLayout.astro
 ---
 

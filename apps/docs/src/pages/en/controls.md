@@ -1,6 +1,6 @@
 ---
-title: Core Controls
-description: React Components for building basic media players.
+title: React Media Player Controls
+description: Add play and pause, mute, looping, fullscreen, picture-in-picture, and timestamps to a React video or audio player with custom icons and styles.
 layout: ../../layouts/MainLayout.astro
 ---
 

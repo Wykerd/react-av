@@ -1,6 +1,6 @@
 ---
-title: Sliders
-description: React Components for building basic media player sliders.
+title: React Seek and Volume Sliders
+description: Build seek bars, buffered-range indicators, and volume sliders for React media players with React AV and Radix UI slider primitives.
 layout: ../../layouts/MainLayout.astro
 ---
 

@@ -22,9 +22,9 @@ const lang = getLanguageFromURL(currentPage);
 			<SidebarToggle client:idle />
 		</div>
 		<div class="logo flex">
-			<a href="/">
+			<a href="/" aria-label="React AV home">
 				<Logo class="logo-mark" />
-				<h1>{CONFIG.SITE.title ?? 'Documentation'}</h1>
+				<span>{CONFIG.SITE.title ?? 'Documentation'}</span>
 			</a>
 		</div>
 		<div style="flex-grow: 1;"></div>
@@ -91,7 +91,7 @@ const lang = getLanguageFromURL(currentPage);
 		color: var(--theme-text-accent);
 	}
 
-	.logo h1 {
+	.logo span {
 		display: none;
 		font: inherit;
 		color: inherit;
@@ -119,7 +119,7 @@ const lang = getLanguageFromURL(currentPage);
 			z-index: 0;
 		}
 
-		.logo h1 {
+		.logo span {
 			display: initial;
 		}
 

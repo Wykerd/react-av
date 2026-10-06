@@ -133,38 +133,35 @@ export function TimelineHeader({
         <TimelineOverflowContainer 
             componentRole="timeline-header"
             ref={containerRef} 
-            onMouseDown={e => {
-                if (e.button !== 0) return;
+            onPointerDown={e => {
+                if (e.button !== 0 || !e.isPrimary) return;
+                e.currentTarget.setPointerCapture(e.pointerId);
                 setPlaying(false);
                 setAnchor(e.clientX);
                 setAnchorTime(currentTime);
                 setDragging(true);
             }}
-            onTouchStart={e => {
-                const touch = e.touches[0];
-                if (!touch) return;
-                setPlaying(false);
-                setAnchor(touch.clientX);
-                setAnchorTime(currentTime);
-                setDragging(true);
-            }}
-            onMouseMove={e => {
-                if (!indicatorWidth || !dragging) return;
+            onPointerMove={e => {
+                if (!e.isPrimary || !indicatorWidth || !dragging) return;
                 const delta = anchor - e.clientX;
                 const timeDelta = (delta / (indicatorWidth + 16)) * interval;
                 setCurrentTime(anchorTime + timeDelta);
             }}
-            onTouchMove={e => {
-                const touch = e.touches[0];
-                if (!touch || !indicatorWidth) return;
-                const delta = anchor - touch.clientX;
-                const timeDelta = (delta / (indicatorWidth + 16)) * interval;
-                setCurrentTime(anchorTime + timeDelta);
+            onPointerUp={e => {
+                if (!e.isPrimary || !dragging) return;
+                if (indicatorWidth) {
+                    const delta = anchor - e.clientX;
+                    setCurrentTime(anchorTime + (delta / (indicatorWidth + 16)) * interval);
+                }
+                e.currentTarget.releasePointerCapture(e.pointerId);
+                setDragging(false);
             }}
-            onMouseUp={() => setDragging(false)}
-            onMouseLeave={() => setDragging(false)}
-            onMouseEnter={() => setDragging(false)}
-            onTouchEnd={() => setDragging(false)}
+            onPointerCancel={e => {
+                if (e.isPrimary) setDragging(false);
+            }}
+            onLostPointerCapture={e => {
+                if (e.isPrimary) setDragging(false);
+            }}
             style={{
                 cursor: dragging ? 'grabbing' : 'grab'
             }}
