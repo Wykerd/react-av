@@ -1,7 +1,7 @@
 ---
 import { getLanguageFromURL, KNOWN_LANGUAGE_CODES } from '../../languages';
 import * as CONFIG from '../../config';
-import AstroLogo from './AstroLogo.astro';
+import Logo from '../Landing/Logo.astro';
 import SkipToContent from './SkipToContent.astro';
 import SidebarToggle from './SidebarToggle';
 import LanguageSelect from './LanguageSelect';
@@ -23,15 +23,16 @@ const lang = getLanguageFromURL(currentPage);
 		</div>
 		<div class="logo flex">
 			<a href="/">
-				<!-- TODO: <AstroLogo size={40} /> -->
+				<Logo class="logo-mark" />
 				<h1>{CONFIG.SITE.title ?? 'Documentation'}</h1>
 			</a>
 		</div>
 		<div style="flex-grow: 1;"></div>
 		{KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle />}
-		<div class="search-item">
-			<!-- TODO: <Search client:idle /> -->
-		</div>
+		<nav class="site-nav" aria-label="Site">
+			<a href="/">Home</a>
+			<a href="https://github.com/Wykerd/react-av">GitHub</a>
+		</nav>
 	</nav>
 </header>
 
@@ -54,7 +55,7 @@ const lang = getLanguageFromURL(currentPage);
 		display: flex;
 		overflow: hidden;
 		width: 30px;
-		font-size: 2rem;
+		font-size: 1.05rem;
 		flex-shrink: 0;
 		font-weight: 600;
 		line-height: 1;
@@ -63,8 +64,17 @@ const lang = getLanguageFromURL(currentPage);
 		z-index: -1;
 	}
 
+	.logo :global(.logo-mark) {
+		width: 1.5rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		color: var(--theme-text);
+	}
+
 	.logo a {
 		display: flex;
+		align-items: center;
+		gap: 0.6rem;
 		padding: 0.5em 0.25em;
 		margin: -0.5em -0.25em;
 		text-decoration: none;
@@ -101,7 +111,6 @@ const lang = getLanguageFromURL(currentPage);
 	@media (min-width: 50em) {
 		header {
 			position: static;
-			padding: 2rem 0rem;
 		}
 
 		.logo {

@@ -1,0 +1,269 @@
+---
+const cues = [
+	{ x: 48, width: 54 },
+	{ x: 112, width: 82 },
+	{ x: 204, width: 40 },
+	{ x: 256, width: 76 },
+	{ x: 344, width: 52 },
+	{ x: 404, width: 36 },
+];
+const ticks = Array.from({ length: 21 }, (_, index) => 40 + index * 20.2);
+const callouts = [
+	{ letter: 'A', y: 40, from: 468, title: 'State', detail: 'Media.Root' },
+	{ letter: 'B', y: 120, from: 444, title: 'Layout', detail: 'Media.Container' },
+	{ letter: 'C', y: 293, from: 424, title: 'Controls', detail: 'Media.Viewport' },
+	{ letter: 'D', y: 384, from: 444, title: 'Captions', detail: '@react-av/vtt' },
+	{ letter: 'E', y: 428, from: 380, title: 'Hooks', detail: 'useMedia*()' },
+];
+---
+
+<svg class="schematic" viewBox="0 0 640 470" role="img" aria-labelledby="schematic-title">
+	<title id="schematic-title">Anatomy of a React AV player: a media root holding a container, video, viewport controls, caption track and hooks.</title>
+	<defs>
+		<pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+			<line x1="0" y1="0" x2="0" y2="4" class="hatch-line"></line>
+		</pattern>
+	</defs>
+
+	<rect class="draw" style="--delay: 0ms" x="16" y="24" width="452" height="436" pathLength="1"></rect>
+	<rect class="label-bg" x="24" y="17" width="88" height="14"></rect>
+	<text class="label" x="28" y="27">&lt;Media.Root&gt;</text>
+
+	<rect class="draw" style="--delay: 150ms" x="40" y="60" width="404" height="258" pathLength="1"></rect>
+	<rect class="label-bg" x="48" y="53" width="118" height="14"></rect>
+	<text class="label" x="52" y="63">&lt;Media.Container&gt;</text>
+
+	<rect class="draw" style="--delay: 300ms" x="60" y="84" width="364" height="184" pathLength="1"></rect>
+	<line class="faint draw" style="--delay: 450ms" x1="60" y1="84" x2="424" y2="268" pathLength="1"></line>
+	<line class="faint draw" style="--delay: 450ms" x1="424" y1="84" x2="60" y2="268" pathLength="1"></line>
+	<circle class="paper-fill draw" style="--delay: 600ms" cx="242" cy="176" r="26" pathLength="1"></circle>
+	<path class="draw" style="--delay: 700ms" d="M234 163 L234 189 L256 176 Z" pathLength="1"></path>
+	<text class="label small" x="68" y="98">&lt;Media.Video /&gt;</text>
+
+	<line class="draw" style="--delay: 300ms" x1="50" y1="84" x2="50" y2="268" pathLength="1"></line>
+	<line class="draw" x1="46" y1="84" x2="54" y2="84" pathLength="1"></line>
+	<line class="draw" x1="46" y1="268" x2="54" y2="268" pathLength="1"></line>
+	<rect class="label-bg" x="44" y="160" width="12" height="32"></rect>
+	<text class="label small" transform="translate(53 176) rotate(-90)" text-anchor="middle">16:9</text>
+
+	<rect class="draw" style="--delay: 800ms" x="60" y="280" width="364" height="26" pathLength="1"></rect>
+	<path class="draw" style="--delay: 900ms" d="M71 287 L71 299 L81 293 Z" pathLength="1"></path>
+	<line class="faint-solid" x1="96" y1="293" x2="340" y2="293"></line>
+	<rect class="progress" x="96" y="292.25" width="244" height="1.5"></rect>
+	<g class="playhead">
+		<rect class="paper-fill stroke" x="92.5" y="289.5" width="7" height="7" transform="rotate(45 96 293)"></rect>
+	</g>
+	<text class="label small" x="352" y="296">01:24</text>
+	<rect class="stroke" x="392" y="287" width="12" height="12"></rect>
+	<rect class="stroke" x="408" y="287" width="10" height="12"></rect>
+
+	<text class="label" x="40" y="346">&lt;Track kind="subtitles" /&gt;</text>
+	<line class="draw" style="--delay: 1000ms" x1="40" y1="372" x2="444" y2="372" pathLength="1"></line>
+	{ticks.map((x, index) => <line class="tick" x1={x} y1={index % 5 === 0 ? 364 : 368} x2={x} y2="372"></line>)}
+	{cues.map(cue => <rect class="cue" x={cue.x} y="378" width={cue.width} height="12"></rect>)}
+	<line class="scan" x1="40" y1="358" x2="40" y2="396"></line>
+
+	<text class="label" x="40" y="432">useMediaPlaying()</text>
+	<text class="label" x="190" y="432">useMediaCurrentTime()</text>
+
+	{
+		callouts.map((callout, index) => (
+			<g class="callout" style={`--delay: ${1100 + index * 120}ms`}>
+				<line class="leader" x1={callout.from} y1={callout.y} x2="496" y2={callout.y}></line>
+				<circle class="dot" cx={callout.from} cy={callout.y} r="2"></circle>
+				<circle class="paper-fill stroke" cx="506" cy={callout.y} r="9"></circle>
+				<text class="letter" x="506" y={callout.y + 3} text-anchor="middle">{callout.letter}</text>
+				<text class="callout-title" x="522" y={callout.y - 1}>{callout.title}</text>
+				<text class="callout-detail" x="522" y={callout.y + 10}>{callout.detail}</text>
+			</g>
+		))
+	}
+</svg>
+
+<style>
+	.schematic {
+		width: 100%;
+		height: auto;
+		overflow: visible;
+		fill: none;
+		stroke: var(--color-ink);
+		stroke-width: 1;
+	}
+
+	.schematic text {
+		stroke: none;
+		fill: var(--color-ink);
+		font-family: var(--font-mono);
+	}
+
+	.label {
+		font-size: 9px;
+		letter-spacing: 0.02em;
+	}
+
+	.label.small {
+		font-size: 8px;
+		fill: var(--color-ink-soft);
+	}
+
+	.label-bg,
+	.paper-fill {
+		fill: var(--color-paper);
+	}
+
+	.label-bg {
+		stroke: none;
+	}
+
+	.faint {
+		stroke: var(--color-line);
+	}
+
+	.faint-solid {
+		stroke: rgb(23 22 15 / 0.25);
+	}
+
+	.hatch-line {
+		stroke: var(--color-ink);
+		stroke-width: 1;
+	}
+
+	.tick {
+		stroke: rgb(23 22 15 / 0.35);
+	}
+
+	.cue {
+		fill: url(#hatch);
+	}
+
+	.progress {
+		stroke: none;
+		fill: var(--color-ink);
+		transform-box: fill-box;
+		transform-origin: left center;
+		animation: progress 12s linear infinite;
+	}
+
+	.playhead {
+		animation: playhead 12s linear infinite;
+	}
+
+	.scan {
+		stroke: var(--color-signal);
+		stroke-width: 1.5;
+		animation: scan 12s linear infinite;
+	}
+
+	.leader {
+		stroke-dasharray: 2 3;
+		animation: flow 1.6s linear infinite;
+	}
+
+	.dot {
+		fill: var(--color-ink);
+		stroke: none;
+	}
+
+	.letter {
+		font-size: 9px;
+		font-weight: 600;
+	}
+
+	.callout-title {
+		font-size: 9px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+	}
+
+	.callout-detail {
+		font-size: 8px;
+		fill: var(--color-ink-soft) !important;
+	}
+
+	.draw {
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+		animation: draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+		animation-delay: var(--delay, 0ms);
+	}
+
+	.callout {
+		opacity: 0;
+		animation: appear 600ms ease forwards;
+		animation-delay: var(--delay, 0ms);
+	}
+
+	@keyframes draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+
+	@keyframes appear {
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes progress {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes playhead {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(244px);
+		}
+	}
+
+	@keyframes scan {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(404px);
+		}
+	}
+
+	@keyframes flow {
+		to {
+			stroke-dashoffset: -10;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.draw,
+		.callout {
+			animation: none;
+			stroke-dashoffset: 0;
+			opacity: 1;
+		}
+
+		.progress,
+		.playhead,
+		.scan,
+		.leader {
+			animation: none;
+		}
+
+		.progress {
+			transform: scaleX(0.35);
+		}
+
+		.playhead {
+			transform: translateX(85px);
+		}
+
+		.scan {
+			transform: translateX(140px);
+		}
+	}
+</style>

@@ -6,7 +6,7 @@ export const SITE = {
 
 export const OPEN_GRAPH = {
 	image: {
-		src: 'https://github.com/withastro/astro/blob/main/assets/social/banner.jpg?raw=true',
+		src: '/og-image.png',
 		alt:
 			'Fully-featured, headless, hooks-based, and declarative media player framework for React.',
 	},
@@ -31,7 +31,7 @@ export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
 
 export const GITHUB_EDIT_URL = `https://github.com/Wykerd/react-av/tree/master/apps/docs`;
 
-export const COMMUNITY_INVITE_URL = `https://astro.build/chat`;
+export const COMMUNITY_INVITE_URL = ``;
 
 // See "Algolia" section of the README for more information.
 export const ALGOLIA = {

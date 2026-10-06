@@ -8,13 +8,13 @@ layout: ../../layouts/MainLayout.astro
 
 A modern library for building media experiences in React, including features such as:
 
-- ✅ **Bring your own media source. Supports HLS, DASH, and more.**
-- ✅ **Consistent and simple hooks-based API. Interact with your media in custom components.**
-- ✅ **Cross browser support for picture-in-picture and fullscreen.**
-- ✅ **Headless, style however you want.**
-- ✅ **Extensive set of prebuilt components.**
-- ✅ **Fully typed, built with TypeScript.**
-- ✅ **Caption, chapter and storyboard support with a fully-featured<!-- TODO: spec compliant --> WebVTT implementation.**
+- **Bring your own media source. Supports HLS, DASH, and more.**
+- **Consistent and simple hooks-based API. Interact with your media in custom components.**
+- **Cross browser support for picture-in-picture and fullscreen.**
+- **Headless, style however you want.**
+- **Extensive set of prebuilt components.**
+- **Fully typed, built with TypeScript.**
+- **Caption, chapter and storyboard support with a fully-featured<!-- TODO: spec compliant --> WebVTT implementation.**
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ To get started, install the core module:
 npm i @react-av/core
 ```
 
-Media must be wrapped in a `Media.Root` component. This component is responsible for managing the media state and providing it to all child components. The core library provides basic components for HTML5 audio and video, but we do provide HLS and DASH support via the `@react-av/hls` and `@react-av/dash` packages.
+Media must be wrapped in a `Media.Root` component. This component is responsible for managing the media state and providing it to all child components. The core library provides basic components for HTML5 audio and video, and HLS and DASH support is available through the `@react-av/shaka` package.
 
 Video components must be wrapped in a `Media.Container` to allow for overlays and captions to be positioned correctly.
 
@@ -123,7 +123,7 @@ function App() {
 }
 ```
 
-Since React AV is headless, all of the components are unstyled. You can style them however you want, we do not provide any default styles. You may look at our demo site for an example of how we style the controls, [here](https://github.com/Wykerd/react-av/blob/master/apps/docs/src/components/VideoExample.tsx)
+Since React AV is headless, all of the components are unstyled. You can style them however you want, we do not provide any default styles. You may look at our demo site for an example of how we style the controls, [here](https://github.com/Wykerd/react-av/blob/master/apps/docs/src/demos/PlayerDemo.tsx)
 
 ## Packages
 
@@ -135,8 +135,7 @@ React AV is split into multiple modules to allow you to pick which features you 
 - `@react-av/vtt` - Adds WebVTT support to `@react-av/core`.
 - `@react-av/vtt-controls` - Additional controls for WebVTT captions, chapters and storyboards.
 
-Also provided are some providers for common media sources:
-- `@react-av/hls` - Adds HLS support to `@react-av/core` using `hls.js`.
-- `@react-av/dash` - Adds DASH support to `@react-av/core` using `dash.js`.
+- `@react-av/shaka` - Adds HLS and DASH support to `@react-av/core` using Shaka Player.
+- `@react-av/editor` - Timeline and subtitle editor components.
 
 

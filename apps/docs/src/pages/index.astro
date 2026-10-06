@@ -1,110 +1,228 @@
 ---
-import DemoOne from "../demos/DemoOne";
-import DemoThree from "../demos/DemoThree";
-import DemoTwo from "../demos/DemoTwo";
-import DemoTwoCodeSnippet from "../demos/DemoTwoCodeSnippet";
-import "../styles/tailwind.css";
+import '@fontsource-variable/schibsted-grotesk';
+import '@fontsource-variable/martian-mono';
+import '../styles/tailwind.css';
+import '../styles/landing.css';
+import { Code } from 'astro:components';
+import Schematic from '../components/Landing/Schematic.astro';
+import Logo from '../components/Landing/Logo.astro';
+import PlayerDemo from '../demos/PlayerDemo';
+import EditorDemo from '../demos/EditorDemo';
+import LyricsDemo from '../demos/LyricsDemo';
+import ink from '../styles/shiki-ink.mjs';
+import { SITE } from '../config';
+
+const title = `${SITE.title} · Headless audio and video for React`;
+const canonicalUrl = new URL('/', Astro.site);
+const socialImage = new URL('/og-image.png', Astro.site);
+
+const facts = [
+	{ label: 'Headless', text: 'No CSS shipped. Every part takes your classes.' },
+	{ label: 'WebVTT', text: 'Spec-based parser and renderer for captions.' },
+	{ label: 'HLS + DASH', text: 'Adaptive streaming through Shaka Player.' },
+	{ label: 'Typed', text: 'Written in TypeScript, declarations included.' },
+];
+
+const editorSnippet = `<Media.Root>
+  <Track kind="subtitles" src="/lesson.vtt" id="captions" />
+  <Editor mediaComponent={<Media.Video src="/lesson.mp4" />}>
+    <TimelineEditor>
+      <TimelineControlBar />
+      <TimelineContainer>
+        <TimelineHeader />
+        <TimelineSubtitlesTrack id="captions">
+          <TimelineSubtitleCueEditor />
+        </TimelineSubtitlesTrack>
+      </TimelineContainer>
+    </TimelineEditor>
+  </Editor>
+</Media.Root>`;
+
+const hookSnippet = `function Lyrics() {
+  const [cues, active] = useMediaTextTrack("lyrics");
+  const [, seek] = useMediaCurrentTime();
+
+  return cues.map(cue => (
+    <Cue as="li" cue={cue} key={cue.startTime}
+      data-active={active.includes(cue)}
+      onClick={() => seek(cue.startTime)} />
+  ));
+}`;
+
+const packages = [
+	{ name: 'core', text: 'Root, media elements, viewport and state hooks.', href: '/en/core-components' },
+	{ name: 'controls', text: 'Play, mute, loop, fullscreen, PiP and timestamps.', href: '/en/controls' },
+	{ name: 'sliders', text: 'Seek and volume sliders built on Radix UI.', href: '/en/sliders' },
+	{ name: 'vtt-core', text: 'Standalone WebVTT parser and renderer.', href: '/en/webvtt' },
+	{ name: 'vtt', text: 'Tracks, cues and caption overlays.', href: '/en/text-track-introduction' },
+	{ name: 'vtt-controls', text: 'Storyboard thumbnails from WebVTT.', href: '/en/vtt-controls' },
+	{ name: 'shaka', text: 'HLS and DASH playback via Shaka Player.', href: '/en/core-other-sources' },
+	{ name: 'editor', text: 'Timeline and subtitle editing components.', href: 'https://github.com/Wykerd/react-av/tree/master/packages/editor' },
+];
+
+const github = 'https://github.com/Wykerd/react-av';
 ---
 
 <html lang="en">
 	<head>
-		<title>React AV</title>
-		<meta
-			name="description"
-			content="Fully-featured, headless, hooks-based, and declarative media player framework for React."
-		/>
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Set the language and utf8 encoding -->
-        <meta charset="utf-8">
-        <meta name="language" content="en">
-        <meta name="color-scheme" content="only dark">
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={SITE.description} />
+		<link rel="canonical" href={canonicalUrl} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="theme-color" content="#f3f1ea" />
+		<meta name="color-scheme" content="light" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={SITE.description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={socialImage} />
+		<meta name="twitter:card" content="summary_large_image" />
 	</head>
-	<body class="dark bg-gray-1 text-white">
-		<main class='py-8'>
-            <section class='pb-24 pt-16 flex flex-col items-center text-center mx-4'>
-                <h1 class='text-6xl font-black bg-gradient-to-tr pb-16 -mb-16 from-prime-12 to-prime-10 text-transparent bg-clip-text'>
-                    React AV
-                </h1>
-                <h2 class='text-xl mb-4 text-gray-12'>
-                    Build modern media players with React.
-                </h2>
-                <p class='text-gray-11'>
-                    Fully-featured, headless, hooks-based, and declarative media player framework for React.
-                </p>
-                <a href="/en/introduction" class='mt-12 text-xl font-bold rounded bg-prime-9 hover:bg-prime-10 transition-colors py-2 px-8 shadow-[0_0px_50px_0px_rgb(245_202_115_/_0.25)]'>
-                    Get Started
-                </a>
-            </section>
-            <section class='flex flex-col text-center items-center justify-center gap-8'>
-                <div class='text-center flex flex-col items-center mx-4'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" viewBox="0 0 256 256"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"></path></svg>
-                    <h3 class='text-3xl font-bold'>
-                        Full-Featured Doesn't Mean Complex
-                    </h3>
-                    <p class='max-w-3xl text-gray-12 text-base'>
-                        Experience how straightforward it is to integrate media playback into your React applications without sacrificing features. React AV provides everything you'll need: from basic playback controls to advanced features like subtitles, storyboard thumbnails, and more.
-                    </p>
-                </div>
-                <DemoOne client:only="react" />
-            </section>
-            <section class='flex flex-col gap-8 items-center mt-16'>
-                <div class='text-center flex flex-col items-center mx-4'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" viewBox="0 0 256 256"><path d="M224,64H176V56a24,24,0,0,0-24-24H104A24,24,0,0,0,80,56v8H32A16,16,0,0,0,16,80V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V80A16,16,0,0,0,224,64ZM96,56a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96ZM224,80v32H192v-8a8,8,0,0,0-16,0v8H80v-8a8,8,0,0,0-16,0v8H32V80Zm0,112H32V128H64v8a8,8,0,0,0,16,0v-8h96v8a8,8,0,0,0,16,0v-8h32v64Z"></path></svg>
-                    <h3 class='text-3xl font-bold'>
-                        Complete Composable Toolkit
-                    </h3>
-                    <p class='max-w-3xl text-gray-12 text-base'>
-                        React AV is designed for developers who need more than just a basic media player. It's a versatile, component-based framework that adapts to your needs - whether you're building a simple player or a full-featured media application.
-                    </p>
-                </div>
-                <div class='flex flex-col xl:flex-row items-center'>
-                    <div class='border-x border-y border-gray-6 max-w-2xl shrink-0'>
-                        <DemoTwo client:only="react" />
-                    </div>
-                    <div class='bg-black flex flex-row gap-4 pl-4 sm:pl-8 py-2 pr-4 sm:pr-12 rounded-b-xl xl:rounded-r-xl'>
-                        <DemoTwoCodeSnippet />
-                    </div>
-                </div>
-            </section>
-            <section class='flex flex-col text-center items-center justify-center gap-8 mt-16'>
-                <div class='text-center flex flex-col items-center mx-4'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" viewBox="0 0 256 256"><path d="M215.12,123.64a8,8,0,1,0-14.24-7.28,79.58,79.58,0,0,1-33.08,33.5l-16.58-37.32A40,40,0,0,0,136,40.8V24a8,8,0,0,0-16,0V40.8a40,40,0,0,0-15.22,71.74L56.69,220.75a8,8,0,1,0,14.62,6.5l25.14-56.56A95.48,95.48,0,0,0,128,176a99.13,99.13,0,0,0,31.6-5.21l25.09,56.46a8,8,0,0,0,14.62-6.5l-25-56.25A95.81,95.81,0,0,0,215.12,123.64ZM128,56a24,24,0,1,1-24,24A24,24,0,0,1,128,56Zm0,104a79.52,79.52,0,0,1-25-4l16.42-36.94a39.81,39.81,0,0,0,17.2,0l16.48,37.06A83.21,83.21,0,0,1,128,160Z"></path></svg>
-                    <h3 class='text-3xl font-bold'>
-                        Declarative and Hooks-Based API
-                    </h3>
-                    <p class='max-w-3xl text-gray-12 text-base'>
-                        Say goodbye to the headaches of browser APIs and state management. With React AV's declarative and hooks-based approach, you can effortlessly sync media playback with dynamic content like lyrics or captions, letting you focus on creating amazing experiences.
-                    </p>
-                </div>
-                <DemoThree client:only="react" />
-            </section>
-            <footer class='pt-24 px-8'>
-                <div class='m-auto max-w-7xl flex flex-col-reverse md:flex-row gap-4 md:gap-2 justify-between border-t border-gray-6 pt-8'>
-                    <div>
-                        <span class='font-extrabold text-xl'>
-                            React AV
-                        </span>
-                        <p class='text-gray-11 text-xs md:text-sm'>
-                            By <a href='https://wykerd.dev' class="text-prime-11 hover:text-prime-12 transition-colors">Daniel Wykerd</a> and <a href='https://github.com/Wykerd/react-av/graphs/contributors' class="text-prime-11 hover:text-prime-12 transition-colors">contributors</a>
-                        </p>
-                        <p class='text-gray-11 text-xs md:text-sm'>
-                            Licensed under the <a href='https://github.com/Wykerd/react-av/blob/main/LICENSE' class="text-prime-11 hover:text-prime-12 transition-colors">MIT License</a>
-                        </p>
-                    </div>
-                    <div class='text-end'>
-                        <span class='font-extrabold text-xl text-gray-11'>
-                            Demos
-                        </span>
-                        <p class='text-gray-11 text-xs md:text-sm'>
-                            <a href='https://www.youtube.com/watch?v=_cMxraX_5RE' class="text-prime-11 hover:text-prime-12 transition-colors">Sprite Fright</a> is licensed under <a href='https://creativecommons.org/licenses/by/1.0/' class="text-prime-11 hover:text-prime-12 transition-colors">CC BY 1.0</a> by <a href='https://studio.blender.org/' class="text-prime-11 hover:text-prime-12 transition-colors">Blender Foundation</a>
-                        </p>
-                        <p class='text-gray-11 text-xs md:text-sm'>
-                            <a href='https://lemondemon.bandcamp.com/album/dinosaurchestra' class="text-prime-11 hover:text-prime-12 transition-colors">Fine</a> is licensed under <a href='https://creativecommons.org/licenses/by-nc-sa/3.0/' class="text-prime-11 hover:text-prime-12 transition-colors">CC BY-NC-SA 3.0</a> by <a href='http://www.neilcic.com/' class="text-prime-11 hover:text-prime-12 transition-colors">Neil Cicierega (Lemon Demon)</a>
-                        </p>
-                    </div>
-                </div>
-            </footer>
-        </main>
+	<body class="landing min-h-screen font-sans text-ink antialiased">
+		<div class="mx-auto max-w-[1180px] border-x border-line">
+			<header class="flex items-center justify-between border-b border-line px-5 py-4 sm:px-8">
+				<a href="/" class="flex items-center gap-2.5 text-ink" aria-label="React AV home">
+					<Logo class="size-6" />
+					<span class="text-[15px] font-semibold tracking-tight">React AV</span>
+				</a>
+				<nav class="flex items-center gap-5 font-mono text-[10px] uppercase tracking-[0.14em] sm:gap-7">
+					<a href="/en/introduction" class="underline-offset-4 hover:underline">Docs</a>
+					<a href={github} class="underline-offset-4 hover:underline">GitHub</a>
+					<a href="https://www.npmjs.com/package/@react-av/core" class="max-sm:hidden underline-offset-4 hover:underline">npm</a>
+				</nav>
+			</header>
+
+			<main>
+				<section class="grid items-center gap-12 px-5 pb-16 pt-14 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:gap-10 lg:pb-24 lg:pt-20">
+					<div class="flex flex-col items-start">
+						<p class="eyebrow rise" style="--delay: 0ms">Headless media toolkit for React</p>
+						<h1 class="rise mt-5 text-[clamp(2.6rem,5.6vw,4.4rem)] font-semibold leading-[0.95] tracking-[-0.035em]" style="--delay: 80ms">
+							Media players,<br />built to your spec.
+						</h1>
+						<p class="rise mt-6 max-w-[34rem] text-lg leading-relaxed text-ink-soft" style="--delay: 160ms">
+							React AV handles playback state, captions, streaming and timeline editing. Compose it with hooks and unstyled components, and keep every pixel of the interface your own.
+						</p>
+						<div class="rise mt-9 flex w-full max-w-md items-stretch border border-ink bg-paper font-mono text-xs" style="--delay: 240ms">
+							<span class="select-none border-r border-line px-3 py-3 text-ink-soft">$</span>
+							<code class="grow overflow-x-auto whitespace-nowrap px-3 py-3">npm i @react-av/core</code>
+							<button type="button" data-copy="npm i @react-av/core" class="border-l border-ink px-4 text-[10px] uppercase tracking-[0.14em] transition-colors hover:bg-ink hover:text-paper focus-visible:bg-ink focus-visible:text-paper focus-visible:outline-none">
+								<span class="copy-label">Copy</span>
+							</button>
+						</div>
+						<div class="rise mt-4 flex flex-wrap gap-3" style="--delay: 320ms">
+							<a href="/en/introduction" class="bg-ink px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-signal">Read the docs</a>
+							<a href={github} class="border border-ink px-5 py-3 text-sm font-medium transition-colors hover:bg-paper-deep">View on GitHub</a>
+						</div>
+					</div>
+					<figure class="rise ticks p-4 sm:p-6" style="--delay: 200ms">
+						<Schematic />
+						<figcaption class="eyebrow mt-3 flex justify-between">
+							<span>Fig. 00 · Anatomy of a player</span>
+							<span class="max-sm:hidden">Scale 1:1</span>
+						</figcaption>
+					</figure>
+				</section>
+
+				<ul class="grid grid-cols-2 border-y border-line lg:grid-cols-4">
+					{
+						facts.map((fact, index) => (
+							<li class:list={['flex flex-col gap-2 px-5 py-6 sm:px-8', index % 2 === 1 && 'border-l border-line', index >= 2 && 'max-lg:border-t max-lg:border-line', index === 2 && 'lg:border-l lg:border-line']}>
+								<span class="eyebrow text-ink">{fact.label}</span>
+								<span class="text-sm leading-snug text-ink-soft">{fact.text}</span>
+							</li>
+						))
+					}
+				</ul>
+
+				<section id="player" class="grid gap-8 border-b border-line px-5 py-16 sm:px-8 lg:grid-cols-[15rem_1fr] lg:gap-12 lg:py-24">
+					<div class="reveal flex flex-col gap-4 lg:sticky lg:top-8 lg:self-start">
+						<span class="eyebrow">01 · Player</span>
+						<h2 class="text-3xl font-semibold leading-tight tracking-tight">One player.<br />Any skin.</h2>
+						<p class="text-[15px] leading-relaxed text-ink-soft">Three skins on one <code class="font-mono text-[12px] text-ink">&lt;Media.Root&gt;</code>. Switch while it plays: position, volume and captions carry over because only the markup changes.</p>
+					</div>
+					<div class="reveal">
+						<PlayerDemo client:only="react" />
+					</div>
+				</section>
+
+				<section id="editor" class="grid gap-8 border-b border-line px-5 py-16 sm:px-8 lg:grid-cols-[15rem_1fr] lg:gap-12 lg:py-24">
+					<div class="reveal flex flex-col gap-4 lg:sticky lg:top-8 lg:self-start">
+						<span class="eyebrow">02 · Editor</span>
+						<h2 class="text-3xl font-semibold leading-tight tracking-tight">A timeline editor you can ship.</h2>
+						<p class="text-[15px] leading-relaxed text-ink-soft">Subtitle editing as composable parts. Restyle it for a studio tool or a course builder without forking a line.</p>
+						<p class="text-[15px] leading-relaxed text-ink-soft">Select a cue to edit it, drag across the track to add one, or use the arrow keys to nudge timing.</p>
+					</div>
+					<div class="reveal flex min-w-0 flex-col gap-6">
+						<EditorDemo client:only="react" />
+						<div class="code-block ticks">
+							<p class="eyebrow border-b border-line px-6 py-3">editor.tsx</p>
+							<Code code={editorSnippet} lang="tsx" theme={ink} />
+						</div>
+					</div>
+				</section>
+
+				<section id="hooks" class="grid gap-8 border-b border-line px-5 py-16 sm:px-8 lg:grid-cols-[15rem_1fr] lg:gap-12 lg:py-24">
+					<div class="reveal flex flex-col gap-4 lg:sticky lg:top-8 lg:self-start">
+						<span class="eyebrow">03 · Hooks</span>
+						<h2 class="text-3xl font-semibold leading-tight tracking-tight">Sync anything to playback.</h2>
+						<p class="text-[15px] leading-relaxed text-ink-soft">Every piece of media state is a hook. Lyrics, transcripts, quizzes, chapter lists: read the clock, render what you like.</p>
+					</div>
+					<div class="reveal flex min-w-0 flex-col gap-10">
+						<LyricsDemo client:only="react" />
+						<div class="code-block ticks">
+							<p class="eyebrow border-b border-line px-6 py-3">lyrics.tsx</p>
+							<Code code={hookSnippet} lang="tsx" theme={ink} />
+						</div>
+					</div>
+				</section>
+
+				<section id="packages" class="px-5 py-16 sm:px-8 lg:py-24">
+					<div class="reveal mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+						<div class="flex flex-col gap-4">
+							<span class="eyebrow">04 · Packages</span>
+							<h2 class="text-3xl font-semibold leading-tight tracking-tight">Take only what you need.</h2>
+						</div>
+						<a href="/en/introduction" class="font-mono text-[10px] uppercase tracking-[0.14em] underline-offset-4 hover:underline">All documentation →</a>
+					</div>
+					<ul class="reveal grid border-l border-t border-ink sm:grid-cols-2 lg:grid-cols-4">
+						{
+							packages.map(item => (
+								<li class="border-b border-r border-ink">
+									<a href={item.href} class="group flex h-full flex-col gap-6 p-5 transition-colors hover:bg-ink hover:text-paper">
+										<span class="font-mono text-[11px]">
+											<span class="text-ink-soft group-hover:text-paper/60">@react-av/</span>{item.name}
+										</span>
+										<span class="mt-auto text-sm leading-snug text-ink-soft group-hover:text-paper/80">{item.text}</span>
+									</a>
+								</li>
+							))
+						}
+					</ul>
+				</section>
+			</main>
+
+			<footer class="grid gap-6 border-t border-line px-5 py-10 text-xs leading-relaxed text-ink-soft sm:px-8 md:grid-cols-2">
+				<div class="flex flex-col gap-1">
+					<span class="flex items-center gap-2 font-semibold text-ink"><Logo class="size-4" /> React AV</span>
+					<span>By <a href="https://wykerd.dev" class="text-ink underline underline-offset-2">Daniel Wykerd</a> and <a href={`${github}/graphs/contributors`} class="text-ink underline underline-offset-2">contributors</a>. Released under the <a href={`${github}/blob/master/LICENSE`} class="text-ink underline underline-offset-2">MIT License</a>.</span>
+				</div>
+				<div class="flex flex-col gap-1 md:text-right">
+					<span><a href="https://www.youtube.com/watch?v=_cMxraX_5RE" class="text-ink underline underline-offset-2">Sprite Fright</a> by <a href="https://studio.blender.org/" class="text-ink underline underline-offset-2">Blender Foundation</a>, <a href="https://creativecommons.org/licenses/by/1.0/" class="text-ink underline underline-offset-2">CC BY 1.0</a>.</span>
+					<span><a href="https://lemondemon.bandcamp.com/album/dinosaurchestra" class="text-ink underline underline-offset-2">Fine</a> by <a href="http://www.neilcic.com/" class="text-ink underline underline-offset-2">Neil Cicierega (Lemon Demon)</a>, <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" class="text-ink underline underline-offset-2">CC BY-NC-SA 3.0</a>.</span>
+				</div>
+			</footer>
+		</div>
+
+		<script>
+			for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+				button.addEventListener('click', async () => {
+					await navigator.clipboard.writeText(button.dataset.copy ?? '');
+					button.dataset.copied = 'true';
+					setTimeout(() => delete button.dataset.copied, 1600);
+				});
+			}
+		</script>
 	</body>
 </html>

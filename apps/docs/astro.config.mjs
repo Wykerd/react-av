@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import ink from './src/styles/shiki-ink.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,8 +15,13 @@ export default defineConfig({
   react({
     include: ['**/src/demos/**/*.tsx'],
   })],
+  markdown: {
+    shikiConfig: {
+      theme: ink,
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
-  site: `http://astro.build`
+  site: `https://react-av.wykerd.dev`
 });

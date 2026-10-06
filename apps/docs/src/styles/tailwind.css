@@ -89,3 +89,14 @@
   --color-red-12: var(--red-12);
   --color-blackA-12: var(--black-a12);
 }
+
+@theme {
+  --font-sans: "Schibsted Grotesk Variable", ui-sans-serif, sans-serif;
+  --font-mono: "Martian Mono Variable", ui-monospace, monospace;
+  --color-paper: #f3f1ea;
+  --color-paper-deep: #e9e6dc;
+  --color-ink: #17160f;
+  --color-ink-soft: #66625a;
+  --color-line: rgb(23 22 15 / 0.14);
+  --color-signal: #ff4f00;
+}
