@@ -746,6 +746,7 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
     let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
+        if (listeners.size === 0) return;
         cleanup();
 
         const element = mediaElement.getState();
@@ -814,8 +815,10 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
         },
         subscribe(callback) {
             listeners.add(callback);
+            if (listeners.size === 1) detectChanges();
             return () => {
                 listeners.delete(callback);
+                if (listeners.size === 0) cleanup();
             }
         },
     }
