@@ -94,19 +94,21 @@ export type ViewportProps = Omit<ComponentPropsWithoutRef<'div'>, "onMouseMove">
  * 
  * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
  */
-export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, ...props }, ref) {
+export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, onPointerMove, onPointerDown, onPointerLeave, ...props }, ref) {
     const element = useMediaElement();
     const [ hover, setHover ] = useState(false);
-    const [ hoverTimeout, setHoverTimeout ] = useState<any>();
+    const hoverTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-    function handleMouseMove() {
+    useEffect(() => () => clearTimeout(hoverTimeout.current), []);
+
+    function showControls() {
         setHover(true);
-        hoverTimeout && clearTimeout(hoverTimeout);
-        const hoverTimeoutNew = setTimeout(() => setHover(false), hoverInactiveTimeout);
-        setHoverTimeout(hoverTimeoutNew);
+        clearTimeout(hoverTimeout.current);
+        hoverTimeout.current = setTimeout(() => setHover(false), hoverInactiveTimeout);
     }
 
-    function handleMouseLeave() {
+    function hideControls() {
+        clearTimeout(hoverTimeout.current);
         setHover(false);
     }
 
@@ -115,8 +117,18 @@ export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttrib
             {...props} 
             data-media-viewport="true"
             data-media-viewport-hover={""+hover}
-            onMouseMove={handleMouseMove} 
-            onMouseLeave={handleMouseLeave} 
+            onPointerMove={event => {
+                onPointerMove?.(event);
+                showControls();
+            }}
+            onPointerDown={event => {
+                onPointerDown?.(event);
+                showControls();
+            }}
+            onPointerLeave={event => {
+                onPointerLeave?.(event);
+                if (event.pointerType === 'mouse') hideControls();
+            }}
             ref={ref}
             className={`${className || ""} ${hover ? "" : inactiveClassName || ""}`.trim() || undefined}
         >
