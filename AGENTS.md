@@ -1,14 +1,5 @@
-# React AV
-
-## Quality
-- Treat performance and usability as acceptance requirements. Verify both for behaviour changes; builds and type checks alone are not enough.
-- Prioritise real-browser E2E tests of user workflows. Check audio/video playback, keyboard/touch controls, and accessibility where affected.
-- Compare performance against the base revision. Measure renders, subscriptions, listener cleanup, and responsiveness under realistic loads.
-- Exercise delayed mounting, React Strict Mode, shared controls, and independent players where relevant. Preserve user-selected state.
-- Keep hooks cheap: avoid unnecessary renders, persistent listeners, polling, and extra work for existing callers.
-- Report measured results and remaining gaps. Never claim no performance issues from source inspection alone.
-
-## Delivery
-- Keep PRs focused and small; document public API changes and add a changeset.
-- Include matched before/after recordings for interaction changes. Never commit evidence files.
-- GitHub Actions is for releases/deployment only; run development checks locally.
+- Prioritise playback performance and usability; verify both in real browsers for behaviour changes.
+- Cover affected audio/video flows: accessible keyboard/touch controls, delayed mounts, React Strict Mode, shared controls, and independent players.
+- Compare renders, subscriptions, and responsiveness against the base revision; verify listener cleanup.
+- Preserve user-selected playback state. Keep hooks free of unnecessary renders, listeners, and polling.
+- Document public API changes and add a changeset.
