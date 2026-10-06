@@ -107,9 +107,22 @@ export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttrib
         hoverTimeout.current = setTimeout(() => setHover(false), hoverInactiveTimeout);
     }
 
-    function hideControls() {
-        clearTimeout(hoverTimeout.current);
-        setHover(false);
+    function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+        onPointerMove?.(event);
+        showControls();
+    }
+
+    function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+        onPointerDown?.(event);
+        showControls();
+    }
+
+    function handlePointerLeave(event: React.PointerEvent<HTMLDivElement>) {
+        onPointerLeave?.(event);
+        if (event.pointerType === 'mouse') {
+            clearTimeout(hoverTimeout.current);
+            setHover(false);
+        }
     }
 
     const overlay = <ViewportHoverContext.Provider value={hover}>
@@ -117,18 +130,9 @@ export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttrib
             {...props} 
             data-media-viewport="true"
             data-media-viewport-hover={""+hover}
-            onPointerMove={event => {
-                onPointerMove?.(event);
-                showControls();
-            }}
-            onPointerDown={event => {
-                onPointerDown?.(event);
-                showControls();
-            }}
-            onPointerLeave={event => {
-                onPointerLeave?.(event);
-                if (event.pointerType === 'mouse') hideControls();
-            }}
+            onPointerMove={handlePointerMove}
+            onPointerDown={handlePointerDown}
+            onPointerLeave={handlePointerLeave}
             ref={ref}
             className={`${className || ""} ${hover ? "" : inactiveClassName || ""}`.trim() || undefined}
         >
