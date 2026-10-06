@@ -96,8 +96,6 @@ import * as Media from '@react-av/core';
 
 The `Media.Video` component is a wrapper around the HTML5 `<video>` element. It accepts all props that a `video` element accepts.
 
-`playsInline` defaults to `true`, keeping playback and custom controls inside the page on iPhone. Pass `playsInline={false}` to opt into the browser's automatic fullscreen behavior.
-
 ```jsx
 import * as Media from '@react-av/core';
 

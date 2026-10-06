@@ -10,12 +10,6 @@ We provide support for HLS and DASH through [Shaka Player](https://github.com/sh
 
 The `@react-av/shaka` package provides a `Video` and `Audio` components that can be used to play both HLS and DASH streams.
 
-Safari uses native HLS playback when available. Recognized, natively playable media files such as MP4 also bypass Shaka. Shaka is imported only when adaptive playback needs it, allowing bundlers with code splitting to keep it out of the initial download. Use `format="native"` for native sources whose URLs do not identify their format.
-
-Changing `src` releases the previous player before attaching its replacement. A component ref exposes `retry()`, which reloads either the native source or the active Shaka player.
-
-Shaka failures are available through `useMediaShakaError()` and the optional `onPlayerError(error)` callback. Native media failures remain available through `Media.useMediaError()` and the media element's `onError` event. A failed source does not throw from an asynchronous event handler and tear down the application.
-
 ```bash
 npm i @react-av/shaka shaka-player
 ```

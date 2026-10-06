@@ -18,7 +18,7 @@ export type VideoProps = ComponentPropsWithoutRef<"video">;
  * 
  * @note The `Media.Video` component must be wrapped in a `Media.Container` component.
  */
-export const Video: React.ForwardRefExoticComponent<VideoProps & RefAttributes<HTMLVideoElement>> = forwardRef<HTMLVideoElement, VideoProps>(function Video({ children, playsInline = true, ...props }, f_ref) {
+export const Video: React.ForwardRefExoticComponent<VideoProps & RefAttributes<HTMLVideoElement>> = forwardRef<HTMLVideoElement, VideoProps>(function Video({ children, ...props }, f_ref) {
     const ref = useRef<HTMLVideoElement>(null);
     const [, setElement] = useMediaElementState();
 
@@ -26,10 +26,9 @@ export const Video: React.ForwardRefExoticComponent<VideoProps & RefAttributes<H
         if (ref.current?.parentElement?.getAttribute('data-media-container') !== 'true') 
             throw new Error('Video element must be wrapped in a <Media.Container />');
         setElement(ref.current);
-        return () => setElement(null);
     }, [setElement]);
 
-    return <video {...props} playsInline={playsInline} ref={current => {
+    return <video {...props} ref={current => {
         // @ts-ignore
         ref.current = current;
         if (typeof f_ref === 'function') f_ref(current);
@@ -51,7 +50,6 @@ export const Audio: React.ForwardRefExoticComponent<AudioProps & RefAttributes<H
 
     useEffect(() => {
         setElement(ref.current);
-        return () => setElement(null);
     }, [setElement]);
 
     return <audio {...props} ref={current => {
@@ -96,21 +94,19 @@ export type ViewportProps = Omit<ComponentPropsWithoutRef<'div'>, "onMouseMove">
  * 
  * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
  */
-export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, onPointerMove, onPointerDown, onPointerLeave, ...props }, ref) {
+export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, ...props }, ref) {
     const element = useMediaElement();
     const [ hover, setHover ] = useState(false);
-    const hoverTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+    const [ hoverTimeout, setHoverTimeout ] = useState<any>();
 
-    useEffect(() => () => clearTimeout(hoverTimeout.current), []);
-
-    function showControls() {
+    function handleMouseMove() {
         setHover(true);
-        clearTimeout(hoverTimeout.current);
-        hoverTimeout.current = setTimeout(() => setHover(false), hoverInactiveTimeout);
+        hoverTimeout && clearTimeout(hoverTimeout);
+        const hoverTimeoutNew = setTimeout(() => setHover(false), hoverInactiveTimeout);
+        setHoverTimeout(hoverTimeoutNew);
     }
 
-    function hideControls() {
-        clearTimeout(hoverTimeout.current);
+    function handleMouseLeave() {
         setHover(false);
     }
 
@@ -119,18 +115,8 @@ export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttrib
             {...props} 
             data-media-viewport="true"
             data-media-viewport-hover={""+hover}
-            onPointerMove={event => {
-                onPointerMove?.(event);
-                showControls();
-            }}
-            onPointerDown={event => {
-                onPointerDown?.(event);
-                showControls();
-            }}
-            onPointerLeave={event => {
-                onPointerLeave?.(event);
-                if (event.pointerType === 'mouse') hideControls();
-            }}
+            onMouseMove={handleMouseMove} 
+            onMouseLeave={handleMouseLeave} 
             ref={ref}
             className={`${className || ""} ${hover ? "" : inactiveClassName || ""}`.trim() || undefined}
         >
