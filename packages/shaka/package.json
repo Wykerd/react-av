@@ -5,6 +5,11 @@
   "description": "Shaka media elements for React AV to play DASH and HLS content.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "files": [
+    "dist/cjs",
+    "dist/esm",
+    "src"
+  ],
   "scripts": {
     "build:cjs": "tsc --outDir dist/cjs --module commonjs",
     "build:esm": "tsc --outDir dist/esm --module esnext",
