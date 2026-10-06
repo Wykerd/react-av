@@ -1,0 +1,101 @@
+.landing {
+	background-color: var(--color-paper);
+	background-image:
+		linear-gradient(rgb(23 22 15 / 0.035) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(23 22 15 / 0.035) 1px, transparent 1px);
+	background-size: 32px 32px;
+	background-position: center top;
+}
+
+.landing ::selection {
+	background: var(--color-ink);
+	color: var(--color-paper);
+}
+
+.ticks {
+	--tick: 12px;
+	--tick-color: var(--color-ink);
+	position: relative;
+	background:
+		linear-gradient(var(--tick-color), var(--tick-color)) top left / var(--tick) 1px no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) top left / 1px var(--tick) no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) top right / var(--tick) 1px no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) top right / 1px var(--tick) no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) bottom left / var(--tick) 1px no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) bottom left / 1px var(--tick) no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) bottom right / var(--tick) 1px no-repeat,
+		linear-gradient(var(--tick-color), var(--tick-color)) bottom right / 1px var(--tick) no-repeat;
+}
+
+.eyebrow {
+	font-family: var(--font-mono);
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--color-ink-soft);
+}
+
+.rise {
+	opacity: 0;
+	transform: translateY(14px);
+	animation: rise 900ms cubic-bezier(0.2, 0.7, 0.1, 1) forwards;
+	animation-delay: var(--delay, 0ms);
+}
+
+@keyframes rise {
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@supports (animation-timeline: view()) {
+	.reveal {
+		animation: reveal linear both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 35%;
+	}
+
+	@keyframes reveal {
+		from {
+			opacity: 0;
+			transform: translateY(24px);
+		}
+	}
+}
+
+.lyrics-mask {
+	mask-image: linear-gradient(transparent, black 22%, black 78%, transparent);
+	scrollbar-width: none;
+}
+
+.lyrics-mask::-webkit-scrollbar {
+	display: none;
+}
+
+.code-block pre {
+	margin: 0;
+	padding: 1.25rem 1.5rem;
+	overflow-x: auto;
+	font-family: var(--font-mono);
+	font-size: 11.5px;
+	line-height: 1.75;
+	background: transparent !important;
+}
+
+[data-copied] .copy-label {
+	display: none;
+}
+
+[data-copied]::after {
+	content: 'Copied';
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rise,
+	.reveal {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+}

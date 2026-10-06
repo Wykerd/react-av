@@ -1,0 +1,121 @@
+body {
+	letter-spacing: -0.005em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-weight: 600;
+	letter-spacing: -0.03em;
+	line-height: 1.05;
+}
+
+h1 {
+	font-size: clamp(2.25rem, 4vw, 3rem);
+}
+
+h2 {
+	font-size: 1.75rem;
+}
+
+h3 {
+	font-size: 1.3rem;
+}
+
+a {
+	text-decoration: underline;
+	text-decoration-color: var(--theme-divider);
+	text-underline-offset: 0.2em;
+}
+
+a:hover,
+a:focus {
+	text-decoration-color: currentColor;
+}
+
+code {
+	font-size: 0.78em;
+}
+
+pre {
+	border: 1px solid var(--theme-text);
+	border-radius: 0 !important;
+	font-size: 0.8rem !important;
+	line-height: 1.75 !important;
+}
+
+pre > code {
+	font-size: inherit;
+}
+
+blockquote {
+	border-left: 1px solid var(--theme-text) !important;
+	background: transparent !important;
+}
+
+.nav-group h2 {
+	margin: 0 0 0.5rem;
+	padding: 0 1rem;
+	font-family: var(--font-mono);
+	font-size: 10px;
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--theme-text-light);
+}
+
+.nav-link a {
+	font-size: 0.95rem;
+	text-decoration: none;
+	border-left: 1px solid var(--theme-divider);
+}
+
+.nav-link a[aria-current='page'] {
+	color: var(--theme-text) !important;
+	background: transparent !important;
+	border-left-color: transparent !important;
+	box-shadow: inset 2px 0 0 var(--theme-signal, #ff4f00);
+	font-weight: 600;
+}
+
+.nav-link a:hover,
+.nav-link a:focus {
+	border-left-color: var(--theme-text);
+}
+
+header {
+	border-bottom: 1px solid var(--theme-divider);
+}
+
+header .logo a {
+	white-space: nowrap;
+}
+
+.site-nav {
+	display: flex;
+	gap: 1.5rem;
+	font-family: var(--font-mono);
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.site-nav a {
+	color: var(--theme-text);
+	text-decoration: none;
+}
+
+.site-nav a:hover {
+	text-decoration: underline;
+}
+
+:is(.toc, .more-menu) h2,
+.heading {
+	font-family: var(--font-mono);
+	font-size: 10px !important;
+	font-weight: 400 !important;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--theme-text-light);
+}
