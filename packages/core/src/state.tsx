@@ -674,6 +674,7 @@ function createMediaDurationStore(mediaElement: StateStore<HTMLMediaElement | nu
         getState() {
             const element = mediaElement.getState();
             if (!element) return 0;
+            if (Number.isNaN(element.duration)) return 0;
             return element.duration;
         },
         setState() {
