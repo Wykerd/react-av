@@ -60,6 +60,13 @@ Additionally, it accepts the following props for icon:
 - `icon` - The icon to use. Defaults to the `PictureInPicture` icon from the [Phosphor Icons](https://phosphoricons.com/) library.
 - `defaultIconSize` - Size of the default icon if you are using the default icon from the [Phosphor Icons](https://phosphoricons.com/) library. Defaults to `32`.
 
+Custom `children` take precedence over `icon`. This also supports button components that forward their icon as children when composed with `as={Controls.PictureInPicture}`.
+
+```jsx
+<Controls.PictureInPicture icon={<CustomIcon />} />
+<Controls.PictureInPicture><CustomIcon /></Controls.PictureInPicture>
+```
+
 ```jsx
 import * as Media from '@react-av/core';
 import * as Controls from '@react-av/controls';

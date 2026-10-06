@@ -18,6 +18,7 @@ const PictureInPicture: React.ForwardRefExoticComponent<PIPProps & RefAttributes
     const { 
         defaultIconSize = 32,
         icon = <PIPIcon weight='fill' size={defaultIconSize} />, 
+        children = icon,
         ...btnProps 
     } = props;
 
@@ -39,7 +40,7 @@ const PictureInPicture: React.ForwardRefExoticComponent<PIPProps & RefAttributes
         aria-label="Toggle Picture-in-Picture"
         onClick={handlePictureInPicture}
     >
-        {icon}
+        {children}
     </button>
 });
 
