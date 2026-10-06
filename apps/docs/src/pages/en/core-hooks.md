@@ -90,6 +90,14 @@ Control the volume of the media element. Returns the state and a setter function
 
 Control the playback rate of the media element. Returns the state and a setter function.
 
+Pass an optional initial rate to apply it once the media element is available, including when the element mounts later. The initial rate is captured when the hook mounts; subsequent renders and changes to the argument do not reset the playback rate. Calls without an argument leave the playback rate unchanged.
+
+Set the initial rate in one component per player. Other components can call the hook without an argument to read or change the shared rate.
+
+```tsx
+const [playbackRate, setPlaybackRate] = useMediaPlaybackRate(1.5);
+```
+
 **Returns:** `[number, (playbackRate: number) => void]`
 
 ## useMediaDuration()
