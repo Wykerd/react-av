@@ -1,0 +1,5 @@
+- Prioritise playback performance and usability; verify both in real browsers for behaviour changes.
+- Cover affected audio/video flows: accessible keyboard/touch controls, delayed mounts, React Strict Mode, shared controls, and independent players.
+- Compare renders, subscriptions, and responsiveness against the base revision; verify listener cleanup.
+- Preserve user-selected playback state. Keep hooks free of unnecessary renders, listeners, and polling.
+- Document public API changes and add a changeset.
