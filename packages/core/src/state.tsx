@@ -735,6 +735,12 @@ function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement |
     }
 }
 
+type NativeFullscreenMediaElement = HTMLMediaElement & {
+    webkitDisplayingFullscreen?: boolean;
+    webkitEnterFullscreen?: () => void;
+    webkitExitFullscreen?: () => void;
+};
+
 function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
     let cleanup: StoreListenerUnsubscribe = () => {};
@@ -742,10 +748,13 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
     function detectChanges() {
         cleanup();
 
+        const element = mediaElement.getState();
         function handler() {
             listeners.forEach((listener) => listener());
         }
 
+        element?.addEventListener('webkitbeginfullscreen', handler);
+        element?.addEventListener('webkitendfullscreen', handler);
         document.addEventListener('fullscreenchange', handler);
         // vendor prefixes for fullscreenchange
         document.addEventListener('webkitfullscreenchange', handler);
@@ -753,6 +762,8 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
         document.addEventListener('MSFullscreenChange', handler);
 
         cleanup = () => {
+            element?.removeEventListener('webkitbeginfullscreen', handler);
+            element?.removeEventListener('webkitendfullscreen', handler);
             document.removeEventListener('fullscreenchange', handler);
             document.removeEventListener('webkitfullscreenchange', handler);
             document.removeEventListener('mozfullscreenchange', handler);
@@ -760,18 +771,20 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
         };
     }
     
+    mediaElement.subscribe(detectChanges);
     detectChanges();
 
     return {
         getState() {
-            const element = mediaElement.getState();
+            const element = mediaElement.getState() as NativeFullscreenMediaElement | null;
+            if (!element) return false;
             // @ts-ignore
             const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
 
-            return fullscreenElement === element?.parentElement;
+            return element.webkitDisplayingFullscreen === true || fullscreenElement === element.parentElement;
         },
         setState(fullscreen) {
-            const element = mediaElement.getState();
+            const element = mediaElement.getState() as NativeFullscreenMediaElement | null;
             if (!element) return;
             if (element.parentElement?.getAttribute('data-media-container') !== 'true') 
                 throw new Error('Fullscreen only works if the media element is inside a media container');
@@ -783,11 +796,19 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
             // @ts-ignore
             const exitFullscreen = document.exitFullscreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msExitFullscreen;
 
-            
-            if (fullscreenElement === element.parentElement && !fullscreen) 
-                exitFullscreen.call(document)?.catch(() => { });
-            else if (fullscreen)
-                enterFullscreen.call(element.parentElement)?.catch(() => { });
+            try {
+                if (!fullscreen && element.webkitDisplayingFullscreen) {
+                    element.webkitExitFullscreen?.();
+                } else if (!fullscreen && fullscreenElement === element.parentElement) {
+                    exitFullscreen?.call(document)?.catch(() => { });
+                } else if (fullscreen && enterFullscreen) {
+                    enterFullscreen.call(element.parentElement)?.catch(() => { });
+                } else if (fullscreen) {
+                    element.webkitEnterFullscreen?.();
+                }
+            } catch {
+                return;
+            }
             
             listeners.forEach((listener) => listener());
         },
