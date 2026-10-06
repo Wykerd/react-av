@@ -691,21 +691,24 @@ function createMediaDurationStore(mediaElement: StateStore<HTMLMediaElement | nu
 
 function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<number> {
     const listeners = new Set<StoreListener>();
+    let currentTime = 0;
     let cleanup: StoreListenerUnsubscribe = () => {};
+
+    function update() {
+        const nextTime = mediaElement.getState()?.currentTime ?? 0;
+        if (nextTime === currentTime) return;
+        currentTime = nextTime;
+        listeners.forEach(listener => listener());
+    }
 
     function detectChanges() {
         cleanup();
-
+        update();
         const element = mediaElement.getState();
         if (!element) return;
-        function handler () {
-            listeners.forEach((listener) => listener());
-        };
-        element.addEventListener('timeupdate', handler);
-        
-        cleanup = () => {
-            element.removeEventListener('timeupdate', handler);
-        };
+        const events = ['timeupdate', 'seeking', 'seeked', 'loadedmetadata', 'emptied'];
+        events.forEach(event => element.addEventListener(event, update));
+        cleanup = () => events.forEach(event => element.removeEventListener(event, update));
     }
 
     mediaElement.subscribe(detectChanges);
@@ -713,9 +716,7 @@ function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement |
 
     return {
         getState() {
-            const element = mediaElement.getState();
-            if (!element) return 0;
-            return element.currentTime;
+            return currentTime;
         },
         setState(time) {
             const element = mediaElement.getState();
@@ -723,7 +724,7 @@ function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement |
             if (!Number.isFinite(time) || Number.isNaN(time)) return;
             if (!Number.isFinite(element.duration) || Number.isNaN(element.duration)) return;
             element.currentTime = Math.min(Math.max(time, 0), element.duration);
-            listeners.forEach((listener) => listener());
+            update();
         },
         subscribe(callback) {
             listeners.add(callback);
