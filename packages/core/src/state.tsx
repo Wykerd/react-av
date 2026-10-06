@@ -943,14 +943,22 @@ export function useMediaVolume() {
 
 export function useMediaPlaybackRate(initialRate?: number) {
     const store = useMediaStore();
-    const element = useMediaElement();
     const pendingInitialRate = useRef(initialRate);
 
     useEffect(() => {
-        if (!element || pendingInitialRate.current === undefined) return;
-        store.playbackRate.setState(pendingInitialRate.current);
-        pendingInitialRate.current = undefined;
-    }, [element, store]);
+        if (pendingInitialRate.current === undefined) return;
+
+        function applyInitialRate() {
+            if (!store.mediaElement.getState() || pendingInitialRate.current === undefined) return;
+            store.playbackRate.setState(pendingInitialRate.current);
+            pendingInitialRate.current = undefined;
+            unsubscribe();
+        }
+
+        const unsubscribe = store.mediaElement.subscribe(applyInitialRate);
+        applyInitialRate();
+        return unsubscribe;
+    }, [store]);
 
     return useStateStore(store.playbackRate);
 }
