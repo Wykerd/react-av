@@ -14,7 +14,7 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
 <ul>
 	{editHref && (
 		<li class={`heading-link depth-2`}>
-			<a class="edit-on-github" href={editHref} target="_blank">
+			<a class="edit-on-github" href={editHref} target="_blank" rel="noopener noreferrer">
 				<svg
 					aria-hidden="true"
 					focusable="false"
@@ -38,7 +38,7 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
 	)}
 	{CONFIG.COMMUNITY_INVITE_URL && (
 		<li class={`heading-link depth-2`}>
-			<a href={CONFIG.COMMUNITY_INVITE_URL} target="_blank">
+			<a href={CONFIG.COMMUNITY_INVITE_URL} target="_blank" rel="noopener noreferrer">
 				<svg
 					aria-hidden="true"
 					focusable="false"
