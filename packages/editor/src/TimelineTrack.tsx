@@ -66,6 +66,7 @@ export function TimelineTrack({
     const [dragging, setDragging] = useState(false);
     const [moving, setMoving] = useState(false);
     const [resizing, setResizing] = useState<"start" | "end" | undefined>(undefined);
+    const interacting = dragging || moving || resizing !== undefined;
     const internalSelectedRef = useRef<HTMLDivElement>(null);
     const [interactionCursor, setInteractionCursor] = useState("default");
 
@@ -84,7 +85,7 @@ export function TimelineTrack({
     }, [selectedSymbol, entries])
 
     const anchorTime = useMemo(() => {
-        if (!duration) return 0;
+        if (!duration || !interacting) return 0;
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return 0;
         const currentTimestampOffset = (rect.width / 2);
@@ -92,10 +93,10 @@ export function TimelineTrack({
         const delta = relativeAnchorX - currentTimestampOffset;
         const timeDelta = delta / (8 * 16) * interval;
         return Math.min(duration, Math.max(0, currentTime + timeDelta));
-    }, [duration, anchor, interval, currentTime]);
+    }, [duration, anchor, interval, currentTime, interacting]);
 
     const currentAnchorTime = useMemo(() => {
-        if (!duration) return 0;
+        if (!duration || !interacting) return 0;
         const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return 0;
         const currentTimestampOffset = (rect.width / 2);
@@ -103,7 +104,7 @@ export function TimelineTrack({
         const delta = relativeAnchorX - currentTimestampOffset;
         const timeDelta = delta / (8 * 16) * interval;
         return Math.min(duration, Math.max(0, currentTime + timeDelta));
-    }, [duration, currentAnchor, interval, currentTime]);
+    }, [duration, currentAnchor, interval, currentTime, interacting]);
 
     const [snapDeltaStart, snapDeltaEnd] = useMemo(() => {
         if (!snap) return [0, 0];
