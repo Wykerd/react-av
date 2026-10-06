@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 
 const MediaStoreContext = createContext<MediaStore | null>(null);
 
@@ -941,8 +941,17 @@ export function useMediaVolume() {
     return useStateStore(store.volume);
 }
 
-export function useMediaPlaybackRate() {
+export function useMediaPlaybackRate(initialRate?: number) {
     const store = useMediaStore();
+    const element = useMediaElement();
+    const pendingInitialRate = useRef(initialRate);
+
+    useEffect(() => {
+        if (!element || pendingInitialRate.current === undefined) return;
+        store.playbackRate.setState(pendingInitialRate.current);
+        pendingInitialRate.current = undefined;
+    }, [element, store]);
+
     return useStateStore(store.playbackRate);
 }
 
