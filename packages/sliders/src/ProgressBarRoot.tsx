@@ -64,11 +64,13 @@ export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootPro
             }} 
             {...mergeProps(props, hoverProps)} 
             onMouseMove={handleMouseMove} 
-                onValueChange={value => {
-                value[0] && setCurrentTime(value[0]);
-                value[0] && setState(state => ({
+            onValueChange={value => {
+                const time = value[0];
+                if (time === undefined) return;
+                setCurrentTime(time);
+                setState(state => ({
                     ...state,
-                    percentage: value[0]! / duration,
+                    percentage: time / duration,
                 }));
             }} 
             value={[currentTime]} 
