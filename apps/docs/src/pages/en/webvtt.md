@@ -1,6 +1,6 @@
 ---
-title: WebVTT Implementation
-description: Specification compliant WebVTT parser and renderer for React AV.
+title: WebVTT Parser and Renderer
+description: Parse and render WebVTT cues, captions, regions, and text tracks with the framework-independent TypeScript implementation in React AV.
 layout: ../../layouts/MainLayout.astro
 ---
 

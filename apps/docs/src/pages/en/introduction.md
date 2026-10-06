@@ -1,6 +1,6 @@
 ---
-title: Introduction
-description: Introduction to the React AV library
+title: Build a React Audio and Video Player
+description: Install React AV and build a custom audio or video player with headless components, playback hooks, and controls you can style yourself.
 layout: ../../layouts/MainLayout.astro
 ---
 

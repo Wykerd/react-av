@@ -1,6 +1,6 @@
 ---
-title: Core Hooks
-description: React Hooks API for the core of React AV.
+title: React Media Playback Hooks
+description: Read and control React audio and video playback, current time, volume, buffering, playback speed, and fullscreen with React AV hooks.
 layout: ../../layouts/MainLayout.astro
 ---
 

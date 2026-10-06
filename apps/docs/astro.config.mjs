@@ -6,6 +6,7 @@ import ink from './src/styles/shiki-ink.mjs';
 
 // https://astro.build/config
 export default defineConfig({
+  trailingSlash: 'always',
   integrations: [
   // Enable Preact to support Preact JSX components.
   preact({

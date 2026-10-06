@@ -73,6 +73,31 @@
 	display: none;
 }
 
+.deferred-demo {
+	container-type: inline-size;
+}
+
+.demo-placeholder {
+	display: grid;
+	place-items: center;
+	border: 1px solid var(--color-ink);
+	color: var(--color-ink-soft);
+	text-align: center;
+	padding: 1rem;
+}
+
+.deferred-demo-player .demo-placeholder {
+	height: calc(56.25cqw + 51px);
+}
+
+.deferred-demo-editor .demo-placeholder {
+	height: calc(56.25cqw + 190px);
+}
+
+.deferred-demo-lyrics .demo-placeholder {
+	min-height: 28rem;
+}
+
 .code-block pre {
 	margin: 0;
 	padding: 1.25rem 1.5rem;

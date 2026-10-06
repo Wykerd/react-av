@@ -1,6 +1,6 @@
 export const SITE = {
 	title: 'React AV',
-	description: 'Fully-featured, headless, hooks-based, and declarative media player framework for React.',
+	description: 'Build custom React audio and video players with headless components, playback hooks, HLS/DASH streaming, WebVTT captions, and subtitle editing.',
 	defaultLanguage: 'en_US',
 };
 
@@ -48,6 +48,9 @@ export const SIDEBAR: Sidebar = {
 	en: {
 		'Getting Started': [
 			{ text: 'Introduction', link: 'en/introduction' },
+		],
+		'Guides': [
+			{ text: 'Subtitle editor', link: 'en/subtitle-editor' },
 		],
 		'Core': [
 			{ text: 'Components', link: 'en/core-components' },
