@@ -12,6 +12,8 @@ Like the core library, all components are unstyled and are meant to be used with
 
 The `Controls.PlayPause` component is a button that toggles the media player between playing and paused states.
 
+Play remains available before media data loads, including with `preload="none"`. This lets a tap start playback on iOS, where loading can depend on a user gesture. The loading icon appears while playback is requested but data is still buffering; the button remains usable to pause.
+
 It is a `HTMLButtonElement` and accepts all props that a `button` element accepts.
 
 Additionally, it accepts the following props for icons:
