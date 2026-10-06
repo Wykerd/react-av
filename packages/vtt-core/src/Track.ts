@@ -56,14 +56,14 @@ export class Track {
                 this.#track.addCue(cue);
                 const context = getContext(this.#element);
                 context?.newlyIntroducedCues.add(cue);
+                context?.tracksChanged.dispatchEvent(new CustomEvent("cuechange", {
+                    detail: this.#track
+                }))
             }
             for (const region of parser.regions) {
                 this.#track._addRegion(region);
             }
             this.#readyState = Track.LOADED;
-            getContext(this.#element)?.tracksChanged.dispatchEvent(new CustomEvent("cuechange", {
-                detail: this.#track
-            }));
         } catch (e) {
             console.error(e);
             this.#readyState = Track.ERROR;
