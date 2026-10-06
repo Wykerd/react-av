@@ -1,20 +1,21 @@
 import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import react from '@astrojs/react';
-
-// https://astro.build/config
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [
   // Enable Preact to support Preact JSX components.
   preact({
-    include: ['src/components/**/*.tsx'],
+    include: ['**/src/components/**/*.tsx'],
   }),
-  // Enable React for the Algolia search component.
+  // Enable React for the interactive demos.
   react({
-    include: ['src/demos/**/*.tsx'],
-  }), tailwind()],
+    include: ['**/src/demos/**/*.tsx'],
+  })],
+  vite: {
+    plugins: [tailwindcss()],
+  },
   site: `http://astro.build`
 });

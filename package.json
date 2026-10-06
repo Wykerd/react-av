@@ -9,8 +9,8 @@
   "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
   "devDependencies": {
-    "@changesets/cli": "^2.25.0",
-    "turbo": "^2.5.4"
+    "@changesets/cli": "^3.0.3",
+    "turbo": "^2.11.7"
   },
-  "packageManager": "pnpm@10.12.1"
+  "packageManager": "pnpm@10.34.6"
 }

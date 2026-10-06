@@ -75,7 +75,7 @@ export function useMediaTextTrackList() {
 // see: https://stackoverflow.com/questions/62238716/using-ref-current-in-react-forwardref (useImperativeHandle)
 
 export const Cue = forwardRef(function Cue<T extends keyof HTMLElementTagNameMap>({ as, cue, ...props }: { as: T, cue: VTTCue } & Omit<ComponentPropsWithoutRef<T>, "children">, ref: React.Ref<HTMLElementTagNameMap[T]>) {
-    const i_ref = useRef<HTMLElement>();
+    const i_ref = useRef<HTMLElement | null>(null);
     useEffect(() => {
         if (!i_ref.current) return;
         i_ref.current.innerHTML = "";

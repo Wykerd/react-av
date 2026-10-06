@@ -31,27 +31,27 @@
     "url": "https://github.com/Wykerd/react-av.git"
   },
   "devDependencies": {
+    "@react-av/controls": "workspace:^",
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
-    "@react-av/controls": "workspace:^",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tslib": "^2.7.0",
-    "typescript": "^5.5.4"
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tslib": "^2.8.1",
+    "typescript": "^7.0.2"
   },
   "peerDependencies": {
+    "@react-av/controls": "workspace:^",
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
-    "@react-av/controls": "workspace:^",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
   },
   "dependencies": {
-    "use-resize-observer": "^9.1.0",
-    "@phosphor-icons/react": "^2.1.7"
+    "@phosphor-icons/react": "^2.1.10",
+    "use-resize-observer": "^10.0.0"
   }
 }

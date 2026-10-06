@@ -56,7 +56,7 @@ function useMediaTextTrack2(id: string) {
 
 export interface TimelineSubtitleCueEditorContextValue {
     entry?: VTTCue,
-    focusRef: React.RefObject<HTMLDivElement>,
+    focusRef: React.RefObject<HTMLDivElement | null>,
     deselect: () => void,
     delete: () => void,
     focusTimeline: () => void,
