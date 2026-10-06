@@ -776,7 +776,6 @@ const toUnicodeMap = new Map([
 // https://html.spec.whatwg.org/commit-snapshots/8c7038df2f83fea748ad269592662c087bfbf066/#consume-a-character-reference
 // which is what will be implemented here.
 function consumeCharacterReference(input: string, position: number, additionalAllowedCharacter?: string): { position: number, reference: string | null } {
-    position++;
     const preparseposition = position;
     if (position >= input.length || ['\u0009', '\u000A', '\u000C', '\u0020', '\u003C', '\u0029'].includes(input.charAt(position)) || additionalAllowedCharacter == input.charAt(position)) {
         // Not a character reference. No characters are consumed, and nothing is returned. (This is not an error, either.)
@@ -848,26 +847,26 @@ function consumeCharacterReference(input: string, position: number, additionalAl
         }
     } else {
         // Consume the maximum number of characters possible, with the consumed characters matching one of the identifiers in the first column of the named character references table (in a case-sensitive manner).
-        let consumed = "";
-        // XXX: they're all ASCII alpha and optionally end with a semicolon, so we may use a regex.
-        while (true) {
-            if (input.charAt(position).match(/[a-zA-Z;]/)) {
-                consumed += input.charAt(position);
-                position++;
-            } else break;
+        let candidate = "";
+        while (input.charAt(position + candidate.length).match(/[a-zA-Z0-9]/)) {
+            candidate += input.charAt(position + candidate.length);
         }
-        // If no match can be made, then no characters are consumed, and nothing is returned. In this case, if the characters after the U+0026 AMPERSAND character (&) consist of a sequence of one or more alphanumeric ASCII characters followed by a U+003B SEMICOLON character (;), then this is a parse error.
-        if (!Object.hasOwn(named_character_reference, consumed)) {
-            return {
-                position: preparseposition,
-                reference: null,
+        if (input.charAt(position + candidate.length) == ';') candidate += ';';
+        for (let length = candidate.length; length > 0; length--) {
+            const name = "&" + candidate.substring(0, length);
+            // XXX: this context is not "part of an attribute" so we don't need to check for the semicolon.
+            // Otherwise, a character reference is parsed. If the last character matched is not a U+003B SEMICOLON character (;), there is a parse error.
+            if (Object.hasOwn(named_character_reference, name)) {
+                return {
+                    position: position + length,
+                    reference: named_character_reference[name]!,
+                }
             }
         }
-        // XXX: this context is not "part of an attribute" so we don't need to check for the semicolon.
-        // Otherwise, a character reference is parsed. If the last character matched is not a U+003B SEMICOLON character (;), there is a parse error.
+        // If no match can be made, then no characters are consumed, and nothing is returned. In this case, if the characters after the U+0026 AMPERSAND character (&) consist of a sequence of one or more alphanumeric ASCII characters followed by a U+003B SEMICOLON character (;), then this is a parse error.
         return {
-            position,
-            reference: named_character_reference[consumed]!,
+            position: preparseposition,
+            reference: null,
         }
     }
 }
