@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode, RefObject} from "react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as Media from '@react-av/core';
-import useResizeObserver from "use-resize-observer";
+import { useResizeObserver } from "use-resize-observer";
 import { TimelineEntryLabel } from "./TimelineEntryLabel";
 import { TimelineOverflowContainer } from "./TimelineOverflowContainer";
 import { DraftElement, DragElement, PlayheadLine, TimelineElement } from "./TimelineElements";
@@ -27,7 +27,7 @@ export interface TimelineTrackProps {
     draft?: DraftTimelineEntryData,
     snap?: boolean,
     
-    selectedRef?: RefObject<HTMLDivElement>,
+    selectedRef?: RefObject<HTMLDivElement | null>,
 
     onDraftCreate?: (draft: DraftTimelineEntryData) => void,
     entries?: TimelineEntryData[],

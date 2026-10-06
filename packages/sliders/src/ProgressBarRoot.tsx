@@ -7,7 +7,7 @@ import { useMediaCurrentTimeFine, useMediaDuration } from '@react-av/core';
 
 export interface ProgressBarTooltipContextState {
     percentage: number;
-    root: RefObject<HTMLSpanElement>;
+    root: RefObject<HTMLSpanElement | null>;
     show: boolean;
 };
 

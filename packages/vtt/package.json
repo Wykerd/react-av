@@ -11,7 +11,6 @@
     "build": "pnpm build:cjs && pnpm build:esm",
     "dev": "tsc --watch"
   },
-  "dependencies": {},
   "keywords": [],
   "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
@@ -23,17 +22,17 @@
   "devDependencies": {
     "@react-av/core": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tslib": "^2.7.0",
-    "typescript": "^5.5.4"
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tslib": "^2.8.1",
+    "typescript": "^7.0.2"
   },
   "peerDependencies": {
     "@react-av/core": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
   }
 }

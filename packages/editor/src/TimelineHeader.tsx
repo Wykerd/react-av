@@ -4,7 +4,7 @@ import type { ReactNode, CSSProperties, ReactElement } from 'react';
 import { useState, useMemo, cloneElement } from 'react';
 import { toTimestampString as toTimestampStringShort } from "@react-av/controls";
 import { toTimestampString } from '@react-av/vtt-core';
-import useResizeObserver from 'use-resize-observer';
+import { useResizeObserver } from 'use-resize-observer';
 import { TimelineOverflowContainer } from './TimelineOverflowContainer';
 import { useTimelineEditorContext } from './TimelineEditor';
 
