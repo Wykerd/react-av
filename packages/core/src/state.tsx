@@ -35,6 +35,7 @@ export function createStateStore<T>(initialState: T): StateStore<T> {
     }
 
     function setState(newState: T) {
+        if (Object.is(state, newState)) return;
         state = newState;
         listeners.forEach((listener) => listener());
     }
@@ -274,9 +275,13 @@ function createMediaErrorStateStore(mediaElement: StateStore<HTMLMediaElement | 
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('error', handler);
+        element.addEventListener('emptied', handler);
+        element.addEventListener('loadstart', handler);
         
         cleanup = () => {
             element.removeEventListener('error', handler);
+            element.removeEventListener('emptied', handler);
+            element.removeEventListener('loadstart', handler);
         };
     }
 
@@ -356,6 +361,8 @@ function createMediaBufferedStateStore(mediaElement: StateStore<HTMLMediaElement
         cleanup();
 
         const element = mediaElement.getState();
+        lastRanges = element?.buffered ?? null;
+        listeners.forEach(listener => listener());
         if (!element) return;
         function handler () {
             if (!element?.buffered) return;
@@ -364,9 +371,13 @@ function createMediaBufferedStateStore(mediaElement: StateStore<HTMLMediaElement
             listeners.forEach((listener) => listener());
         };
         element.addEventListener('progress', handler);
+        element.addEventListener('loadedmetadata', handler);
+        element.addEventListener('emptied', handler);
         
         cleanup = () => {
             element.removeEventListener('progress', handler);
+            element.removeEventListener('loadedmetadata', handler);
+            element.removeEventListener('emptied', handler);
         };
     }
 
@@ -445,11 +456,12 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
         cleanup();
 
         const element = mediaElement.getState();
+        lastRanges = element?.seekable ?? null;
+        listeners.forEach(listener => listener());
         if (!element) return;
         function handler () {
             if (!element?.seekable) return;
-            if (!lastRanges) return;
-            if (timeRangesCompare(element.seekable, lastRanges)) return;
+            if (lastRanges && timeRangesCompare(element.seekable, lastRanges)) return;
             lastRanges = element?.seekable ?? null;
             listeners.forEach((listener) => listener());
         };
@@ -458,6 +470,8 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
         element.addEventListener('progress', handler);
         element.addEventListener('canplay', handler);
         element.addEventListener('canplaythrough', handler);
+        element.addEventListener('loadedmetadata', handler);
+        element.addEventListener('emptied', handler);
         
         cleanup = () => {
             element.removeEventListener('seeking', handler);
@@ -465,6 +479,8 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
             element.removeEventListener('progress', handler);
             element.removeEventListener('canplay', handler);
             element.removeEventListener('canplaythrough', handler);
+            element.removeEventListener('loadedmetadata', handler);
+            element.removeEventListener('emptied', handler);
         };
     }
 
@@ -491,7 +507,6 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
 
 function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
-    let lastPlaying: boolean = false;
     let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
@@ -500,17 +515,22 @@ function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | nul
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
-            if (element?.paused === lastPlaying) return;
             listeners.forEach((listener) => listener());
-            lastPlaying = !element?.paused;
         };
         element.addEventListener('play', handler);
         element.addEventListener('pause', handler);
+        element.addEventListener('ended', handler);
+        element.addEventListener('emptied', handler);
+        element.addEventListener('error', handler);
 
         cleanup = () => {
             element.removeEventListener('play', handler);
             element.removeEventListener('pause', handler);
+            element.removeEventListener('ended', handler);
+            element.removeEventListener('emptied', handler);
+            element.removeEventListener('error', handler);
         };
+        handler();
     }
 
     mediaElement.subscribe(detectChanges);
@@ -525,7 +545,15 @@ function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | nul
         setState(playing) {
             const element = mediaElement.getState();
             if (!element) return;
-            if (playing && element.paused) element.play();
+            if (playing && element.paused) {
+                try {
+                    element.play()?.catch(() => {
+                        listeners.forEach((listener) => listener());
+                    });
+                } catch {
+                    listeners.forEach((listener) => listener());
+                }
+            }
             if (!playing && !element.paused) element.pause();
             listeners.forEach((listener) => listener());
         },
@@ -691,21 +719,25 @@ function createMediaDurationStore(mediaElement: StateStore<HTMLMediaElement | nu
 
 function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<number> {
     const listeners = new Set<StoreListener>();
+    let currentTime = 0;
     let cleanup: StoreListenerUnsubscribe = () => {};
+
+    function update() {
+        const time = mediaElement.getState()?.currentTime ?? 0;
+        const nextTime = Number.isFinite(time) ? time : 0;
+        if (nextTime === currentTime) return;
+        currentTime = nextTime;
+        listeners.forEach(listener => listener());
+    }
 
     function detectChanges() {
         cleanup();
-
+        update();
         const element = mediaElement.getState();
         if (!element) return;
-        function handler () {
-            listeners.forEach((listener) => listener());
-        };
-        element.addEventListener('timeupdate', handler);
-        
-        cleanup = () => {
-            element.removeEventListener('timeupdate', handler);
-        };
+        const events = ['timeupdate', 'seeking', 'seeked', 'loadedmetadata', 'emptied'];
+        events.forEach(event => element.addEventListener(event, update));
+        cleanup = () => events.forEach(event => element.removeEventListener(event, update));
     }
 
     mediaElement.subscribe(detectChanges);
@@ -713,90 +745,135 @@ function createMediaCurrentTimeStore(mediaElement: StateStore<HTMLMediaElement |
 
     return {
         getState() {
-            const element = mediaElement.getState();
-            if (!element) return 0;
-            return element.currentTime;
+            return currentTime;
         },
         setState(time) {
             const element = mediaElement.getState();
-            if (!element) return;
-            if (!Number.isFinite(time) || Number.isNaN(time)) return;
-            if (!Number.isFinite(element.duration) || Number.isNaN(element.duration)) return;
+            if (!element || !Number.isFinite(time) || !Number.isFinite(element.duration)) return;
             element.currentTime = Math.min(Math.max(time, 0), element.duration);
-            listeners.forEach((listener) => listener());
+            update();
         },
         subscribe(callback) {
             listeners.add(callback);
-            return () => {
-                listeners.delete(callback);
-            }
+            return () => listeners.delete(callback);
         },
-    }
+    };
+}
+
+type FullscreenDocument = Document & {
+    webkitFullscreenElement?: Element;
+    webkitFullscreenEnabled?: boolean;
+    webkitExitFullscreen?: () => Promise<void> | void;
+    webkitCancelFullScreen?: () => void;
+    mozFullScreenElement?: Element;
+    mozCancelFullScreen?: () => void;
+    msFullscreenElement?: Element;
+    msExitFullscreen?: () => void;
+};
+
+type FullscreenContainer = HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void;
+    mozRequestFullScreen?: () => void;
+    msRequestFullscreen?: () => void;
+};
+
+type FullscreenMedia = HTMLMediaElement & {
+    webkitDisplayingFullscreen?: boolean;
+    webkitSupportsFullscreen?: boolean;
+    webkitEnterFullscreen?: () => void;
+    webkitExitFullscreen?: () => void;
+};
+
+function getFullscreenElement(document: FullscreenDocument) {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+}
+
+function getEnterFullscreen(container: FullscreenContainer) {
+    const document = container.ownerDocument as FullscreenDocument;
+    if (document.fullscreenEnabled !== false && container.requestFullscreen) return container.requestFullscreen;
+    if (document.webkitFullscreenEnabled !== false && container.webkitRequestFullscreen) return container.webkitRequestFullscreen;
+    return container.mozRequestFullScreen || container.msRequestFullscreen;
+}
+
+function supportsFullscreen(element: FullscreenMedia | null) {
+    if (!element?.parentElement) return false;
+    if (getEnterFullscreen(element.parentElement)) return true;
+    return element.nodeName === 'VIDEO' && typeof element.webkitEnterFullscreen === 'function' && element.webkitSupportsFullscreen !== false;
 }
 
 function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
     let cleanup: StoreListenerUnsubscribe = () => {};
+    let unsubscribeElement: StoreListenerUnsubscribe = () => {};
+
+    function notify() {
+        listeners.forEach(listener => listener());
+    }
 
     function detectChanges() {
         cleanup();
-
-        function handler() {
-            listeners.forEach((listener) => listener());
-        }
-
-        document.addEventListener('fullscreenchange', handler);
-        // vendor prefixes for fullscreenchange
-        document.addEventListener('webkitfullscreenchange', handler);
-        document.addEventListener('mozfullscreenchange', handler);
-        document.addEventListener('MSFullscreenChange', handler);
-
+        const element = mediaElement.getState();
+        if (!element) return;
+        const document = element.ownerDocument;
+        const events = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+        events.forEach(event => document.addEventListener(event, notify));
+        element.addEventListener('webkitbeginfullscreen', notify);
+        element.addEventListener('webkitendfullscreen', notify);
         cleanup = () => {
-            document.removeEventListener('fullscreenchange', handler);
-            document.removeEventListener('webkitfullscreenchange', handler);
-            document.removeEventListener('mozfullscreenchange', handler);
-            document.removeEventListener('MSFullscreenChange', handler);
+            events.forEach(event => document.removeEventListener(event, notify));
+            element.removeEventListener('webkitbeginfullscreen', notify);
+            element.removeEventListener('webkitendfullscreen', notify);
         };
+        notify();
     }
-    
-    detectChanges();
 
     return {
         getState() {
-            const element = mediaElement.getState();
-            // @ts-ignore
-            const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-
-            return fullscreenElement === element?.parentElement;
+            const element = mediaElement.getState() as FullscreenMedia | null;
+            if (!element) return false;
+            return Boolean(element.webkitDisplayingFullscreen || (element.parentElement && getFullscreenElement(element.ownerDocument) === element.parentElement));
         },
         setState(fullscreen) {
-            const element = mediaElement.getState();
+            const element = mediaElement.getState() as FullscreenMedia | null;
             if (!element) return;
-            if (element.parentElement?.getAttribute('data-media-container') !== 'true') 
+            const container = element.parentElement;
+            if (container?.getAttribute('data-media-container') !== 'true')
                 throw new Error('Fullscreen only works if the media element is inside a media container');
-            // @ts-ignore
-            const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-
-            // @ts-ignore
-            const enterFullscreen = element.parentElement?.requestFullscreen || element.parentElement?.webkitRequestFullscreen || element.parentElement?.mozRequestFullScreen || element.parentElement?.msRequestFullscreen;
-            // @ts-ignore
-            const exitFullscreen = document.exitFullscreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msExitFullscreen;
-
-            
-            if (fullscreenElement === element.parentElement && !fullscreen) 
-                exitFullscreen.call(document)?.catch(() => { });
-            else if (fullscreen)
-                enterFullscreen.call(element.parentElement)?.catch(() => { });
-            
-            listeners.forEach((listener) => listener());
+            const document = element.ownerDocument as FullscreenDocument;
+            const fullscreenElement = getFullscreenElement(document);
+            try {
+                if (fullscreen) {
+                    const enterFullscreen = getEnterFullscreen(container);
+                    if (enterFullscreen) {
+                        enterFullscreen.call(container)?.catch(notify);
+                    } else if (supportsFullscreen(element)) {
+                        element.webkitEnterFullscreen?.();
+                    }
+                } else if (element.webkitDisplayingFullscreen) {
+                    element.webkitExitFullscreen?.();
+                } else if (fullscreenElement === container) {
+                    const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                    exitFullscreen?.call(document)?.catch(notify);
+                }
+            } catch {
+                notify();
+            }
         },
         subscribe(callback) {
             listeners.add(callback);
+            if (listeners.size === 1) {
+                unsubscribeElement = mediaElement.subscribe(detectChanges);
+                detectChanges();
+            }
             return () => {
                 listeners.delete(callback);
-            }
+                if (listeners.size === 0) {
+                    unsubscribeElement();
+                    cleanup();
+                }
+            };
         },
-    }
+    };
 }
 
 export function createMediaStore(): MediaStore {
@@ -962,22 +1039,63 @@ export function useMediaCurrentTimeFine() {
     const [currentTime, setCurrentTime] = useState(0);
 
     useEffect(() => {
-        if (!element) return;
-        let handle = 0;
+        if (!element) {
+            setCurrentTime(0);
+            return;
+        }
+        let handle: number | undefined;
+        const document = element.ownerDocument;
+        function update() {
+            if (element && Number.isFinite(element.currentTime)) setCurrentTime(element.currentTime);
+        }
+        function stop() {
+            if (handle !== undefined) cancelAnimationFrame(handle);
+            handle = undefined;
+            update();
+        }
         function tick() {
-            if (!element) return;
-            if (!Number.isNaN(element.currentTime) && Number.isFinite(element.currentTime))
-                setCurrentTime(element.currentTime);
-            handle = requestAnimationFrame(tick);
+            handle = undefined;
+            update();
+            if (!element?.paused && !element?.ended && !document.hidden) handle = requestAnimationFrame(tick);
         }
-        tick();
-
+        function start() {
+            update();
+            if (handle === undefined && !element?.paused && !element?.ended && !document.hidden)
+                handle = requestAnimationFrame(tick);
+        }
+        function visibilityChanged() {
+            if (document.hidden) stop();
+            else start();
+        }
+        element.addEventListener('playing', start);
+        element.addEventListener('pause', stop);
+        element.addEventListener('ended', stop);
+        element.addEventListener('waiting', stop);
+        element.addEventListener('emptied', stop);
+        element.addEventListener('timeupdate', update);
+        element.addEventListener('seeked', update);
+        document.addEventListener('visibilitychange', visibilityChanged);
+        start();
         return () => {
-            cancelAnimationFrame(handle);
-        }
+            if (handle !== undefined) cancelAnimationFrame(handle);
+            element.removeEventListener('playing', start);
+            element.removeEventListener('pause', stop);
+            element.removeEventListener('ended', stop);
+            element.removeEventListener('waiting', stop);
+            element.removeEventListener('emptied', stop);
+            element.removeEventListener('timeupdate', update);
+            element.removeEventListener('seeked', update);
+            document.removeEventListener('visibilitychange', visibilityChanged);
+        };
     }, [element]);
 
     return [currentTime, store.currentTime.setState] as const;
+}
+
+export function useMediaFullscreenSupported() {
+    const element = useMediaElement();
+    useMediaReadyState();
+    return supportsFullscreen(element);
 }
 
 export function useMediaFullscreen() {

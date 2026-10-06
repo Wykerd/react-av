@@ -22,7 +22,33 @@ export interface TextTrackCueContext {
 }
 
 const trackContext = new Map<HTMLMediaElement, TextTrackContext>();
-const cueContext = new Map<TextTrackCue, TextTrackCueContext>();
+const cueContext = new WeakMap<TextTrackCue, TextTrackCueContext>();
+const mediaCleanup = new WeakMap<HTMLMediaElement, () => void>();
+let animationFrame: number | undefined;
+
+function scheduleTimeLoop() {
+    if (!globalThis.window || document.hidden || animationFrame !== undefined) return;
+    for (const [element, context] of trackContext) {
+        if (!element.paused && !element.ended && context.tracks.length > 0) {
+            animationFrame = requestAnimationFrame(() => {
+                animationFrame = undefined;
+                timeMarchesOn();
+                scheduleTimeLoop();
+            });
+            return;
+        }
+    }
+}
+
+function visibilityChanged() {
+    if (document.hidden && animationFrame !== undefined) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = undefined;
+    } else {
+        timeMarchesOn();
+        scheduleTimeLoop();
+    }
+}
 
 export function getContext(element: HTMLMediaElement) {
     return trackContext.get(element);
@@ -74,12 +100,39 @@ export function init(element: HTMLMediaElement) {
         updateRules: new Set([defaultUpdateRule])
     });
 
+    const events = ['playing', 'pause', 'ended', 'timeupdate', 'seeked', 'loadedmetadata', 'emptied'];
+    function update() {
+        timeMarchesOn();
+        scheduleTimeLoop();
+    }
+    function tracksChanged() {
+        const context = trackContext.get(element);
+        if (context) context.lastTimestamp = undefined;
+        update();
+    }
+    events.forEach(event => element.addEventListener(event, update));
+    const context = trackContext.get(element)!;
+    context.tracksChanged.addEventListener('cuechange', tracksChanged);
+    mediaCleanup.set(element, () => {
+        events.forEach(event => element.removeEventListener(event, update));
+        context.tracksChanged.removeEventListener('cuechange', tracksChanged);
+    });
+    if (trackContext.size === 1) document.addEventListener('visibilitychange', visibilityChanged);
+    update();
+
     return trackContext.get(element)!;
 }
 
 export function deinit(element: HTMLMediaElement) {
+    mediaCleanup.get(element)?.();
+    mediaCleanup.delete(element);
     observer?.unobserve(element);
     trackContext.delete(element);
+    if (trackContext.size === 0) {
+        if (animationFrame !== undefined) cancelAnimationFrame(animationFrame);
+        animationFrame = undefined;
+        document.removeEventListener('visibilitychange', visibilityChanged);
+    }
 }
 
 export function ref(element: HTMLMediaElement) {
@@ -99,6 +152,7 @@ export function addTrack(element: HTMLMediaElement, track: TextTrack) {
     const context = trackContext.get(element);
     if (!context) return;
     context.tracks.push(track);
+    scheduleTimeLoop();
     
     context.tracksChanged.dispatchEvent(new CustomEvent("change", {
         detail: context
@@ -139,14 +193,6 @@ export function getCueById(element: HTMLMediaElement, id: string) {
         const cue = track.cues?.find(cue => cue.id === id);
         if (cue) return cue;
     }
-}
-
-if (globalThis?.window) {
-    function timeLoop() {
-        timeMarchesOn();
-        window.requestAnimationFrame(timeLoop);
-    }
-    timeLoop();
 }
 
 export function updateTextTrackDisplay(element: HTMLMediaElement, affectedTracks: TextTrack[]) {
