@@ -28,7 +28,6 @@ function SeekTooltip({ className }: { className: string }) {
 const INK_BUTTON = "grid size-8 place-items-center border border-ink/0 text-ink transition-colors hover:border-ink focus-visible:border-ink focus-visible:outline-none";
 
 function InkControls() {
-    const duration = Media.useMediaDuration();
     const icon = { weight: "light", size: 18 } as const;
     return <div
         className="flex shrink-0 items-center gap-2 border-t border-ink bg-paper px-2 py-1.5 text-ink"
@@ -39,16 +38,16 @@ function InkControls() {
             pauseIcon={<Pause {...icon} />}
             loadingIcon={<CircleNotch {...icon} className="animate-spin" />}
         />
-        <span className="hidden font-mono text-[10px] tabular-nums sm:inline">
+        <span className="hidden w-24 shrink-0 font-mono text-[10px] tabular-nums sm:inline">
             <Timestamp type="elapsed" /> <span className="text-ink-soft">/ <Timestamp type="duration" /></span>
         </span>
-        <ProgressBarRoot style={{ visibility: duration > 0 ? "visible" : "hidden" }} className="relative mx-1 flex h-6 grow touch-none select-none items-center">
+        <ProgressBarRoot className="relative mx-1 flex h-6 grow touch-none select-none items-center">
             <Slider.Track className="relative h-px grow bg-ink/25">
                 <ProgressBarBufferedRanges className="absolute h-full bg-ink/40" />
                 <Slider.Range className="absolute h-full bg-ink" />
             </Slider.Track>
             <SeekTooltip className="-top-7 border border-ink bg-paper px-1.5 py-0.5 font-mono text-[10px]" />
-            <Slider.Thumb aria-label="Seek" className="block size-2.5 rotate-45 border border-ink bg-paper outline-none focus-visible:bg-signal" />
+            <Slider.Thumb aria-label="Seek" className="block! size-2.5 rotate-45 border border-ink bg-paper outline-none focus-visible:bg-signal [&:not([aria-valuenow])]:translate-x-1/2" />
         </ProgressBarRoot>
         <Mute
             className={INK_BUTTON}
@@ -57,7 +56,9 @@ function InkControls() {
             noneIcon={<SpeakerNone {...icon} />}
             mutedIcon={<SpeakerX {...icon} />}
         />
-        <PictureInPicture className={`${INK_BUTTON} max-sm:hidden`} icon={<PipIcon {...icon} />} />
+        <span className="size-8 shrink-0 max-sm:hidden">
+            <PictureInPicture className={INK_BUTTON} icon={<PipIcon {...icon} />} />
+        </span>
         <Fullscreen className={INK_BUTTON} fullscreenIcon={<ArrowsOut {...icon} />} exitFullscreenIcon={<ArrowsIn {...icon} />} />
     </div>;
 }
