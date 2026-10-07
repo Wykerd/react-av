@@ -26,6 +26,7 @@ export const Video: React.ForwardRefExoticComponent<VideoProps & RefAttributes<H
         if (ref.current?.parentElement?.getAttribute('data-media-container') !== 'true') 
             throw new Error('Video element must be wrapped in a <Media.Container />');
         setElement(ref.current);
+        return () => setElement(null);
     }, [setElement]);
 
     return <video {...props} ref={current => {
@@ -50,6 +51,7 @@ export const Audio: React.ForwardRefExoticComponent<AudioProps & RefAttributes<H
 
     useEffect(() => {
         setElement(ref.current);
+        return () => setElement(null);
     }, [setElement]);
 
     return <audio {...props} ref={current => {

@@ -826,44 +826,56 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
     }
 }
 
-function withServerSnapshot<T>(store: StateStore<T>): StateStore<T> {
-    const snapshot = store.getState();
-    return { ...store, getServerSnapshot: () => snapshot };
-}
-
 export function createMediaStore(): MediaStore {
     const mediaElement = createStateStore<HTMLMediaElement | null>(null);
+
+    function withMediaSnapshot<T>(store: StateStore<T>): StateStore<T> {
+        const snapshot = store.getState();
+        return {
+            ...store,
+            getServerSnapshot: () => snapshot,
+            subscribe(callback) {
+                const unsubscribeStore = store.subscribe(callback);
+                const unsubscribeElement = mediaElement.subscribe(callback);
+                return () => {
+                    unsubscribeStore();
+                    unsubscribeElement();
+                };
+            },
+        };
+    }
 
     const opaqueStores = new Map<string, StateStore<unknown>>();
 
     return {
         mediaElement,
-        audioOnly: withServerSnapshot({
+        audioOnly: {
             getState() {
                 return mediaElement.getState()?.tagName === 'AUDIO';
             },
+            getServerSnapshot: () => false,
             setState() {
                 // Do nothing
             },
             subscribe(callback) {
                 return mediaElement.subscribe(callback);
             },
-        }),
-        muted: withServerSnapshot(createMutedStore(mediaElement)),
-        readyState: withServerSnapshot(createMediaReadyStateStore(mediaElement)),
-        networkState: withServerSnapshot(createMediaNetworkStateStore(mediaElement)),
-        error: withServerSnapshot(createMediaErrorStateStore(mediaElement)),
-        ended: withServerSnapshot(createMediaEndedStateStore(mediaElement)),
-        buffered: withServerSnapshot(createMediaBufferedStateStore(mediaElement)),
-        seeking: withServerSnapshot(createMediaSeekingStore(mediaElement)),
-        seekable: withServerSnapshot(createMediaSeekableStore(mediaElement)),
-        playing: withServerSnapshot(createMediaPlayingStore(mediaElement)),
-        loop: withServerSnapshot(createMediaLoopStore(mediaElement)),
-        volume: withServerSnapshot(createMediaVolumeStore(mediaElement)),
-        playbackRate: withServerSnapshot(createMediaPlaybackRateStore(mediaElement)),
-        duration: withServerSnapshot(createMediaDurationStore(mediaElement)),
-        currentTime: withServerSnapshot(createMediaCurrentTimeStore(mediaElement)),
-        fullscreen: withServerSnapshot(createMediaFullscreenStore(mediaElement)),
+        },
+        muted: withMediaSnapshot(createMutedStore(mediaElement)),
+        readyState: withMediaSnapshot(createMediaReadyStateStore(mediaElement)),
+        networkState: withMediaSnapshot(createMediaNetworkStateStore(mediaElement)),
+        error: withMediaSnapshot(createMediaErrorStateStore(mediaElement)),
+        ended: withMediaSnapshot(createMediaEndedStateStore(mediaElement)),
+        buffered: withMediaSnapshot(createMediaBufferedStateStore(mediaElement)),
+        seeking: withMediaSnapshot(createMediaSeekingStore(mediaElement)),
+        seekable: withMediaSnapshot(createMediaSeekableStore(mediaElement)),
+        playing: withMediaSnapshot(createMediaPlayingStore(mediaElement)),
+        loop: withMediaSnapshot(createMediaLoopStore(mediaElement)),
+        volume: withMediaSnapshot(createMediaVolumeStore(mediaElement)),
+        playbackRate: withMediaSnapshot(createMediaPlaybackRateStore(mediaElement)),
+        duration: withMediaSnapshot(createMediaDurationStore(mediaElement)),
+        currentTime: withMediaSnapshot(createMediaCurrentTimeStore(mediaElement)),
+        fullscreen: withMediaSnapshot(createMediaFullscreenStore(mediaElement)),
         opaque: (key: string) => {
             if (opaqueStores.has(key)) 
                 return opaqueStores.get(key)!;

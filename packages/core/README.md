@@ -18,7 +18,9 @@ See the [documentation](https://react-av.wykerd.dev) for more information.
 
 `Media.Root` and its controls can render on the server. Media hooks use the
 player's initial state during server rendering and hydration, then read the
-browser's media state after hydration. Each root has its own store.
+browser's media state after hydration, even when controls precede media that
+has already loaded. Controls update when media is mounted or removed.
+Each root has its own store.
 
 `StateStore` accepts an optional `getServerSnapshot` for custom stores used with
 `useStateStoreValue` or `useStateStore`. Return the same initial value on the
