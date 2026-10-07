@@ -22,6 +22,7 @@ export type StoreListenerUnsubscribe = () => void;
 
 export interface StateStore<T> {
     getState: () => T;
+    getServerSnapshot?: () => T;
     setState: (state: T) => void;
     subscribe: (callback: StoreListener) => StoreListenerUnsubscribe;
 }
@@ -48,6 +49,7 @@ export function createStateStore<T>(initialState: T): StateStore<T> {
 
     return {
         getState,
+        getServerSnapshot: () => initialState,
         setState,
         subscribe,
     };
@@ -824,6 +826,11 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
     }
 }
 
+function withServerSnapshot<T>(store: StateStore<T>): StateStore<T> {
+    const snapshot = store.getState();
+    return { ...store, getServerSnapshot: () => snapshot };
+}
+
 export function createMediaStore(): MediaStore {
     const mediaElement = createStateStore<HTMLMediaElement | null>(null);
 
@@ -831,7 +838,7 @@ export function createMediaStore(): MediaStore {
 
     return {
         mediaElement,
-        audioOnly: {
+        audioOnly: withServerSnapshot({
             getState() {
                 return mediaElement.getState()?.tagName === 'AUDIO';
             },
@@ -841,22 +848,22 @@ export function createMediaStore(): MediaStore {
             subscribe(callback) {
                 return mediaElement.subscribe(callback);
             },
-        },
-        muted: createMutedStore(mediaElement),
-        readyState: createMediaReadyStateStore(mediaElement),
-        networkState: createMediaNetworkStateStore(mediaElement),
-        error: createMediaErrorStateStore(mediaElement),
-        ended: createMediaEndedStateStore(mediaElement),
-        buffered: createMediaBufferedStateStore(mediaElement),
-        seeking: createMediaSeekingStore(mediaElement),
-        seekable: createMediaSeekableStore(mediaElement),
-        playing: createMediaPlayingStore(mediaElement),
-        loop: createMediaLoopStore(mediaElement),
-        volume: createMediaVolumeStore(mediaElement),
-        playbackRate: createMediaPlaybackRateStore(mediaElement),
-        duration: createMediaDurationStore(mediaElement),
-        currentTime: createMediaCurrentTimeStore(mediaElement),
-        fullscreen: createMediaFullscreenStore(mediaElement),
+        }),
+        muted: withServerSnapshot(createMutedStore(mediaElement)),
+        readyState: withServerSnapshot(createMediaReadyStateStore(mediaElement)),
+        networkState: withServerSnapshot(createMediaNetworkStateStore(mediaElement)),
+        error: withServerSnapshot(createMediaErrorStateStore(mediaElement)),
+        ended: withServerSnapshot(createMediaEndedStateStore(mediaElement)),
+        buffered: withServerSnapshot(createMediaBufferedStateStore(mediaElement)),
+        seeking: withServerSnapshot(createMediaSeekingStore(mediaElement)),
+        seekable: withServerSnapshot(createMediaSeekableStore(mediaElement)),
+        playing: withServerSnapshot(createMediaPlayingStore(mediaElement)),
+        loop: withServerSnapshot(createMediaLoopStore(mediaElement)),
+        volume: withServerSnapshot(createMediaVolumeStore(mediaElement)),
+        playbackRate: withServerSnapshot(createMediaPlaybackRateStore(mediaElement)),
+        duration: withServerSnapshot(createMediaDurationStore(mediaElement)),
+        currentTime: withServerSnapshot(createMediaCurrentTimeStore(mediaElement)),
+        fullscreen: withServerSnapshot(createMediaFullscreenStore(mediaElement)),
         opaque: (key: string) => {
             if (opaqueStores.has(key)) 
                 return opaqueStores.get(key)!;
@@ -883,7 +890,7 @@ export function MediaStoreProvider({ children }: { children: React.ReactNode }) 
 }
 
 export function useStateStoreValue<T>(store: StateStore<T>): T {
-    return useSyncExternalStore(store.subscribe, store.getState);
+    return useSyncExternalStore(store.subscribe, store.getState, store.getServerSnapshot ?? store.getState);
 }
 
 export function useStateStore<T>(store: StateStore<T>): readonly [T, (value: T) => void] {
