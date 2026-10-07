@@ -145,10 +145,10 @@ export default function PlayerDemo() {
 
     return <div className="flex flex-col gap-4">
         <PlayerDemoHeader skin={skin} onChange={setSkin} />
-        <Media.Root>
+        <Media.Root loading="lazy">
             <Media.Container className={`player-demo relative overflow-hidden bg-ink transition-[border-radius,box-shadow] duration-500 ${CONTAINER_CLASSES[skin]}`}>
                 <Media.Video
-                    src="https://storage.wykerd.dev/react-av/sprite-fright.mp4#t=0.1"
+                    src="https://storage.wykerd.dev/react-av/sprite-fright.mp4"
                     poster="/sprite-fright.jpg"
                     playsInline
                     width={2048}
