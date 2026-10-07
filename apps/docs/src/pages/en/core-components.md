@@ -39,6 +39,37 @@ The `Media.Root` component is the root of the React AV component tree. It provid
 
 Each media player must be wrapped in its own `Media.Root` component. This allows for multiple players to be rendered on the same page.
 
+### Deferred loading
+
+Set `loading="lazy"` on `Media.Root` to render the complete player while deferring
+native media loading. Wrap the media and its visible controls in `Media.Container`,
+including for audio players. Loading activates once the container comes within
+200 pixels of the viewport, receives focus or a pointer press, or playback starts.
+Leaving the viewport does not pause the player or reset its playback state.
+
+```jsx
+<Media.Root loading="lazy">
+  <Media.Container>
+    <Media.Video src="/video.mp4" poster="/poster.jpg" preload="auto" />
+    <PlayPause />
+  </Media.Container>
+</Media.Root>
+```
+
+Before activation, `Media.Video` and `Media.Audio` use `preload="none"` and defer
+`autoPlay`. After activation, they honor your original props. Preloading remains
+a browser hint; explicit playback can load the source immediately. Browsers
+without `IntersectionObserver` activate on mount. The default `loading="eager"`
+preserves normal browser loading behavior.
+
+`useMediaLoadingState()` and the container's `data-media-loading` attribute expose
+`deferred`, `loading`, `ready`, or `error`. `ready` means a current frame or audio
+data is available; later buffering can return to `loading`. This option controls
+native media loading, while your framework controls JavaScript delivery and
+hydration. Streaming adapters manage their own network requests.
+Server rendering keeps the player shell and poster present before
+hydration; supply dimensions to reserve the video's space.
+
 ```jsx
 import * as Media from '@react-av/core';
 
