@@ -89,11 +89,13 @@ export function TimelineControlBar({
             className={typeof styling?.timelineControlBarZoomContainer === 'string' ? styling.timelineControlBarZoomContainer : undefined}
         >
             <button 
+                type="button"
+                aria-label="Zoom in"
+                title="Zoom in"
                 style={typeof styling?.timelineControlBarZoomButton === 'string' ? {} : styling?.timelineControlBarZoomButton}
                 className={typeof styling?.timelineControlBarZoomButton === 'string' ? styling.timelineControlBarZoomButton : undefined}
                 onClick={() => setTimelineInterval(interval => Math.max(1, interval - 1))}
             >
-                {/* TODO: Tooltip = Zoom In */}
                 {
                     styling?.timelineControlBarZoomInIcon ? styling.timelineControlBarZoomInIcon : <ZoomIn />
                 }
@@ -107,11 +109,13 @@ export function TimelineControlBar({
                 }
             </span>
             <button 
+                type="button"
+                aria-label="Zoom out"
+                title="Zoom out"
                 style={typeof styling?.timelineControlBarZoomButton === 'string' ? {} : styling?.timelineControlBarZoomButton}
                 className={typeof styling?.timelineControlBarZoomButton === 'string' ? styling.timelineControlBarZoomButton : undefined}
                 onClick={() => setTimelineInterval(interval => Math.min(Math.max(5, Math.floor(duration / 40) * 10), interval + 1))}
             >
-                {/* TODO: Tooltip = Zoom Out */}
                 {
                     styling?.timelineControlBarZoomOutIcon ? styling.timelineControlBarZoomOutIcon : <ZoomOut />
                 }
