@@ -19,9 +19,9 @@ export function useMediaProgressBarTooltip() {
     return context;
 }
 
-export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min" | "step"> & ComponentPropsWithoutRef<'span'>;
+export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min"> & ComponentPropsWithoutRef<'span'>;
 
-export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, ...props}, ref) {
+export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, step = 1, ...props}, ref) {
     const [currentTime, setCurrentTime] = useMediaCurrentTimeFine();
     const internalRef = useRef<HTMLSpanElement>(null);
     const duration = useMediaDuration();
@@ -74,7 +74,7 @@ export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootPro
                 }));
             }} 
             value={[currentTime]} 
-            min={0} max={duration} step={0.001}
+            min={0} max={duration} step={step}
         >
             {children}
         </SliderRoot>

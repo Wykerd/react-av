@@ -14,6 +14,8 @@ npm i @react-av/core @radix-ui/react-slider @react-av/sliders
 
 Displays a progress bar for the media. Changing the value of the progress bar will seek the media to the new time.
 
+The default `step` is one second. Arrow keys move one step; Shift+Arrow and Page Up/Down move ten steps. Pass `step={0.001}` when you need millisecond precision for pointer and keyboard adjustments.
+
 Simply replace Radix UI's `Slider.Root` component with `ProgressBarRoot` and you're good to go.
 
 ```tsx
@@ -33,25 +35,27 @@ function ProgressBar() {
 }
 ```
 
-## VolumeSliderRoot
+## VolumeRoot
 
 Displays a volume slider for the media. Changing the value of the volume slider will change the volume of the media.
 
-Simply replace Radix UI's `Slider.Root` component with `VolumeSliderRoot` and you're good to go.
+The default `step` is `0.05`, or five percentage points. Pass `step={0.01}` for one-percentage-point pointer and keyboard adjustments. Home and End move either slider to its minimum or maximum.
+
+Simply replace Radix UI's `Slider.Root` component with `VolumeRoot` and you're good to go.
 
 ```tsx
 import * as Media from '@react-av/core';
 import * as Slider from '@radix-ui/react-slider';
-import { VolumeSliderRoot } from '@react-av/sliders';
+import { VolumeRoot } from '@react-av/sliders';
 
 function VolumeSlider() {
   return (
-    <VolumeSliderRoot>
+    <VolumeRoot>
       <Slider.Track>
         <Slider.Range />
       </Slider.Track>
       <Slider.Thumb />
-    </VolumeSliderRoot>
+    </VolumeRoot>
   )
 }
 ```
