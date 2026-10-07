@@ -2,4 +2,4 @@
 "@react-av/sliders": patch
 ---
 
-Use one-second seeking and five-percent volume steps so keyboard adjustments are useful. Both slider roots now accept a `step` prop for applications that need finer pointer and keyboard precision.
+Use one-second seeking and five-percent volume keyboard increments without reducing pointer precision. Both slider roots accept independent `step` and `keyboardStep` props.

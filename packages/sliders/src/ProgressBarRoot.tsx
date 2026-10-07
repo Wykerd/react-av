@@ -1,5 +1,4 @@
-import * as Slider from '@radix-ui/react-slider';
-const SliderRoot = Slider.Root;
+import { SliderRoot } from './SliderRoot';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
 import React, { ComponentProps, ComponentPropsWithoutRef, createContext, forwardRef, MouseEvent, RefAttributes, RefObject, useContext, useEffect, useRef, useState } from 'react';
@@ -21,7 +20,7 @@ export function useMediaProgressBarTooltip() {
 
 export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min"> & ComponentPropsWithoutRef<'span'>;
 
-export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, step = 1, ...props}, ref) {
+export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, step = 0.001, keyboardStep = 1, ...props}, ref) {
     const [currentTime, setCurrentTime] = useMediaCurrentTimeFine();
     const internalRef = useRef<HTMLSpanElement>(null);
     const duration = useMediaDuration();
@@ -62,7 +61,7 @@ export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootPro
                 // @ts-ignore
                 internalRef.current = current;
             }} 
-            {...mergeProps(props, hoverProps)} 
+            keyboardStep={keyboardStep} {...mergeProps(props, hoverProps)}
             onMouseMove={handleMouseMove} 
             onValueChange={value => {
                 const time = value[0];
