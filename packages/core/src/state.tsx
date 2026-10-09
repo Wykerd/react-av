@@ -493,7 +493,6 @@ export function createMediaSeekableStore(mediaElement: StateStore<HTMLMediaEleme
 
 function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | null>): StateStore<boolean> {
     const listeners = new Set<StoreListener>();
-    let lastPlaying: boolean = false;
     let cleanup: StoreListenerUnsubscribe = () => {};
 
     function detectChanges() {
@@ -502,9 +501,7 @@ function createMediaPlayingStore(mediaElement: StateStore<HTMLMediaElement | nul
         const element = mediaElement.getState();
         if (!element) return;
         function handler () {
-            if (element?.paused === lastPlaying) return;
             listeners.forEach((listener) => listener());
-            lastPlaying = !element?.paused;
         };
         element.addEventListener('play', handler);
         element.addEventListener('pause', handler);
