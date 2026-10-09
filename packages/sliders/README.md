@@ -13,3 +13,6 @@ pnpm i @react-av/core @radix-ui/react-slider @react-av/sliders
 ## Usage
 
 See the [documentation](https://react-av.wykerd.dev) for more information.
+
+`ProgressBarRoot` disables seeking until the media exposes a finite, positive
+duration. Keep its track mounted while loading so the control retains its layout.

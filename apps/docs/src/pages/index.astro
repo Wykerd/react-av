@@ -7,6 +7,7 @@ import { Code } from 'astro:components';
 import Schematic from '../components/Landing/Schematic.astro';
 import Logo from '../components/Landing/Logo.astro';
 import DeferredDemo from '../demos/DeferredDemo';
+import PlayerDemo from '../demos/PlayerDemo';
 import ink from '../styles/shiki-ink.mjs';
 import { SITE } from '../config';
 
@@ -71,6 +72,7 @@ const github = 'https://github.com/Wykerd/react-av';
 		<link rel="sitemap" href="/sitemap.xml" />
 		<link rel="describedby" href="/llms.txt" type="text/plain" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preload" as="image" href="/sprite-fright.jpg" fetchpriority="high" />
 		<meta name="theme-color" content="#f3f1ea" />
 		<meta name="color-scheme" content="light" />
 		<meta property="og:type" content="website" />
@@ -144,7 +146,7 @@ const github = 'https://github.com/Wykerd/react-av';
 						<a href="/en/core-other-sources/" class="text-sm underline underline-offset-4">Build an HLS or DASH player →</a>
 					</div>
 					<div class="reveal">
-						<DeferredDemo demo="player" label="Interactive React video player" client:visible={{ rootMargin: '200px' }} />
+						<PlayerDemo client:visible={{ rootMargin: '200px' }} />
 					</div>
 				</section>
 
