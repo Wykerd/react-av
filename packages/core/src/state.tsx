@@ -22,6 +22,7 @@ export type StoreListenerUnsubscribe = () => void;
 
 export interface StateStore<T> {
     getState: () => T;
+    getServerSnapshot?: () => T;
     setState: (state: T) => void;
     subscribe: (callback: StoreListener) => StoreListenerUnsubscribe;
 }
@@ -48,6 +49,7 @@ export function createStateStore<T>(initialState: T): StateStore<T> {
 
     return {
         getState,
+        getServerSnapshot: () => initialState,
         setState,
         subscribe,
     };
@@ -827,6 +829,22 @@ function createMediaFullscreenStore(mediaElement: StateStore<HTMLMediaElement | 
 export function createMediaStore(): MediaStore {
     const mediaElement = createStateStore<HTMLMediaElement | null>(null);
 
+    function withMediaSnapshot<T>(store: StateStore<T>): StateStore<T> {
+        const snapshot = store.getState();
+        return {
+            ...store,
+            getServerSnapshot: () => snapshot,
+            subscribe(callback) {
+                const unsubscribeStore = store.subscribe(callback);
+                const unsubscribeElement = mediaElement.subscribe(callback);
+                return () => {
+                    unsubscribeStore();
+                    unsubscribeElement();
+                };
+            },
+        };
+    }
+
     const opaqueStores = new Map<string, StateStore<unknown>>();
 
     return {
@@ -835,6 +853,7 @@ export function createMediaStore(): MediaStore {
             getState() {
                 return mediaElement.getState()?.tagName === 'AUDIO';
             },
+            getServerSnapshot: () => false,
             setState() {
                 // Do nothing
             },
@@ -842,21 +861,21 @@ export function createMediaStore(): MediaStore {
                 return mediaElement.subscribe(callback);
             },
         },
-        muted: createMutedStore(mediaElement),
-        readyState: createMediaReadyStateStore(mediaElement),
-        networkState: createMediaNetworkStateStore(mediaElement),
-        error: createMediaErrorStateStore(mediaElement),
-        ended: createMediaEndedStateStore(mediaElement),
-        buffered: createMediaBufferedStateStore(mediaElement),
-        seeking: createMediaSeekingStore(mediaElement),
-        seekable: createMediaSeekableStore(mediaElement),
-        playing: createMediaPlayingStore(mediaElement),
-        loop: createMediaLoopStore(mediaElement),
-        volume: createMediaVolumeStore(mediaElement),
-        playbackRate: createMediaPlaybackRateStore(mediaElement),
-        duration: createMediaDurationStore(mediaElement),
-        currentTime: createMediaCurrentTimeStore(mediaElement),
-        fullscreen: createMediaFullscreenStore(mediaElement),
+        muted: withMediaSnapshot(createMutedStore(mediaElement)),
+        readyState: withMediaSnapshot(createMediaReadyStateStore(mediaElement)),
+        networkState: withMediaSnapshot(createMediaNetworkStateStore(mediaElement)),
+        error: withMediaSnapshot(createMediaErrorStateStore(mediaElement)),
+        ended: withMediaSnapshot(createMediaEndedStateStore(mediaElement)),
+        buffered: withMediaSnapshot(createMediaBufferedStateStore(mediaElement)),
+        seeking: withMediaSnapshot(createMediaSeekingStore(mediaElement)),
+        seekable: withMediaSnapshot(createMediaSeekableStore(mediaElement)),
+        playing: withMediaSnapshot(createMediaPlayingStore(mediaElement)),
+        loop: withMediaSnapshot(createMediaLoopStore(mediaElement)),
+        volume: withMediaSnapshot(createMediaVolumeStore(mediaElement)),
+        playbackRate: withMediaSnapshot(createMediaPlaybackRateStore(mediaElement)),
+        duration: withMediaSnapshot(createMediaDurationStore(mediaElement)),
+        currentTime: withMediaSnapshot(createMediaCurrentTimeStore(mediaElement)),
+        fullscreen: withMediaSnapshot(createMediaFullscreenStore(mediaElement)),
         opaque: (key: string) => {
             if (opaqueStores.has(key)) 
                 return opaqueStores.get(key)!;
@@ -883,7 +902,7 @@ export function MediaStoreProvider({ children }: { children: React.ReactNode }) 
 }
 
 export function useStateStoreValue<T>(store: StateStore<T>): T {
-    return useSyncExternalStore(store.subscribe, store.getState);
+    return useSyncExternalStore(store.subscribe, store.getState, store.getServerSnapshot ?? store.getState);
 }
 
 export function useStateStore<T>(store: StateStore<T>): readonly [T, (value: T) => void] {
