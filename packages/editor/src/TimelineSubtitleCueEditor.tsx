@@ -71,6 +71,7 @@ export function TimelineSubtitleCueEditor({
                 className={typeof styling?.timelineSubtitleCueEditorActionsContainer === 'string' ? styling.timelineSubtitleCueEditorActionsContainer : undefined}
             >
                 <button 
+                    type="button"
                     className={
                         [
                             typeof styling?.timelineSubtitleCueEditorBaseButton === 'string' ? styling.timelineSubtitleCueEditorBaseButton : undefined,
@@ -93,6 +94,7 @@ export function TimelineSubtitleCueEditor({
                     {styling?.timelineSubtitleCueEditorFocusTimelineButtonText ?? 'Back to Timeline'}
                 </button>
                 <button
+                    type="button"
                     className={
                         [
                             typeof styling?.timelineSubtitleCueEditorBaseButton === 'string' ? styling.timelineSubtitleCueEditorBaseButton : undefined,
@@ -115,6 +117,7 @@ export function TimelineSubtitleCueEditor({
                     {styling?.timelineSubtitleCueEditorDeleteButtonText ?? 'Delete'}
                 </button>
                 <button 
+                    type="button"
                     className={
                         [
                             typeof styling?.timelineSubtitleCueEditorBaseButton === 'string' ? styling.timelineSubtitleCueEditorBaseButton : undefined,

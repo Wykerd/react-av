@@ -12,7 +12,7 @@ export default function SkinTabs<T extends string>({
     label: string;
     options: SkinOption<T>[];
     value: T;
-    onChange: (value: T) => void;
+    onChange?: (value: T) => void;
 }) {
     return <div role="radiogroup" aria-label={label} className="inline-flex border border-ink font-mono text-[10px] uppercase tracking-[0.12em]">
         {options.map((option, index) => {
@@ -22,7 +22,8 @@ export default function SkinTabs<T extends string>({
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                onClick={() => onChange(option.id)}
+                disabled={!onChange}
+                onClick={() => onChange?.(option.id)}
                 className={[
                     "px-3 py-2 transition-colors duration-200 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-signal",
                     index > 0 ? "border-l border-ink" : "",

@@ -20,17 +20,18 @@ export function useMediaProgressBarTooltip() {
 
 export type ProgressBarRootProps = Omit<ComponentProps<typeof SliderRoot>, "onValueChange" | "value" | "max" | "min"> & ComponentPropsWithoutRef<'span'>;
 
-export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, step = 0.001, keyboardStep = 1, ...props}, ref) {
+export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootProps & RefAttributes<HTMLSpanElement>> = forwardRef<HTMLSpanElement, ProgressBarRootProps>(function ProgressBarRoot({children, disabled, step = 0.001, keyboardStep = 1, ...props}, ref) {
     const [currentTime, setCurrentTime] = useMediaCurrentTimeFine();
     const internalRef = useRef<HTMLSpanElement>(null);
     const duration = useMediaDuration();
+    const hasDuration = Number.isFinite(duration) && duration > 0;
     const [state, setState] = useState<ProgressBarTooltipContextState>({
         percentage: 0,
         root: internalRef,
         show: false,
     });
 
-    const {isHovered, hoverProps} = useHover({});
+    const {isHovered, hoverProps} = useHover({ isDisabled: disabled || !hasDuration });
 
     useEffect(() => {
         setState(state => ({
@@ -65,15 +66,16 @@ export const ProgressBarRoot: React.ForwardRefExoticComponent<ProgressBarRootPro
             onMouseMove={handleMouseMove} 
             onValueChange={value => {
                 const time = value[0];
-                if (time === undefined) return;
+                if (time === undefined || !hasDuration) return;
                 setCurrentTime(time);
                 setState(state => ({
                     ...state,
                     percentage: time / duration,
                 }));
             }} 
-            value={[currentTime]} 
-            min={0} max={duration} step={step}
+            disabled={disabled || !hasDuration}
+            value={[hasDuration ? currentTime : 0]}
+            min={0} max={hasDuration ? duration : 1} step={step}
         >
             {children}
         </SliderRoot>

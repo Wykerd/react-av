@@ -14,6 +14,9 @@ pnpm i @react-av/core @radix-ui/react-slider @react-av/sliders
 
 See the [documentation](https://react-av.wykerd.dev) for more information.
 
+`ProgressBarRoot` disables seeking until the media exposes a finite, positive
+duration. Keep its track mounted while loading so the control retains its layout.
+
 Arrow keys seek one second or adjust volume by five percentage points.
 `keyboardStep` customizes these increments independently of pointer precision.
 `step` controls pointer precision, defaulting to `0.001` seconds for seeking and

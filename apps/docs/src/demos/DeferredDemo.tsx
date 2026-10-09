@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 
 const demos = {
-	player: lazy(() => import('./PlayerDemo')),
 	editor: lazy(() => import('./EditorDemo')),
 	lyrics: lazy(() => import('./LyricsDemo')),
 };

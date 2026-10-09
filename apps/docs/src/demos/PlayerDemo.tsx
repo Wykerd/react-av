@@ -5,15 +5,7 @@ import { ProgressBarBufferedRanges, ProgressBarRoot, ProgressBarTooltip, VolumeR
 import { InterfaceOverlay, Track } from "@react-av/vtt";
 import * as Slider from "@radix-ui/react-slider";
 import { ArrowsIn, ArrowsOut, CircleNotch, Pause, PictureInPicture as PipIcon, Play, SpeakerHigh, SpeakerLow, SpeakerNone, SpeakerX } from "@phosphor-icons/react";
-import SkinTabs, { type SkinOption } from "./SkinTabs";
-
-type PlayerSkin = "ink" | "studio" | "broadcast";
-
-const SKINS: SkinOption<PlayerSkin>[] = [
-    { id: "ink", label: "Ink" },
-    { id: "studio", label: "Studio" },
-    { id: "broadcast", label: "Broadcast" },
-];
+import PlayerDemoHeader, { type PlayerSkin } from "./PlayerDemoHeader";
 
 const CONTAINER_CLASSES: Record<PlayerSkin, string> = {
     ink: "border border-ink",
@@ -37,9 +29,8 @@ const INK_BUTTON = "grid size-8 place-items-center border border-ink/0 text-ink 
 
 function InkControls() {
     const icon = { weight: "light", size: 18 } as const;
-    return <InterfaceOverlay
-        className="absolute inset-x-0 bottom-0 flex items-center gap-2 border-t border-ink bg-paper px-2 py-1.5 text-ink transition-opacity duration-300"
-        inactiveClassName="opacity-0"
+    return <div
+        className="flex shrink-0 items-center gap-2 border-t border-ink bg-paper px-2 py-1.5 text-ink"
     >
         <PlayPause
             className={INK_BUTTON}
@@ -47,7 +38,7 @@ function InkControls() {
             pauseIcon={<Pause {...icon} />}
             loadingIcon={<CircleNotch {...icon} className="animate-spin" />}
         />
-        <span className="hidden font-mono text-[10px] tabular-nums sm:inline">
+        <span className="hidden w-24 shrink-0 font-mono text-[10px] tabular-nums sm:inline">
             <Timestamp type="elapsed" /> <span className="text-ink-soft">/ <Timestamp type="duration" /></span>
         </span>
         <ProgressBarRoot className="relative mx-1 flex h-6 grow touch-none select-none items-center">
@@ -56,7 +47,7 @@ function InkControls() {
                 <Slider.Range className="absolute h-full bg-ink" />
             </Slider.Track>
             <SeekTooltip className="-top-7 border border-ink bg-paper px-1.5 py-0.5 font-mono text-[10px]" />
-            <Slider.Thumb aria-label="Seek" className="block size-2.5 rotate-45 border border-ink bg-paper outline-none focus-visible:bg-signal" />
+            <Slider.Thumb aria-label="Seek" className="block! size-2.5 rotate-45 border border-ink bg-paper outline-none focus-visible:bg-signal [&:not([aria-valuenow])]:translate-x-1/2" />
         </ProgressBarRoot>
         <Mute
             className={INK_BUTTON}
@@ -65,9 +56,11 @@ function InkControls() {
             noneIcon={<SpeakerNone {...icon} />}
             mutedIcon={<SpeakerX {...icon} />}
         />
-        <PictureInPicture className={`${INK_BUTTON} max-sm:hidden`} icon={<PipIcon {...icon} />} />
+        <span className="size-8 shrink-0 max-sm:hidden">
+            <PictureInPicture className={INK_BUTTON} icon={<PipIcon {...icon} />} />
+        </span>
         <Fullscreen className={INK_BUTTON} fullscreenIcon={<ArrowsOut {...icon} />} exitFullscreenIcon={<ArrowsIn {...icon} />} />
-    </InterfaceOverlay>;
+    </div>;
 }
 
 const STUDIO_BUTTON = "grid size-9 place-items-center rounded-full text-white/90 transition hover:bg-white/15 focus-visible:bg-white/15 focus-visible:outline-none";
@@ -152,27 +145,24 @@ export default function PlayerDemo() {
     const [skin, setSkin] = useState<PlayerSkin>("ink");
 
     return <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-            <SkinTabs label="Player skin" options={SKINS} value={skin} onChange={setSkin} />
-            <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft">Same state · new markup</p>
-        </div>
-        <Media.Root>
-            <Media.Container className={`relative overflow-hidden bg-ink transition-[border-radius,box-shadow] duration-500 ${CONTAINER_CLASSES[skin]}`}>
+        <PlayerDemoHeader skin={skin} onChange={setSkin} />
+        <Media.Root loading="lazy">
+            <Media.Container className={`player-demo relative overflow-hidden bg-ink transition-[border-radius,box-shadow] duration-500 ${CONTAINER_CLASSES[skin]}`}>
                 <Media.Video
-                    src="https://storage.wykerd.dev/react-av/sprite-fright.mp4#t=0.1"
+                    src="https://storage.wykerd.dev/react-av/sprite-fright.mp4"
                     poster="/sprite-fright.jpg"
                     playsInline
                     width={2048}
                     height={858}
                     className="block h-auto w-full"
                 />
+                {skin === "ink" && <InkControls />}
             </Media.Container>
             <Track kind="subtitles" srclang="en" label="English" src="/sprite-fright.vtt" id="player-captions" default />
-            <Media.Viewport className="absolute inset-0 z-10" inactiveClassName="cursor-none">
-                {skin === "ink" && <InkControls />}
+            {skin !== "ink" && <Media.Viewport className="absolute inset-0 z-10" inactiveClassName="cursor-none">
                 {skin === "studio" && <StudioControls />}
                 {skin === "broadcast" && <BroadcastControls />}
-            </Media.Viewport>
+            </Media.Viewport>}
         </Media.Root>
     </div>;
 }

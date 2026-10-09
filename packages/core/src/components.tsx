@@ -1,13 +1,41 @@
-import React, { ComponentPropsWithoutRef, createContext, forwardRef, RefAttributes, useContext, useEffect, useRef, useState } from "react";
+import React, { ComponentPropsWithoutRef, createContext, forwardRef, RefAttributes, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MediaStoreProvider, useMediaElement, useMediaElementState } from "./state";
+import { MediaReadyState, MediaStoreProvider, useMediaElement, useMediaElementState, useMediaError, useMediaReadyState } from "./state";
+
+const LoadingContext = createContext({ active: true, activate: () => {} });
+
+export type RootProps = {
+    children: React.ReactNode;
+    loading?: 'eager' | 'lazy';
+};
+
+export type MediaLoadingState = 'deferred' | 'loading' | 'ready' | 'error';
+
+export function useMediaLoadingState(): MediaLoadingState {
+    const { active } = useContext(LoadingContext);
+    const readyState = useMediaReadyState();
+    const error = useMediaError();
+    if (error) return 'error';
+    if (!active) return 'deferred';
+    if (readyState >= MediaReadyState.HAVE_CURRENT_DATA) return 'ready';
+    return 'loading';
+}
 
 /**
  * The `Media.Root` component is the root of the React AV component tree. It provides the context for all other components to work.
  */
-export function Root({ children } : { children: React.ReactNode }) {
+export function Root({ children, loading = 'eager' } : RootProps) {
+    const [activated, setActivated] = useState(loading === 'eager');
+    const activate = useCallback(() => setActivated(true), []);
+    const active = loading === 'eager' || activated;
+    const policy = useMemo(() => ({ active, activate }), [active, activate]);
+
+    useEffect(() => {
+        if (loading === 'eager') activate();
+    }, [loading, activate]);
+
     return <MediaStoreProvider>
-        {children}
+        <LoadingContext.Provider value={policy}>{children}</LoadingContext.Provider>
     </MediaStoreProvider>
 }
 
@@ -21,14 +49,19 @@ export type VideoProps = ComponentPropsWithoutRef<"video">;
 export const Video: React.ForwardRefExoticComponent<VideoProps & RefAttributes<HTMLVideoElement>> = forwardRef<HTMLVideoElement, VideoProps>(function Video({ children, ...props }, f_ref) {
     const ref = useRef<HTMLVideoElement>(null);
     const [, setElement] = useMediaElementState();
+    const { active, activate } = useContext(LoadingContext);
 
     useEffect(() => {
         if (ref.current?.parentElement?.getAttribute('data-media-container') !== 'true') 
             throw new Error('Video element must be wrapped in a <Media.Container />');
         setElement(ref.current);
+        return () => setElement(null);
     }, [setElement]);
 
-    return <video {...props} ref={current => {
+    return <video {...props} preload={active ? props.preload : 'none'} autoPlay={active && props.autoPlay} onPlay={event => {
+        activate();
+        props.onPlay?.(event);
+    }} ref={current => {
         // @ts-ignore
         ref.current = current;
         if (typeof f_ref === 'function') f_ref(current);
@@ -47,12 +80,17 @@ export type AudioProps = ComponentPropsWithoutRef<"audio">;
 export const Audio: React.ForwardRefExoticComponent<AudioProps & RefAttributes<HTMLAudioElement>> = forwardRef<HTMLAudioElement, AudioProps>(function Audio({ children, ...props }, f_ref) {
     const ref = useRef<HTMLAudioElement>(null);
     const [, setElement] = useMediaElementState();
+    const { active, activate } = useContext(LoadingContext);
 
     useEffect(() => {
         setElement(ref.current);
+        return () => setElement(null);
     }, [setElement]);
 
-    return <audio {...props} ref={current => {
+    return <audio {...props} preload={active ? props.preload : 'none'} autoPlay={active && props.autoPlay} onPlay={event => {
+        activate();
+        props.onPlay?.(event);
+    }} ref={current => {
         // @ts-ignore
         ref.current = current;
         if (typeof f_ref === 'function') f_ref(current);
@@ -71,8 +109,36 @@ export type ContainerProps = ComponentPropsWithoutRef<'div'>;
  *
  * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
  */
-export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ContainerProps>(function Container({ children, style, ...props }, ref) {
-    return <div {...props} style={{ position: 'relative', ...(style || {}) }} ref={ref} data-media-container="true">
+export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ContainerProps>(function Container({ children, style, onPointerDownCapture, onFocusCapture, ...props }, ref) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { active, activate } = useContext(LoadingContext);
+    const loadingState = useMediaLoadingState();
+    useImperativeHandle(ref, () => containerRef.current!, []);
+
+    useEffect(() => {
+        if (active || !containerRef.current) return;
+        if (typeof IntersectionObserver === 'undefined') {
+            activate();
+            return;
+        }
+        const observer = new IntersectionObserver(entries => {
+            if (entries.some(entry => entry.isIntersecting)) activate();
+        }, { rootMargin: '200px' });
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, [active, activate]);
+
+    return <div {...props} style={{ position: 'relative', ...(style || {}) }} ref={containerRef} data-media-container="true"
+        data-media-loading={loadingState}
+        onPointerDownCapture={event => {
+            activate();
+            onPointerDownCapture?.(event);
+        }}
+        onFocusCapture={event => {
+            activate();
+            onFocusCapture?.(event);
+        }}
+    >
         {children}
     </div>
 });
