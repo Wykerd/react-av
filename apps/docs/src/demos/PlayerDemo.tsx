@@ -1,10 +1,10 @@
 import { useState } from "react";
 import * as Media from "@react-av/core";
-import { Fullscreen, Mute, PictureInPicture, PlayPause, Timestamp, toTimestampString } from "@react-av/controls";
+import { Fullscreen, Mute, PictureInPicture, PlayPause, SkipBack, SkipForward, Timestamp, toTimestampString } from "@react-av/controls";
 import { ProgressBarBufferedRanges, ProgressBarRoot, ProgressBarTooltip, VolumeRoot, useMediaProgressBarTooltip } from "@react-av/sliders";
 import { InterfaceOverlay, Track } from "@react-av/vtt";
 import * as Slider from "@radix-ui/react-slider";
-import { ArrowsIn, ArrowsOut, CircleNotch, Pause, PictureInPicture as PipIcon, Play, SpeakerHigh, SpeakerLow, SpeakerNone, SpeakerX } from "@phosphor-icons/react";
+import { ArrowClockwise, ArrowCounterClockwise, ArrowsIn, ArrowsOut, CircleNotch, Pause, PictureInPicture as PipIcon, Play, SpeakerHigh, SpeakerLow, SpeakerNone, SpeakerX } from "@phosphor-icons/react";
 import PlayerDemoHeader, { type PlayerSkin } from "./PlayerDemoHeader";
 
 const CONTAINER_CLASSES: Record<PlayerSkin, string> = {
@@ -32,12 +32,14 @@ function InkControls() {
     return <div
         className="flex shrink-0 items-center gap-2 border-t border-ink bg-paper px-2 py-1.5 text-ink"
     >
+        <SkipBack className={INK_BUTTON} icon={<ArrowCounterClockwise {...icon} />} />
         <PlayPause
             className={INK_BUTTON}
             playIcon={<Play {...icon} />}
             pauseIcon={<Pause {...icon} />}
             loadingIcon={<CircleNotch {...icon} className="animate-spin" />}
         />
+        <SkipForward className={INK_BUTTON} icon={<ArrowClockwise {...icon} />} />
         <span className="hidden w-24 shrink-0 font-mono text-[10px] tabular-nums sm:inline">
             <Timestamp type="elapsed" /> <span className="text-ink-soft">/ <Timestamp type="duration" /></span>
         </span>

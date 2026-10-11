@@ -1,6 +1,6 @@
 ---
 title: React Media Player Controls
-description: Add play and pause, mute, looping, fullscreen, picture-in-picture, and timestamps to a React video or audio player with custom icons and styles.
+description: Add play and pause, skip back and forward, mute, looping, fullscreen, picture-in-picture, and timestamps to a React video or audio player with custom icons and styles.
 layout: ../../layouts/MainLayout.astro
 ---
 
@@ -46,6 +46,36 @@ import * as Controls from '@react-av/controls';
     </Media.Container>
     <Media.Viewport>
       <Controls.PlayPause />
+    </Media.Viewport>
+  </Media.Root>
+)
+```
+
+## Controls.SkipBack and Controls.SkipForward
+
+The `Controls.SkipBack` and `Controls.SkipForward` components are buttons that move playback back or forward by a fixed number of seconds, without going past the start or end of the media. Pressing them before the media's duration is known does nothing.
+
+They are `HTMLButtonElement`s and accept all props that a `button` element accepts.
+
+Additionally, they accept the following props:
+
+- `seconds` - How many seconds to move by. Defaults to `10`. The accessible labels follow the step, for example "Back 10 seconds" and "Forward 30 seconds".
+- `icon` - The icon to use. Defaults to the `ArrowCounterClockwise` icon for `Controls.SkipBack` and the `ArrowClockwise` icon for `Controls.SkipForward` from the [Phosphor Icons](https://phosphoricons.com/) library.
+- `defaultIconSize` - Size of the default icon if you are using the default icon from the [Phosphor Icons](https://phosphoricons.com/) library. Defaults to `32`.
+
+```jsx
+import * as Media from '@react-av/core';
+import * as Controls from '@react-av/controls';
+
+() => (
+  <Media.Root>
+    <Media.Container>
+      <Media.Video src="https://example.com/video.mp4" />
+    </Media.Container>
+    <Media.Viewport>
+      <Controls.SkipBack />
+      <Controls.PlayPause />
+      <Controls.SkipForward seconds={30} />
     </Media.Viewport>
   </Media.Root>
 )
