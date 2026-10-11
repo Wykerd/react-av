@@ -64,18 +64,20 @@ function PlayButton() {
 
 ## Packages
 
-| Package | Description |
-| --- | --- |
-| [`@react-av/core`](./packages/core) | Media root, video/audio elements, viewport, and state hooks. |
-| [`@react-av/controls`](./packages/controls) | Play/pause, mute, loop, fullscreen, picture-in-picture, and timestamp controls. |
-| [`@react-av/sliders`](./packages/sliders) | Seek and volume sliders built on Radix UI. |
-| [`@react-av/vtt-core`](./packages/vtt-core) | Standalone W3C WebVTT parser and renderer. |
-| [`@react-av/vtt`](./packages/vtt) | WebVTT tracks, cues, and caption overlays for React AV. |
-| [`@react-av/vtt-controls`](./packages/vtt-controls) | Storyboard thumbnail previews from WebVTT tracks. |
-| [`@react-av/shaka`](./packages/shaka) | HLS and DASH playback powered by Shaka Player. |
-| [`@react-av/editor`](./packages/editor) | Timeline editor components for subtitles and media. |
+| Package | Description | Size |
+| --- | --- | --- |
+| [`@react-av/core`](./packages/core) | Media root, video/audio elements, viewport, and state hooks. | 4.4 kB |
+| [`@react-av/controls`](./packages/controls) | Play/pause, mute, loop, fullscreen, picture-in-picture, and timestamp controls. | 7.5 kB |
+| [`@react-av/sliders`](./packages/sliders) | Seek and volume sliders built on Radix UI. | 3.9 kB |
+| [`@react-av/vtt-core`](./packages/vtt-core) | Standalone W3C WebVTT parser and renderer. | 24.3 kB |
+| [`@react-av/vtt`](./packages/vtt) | WebVTT tracks, cues, and caption overlays for React AV. | 1.6 kB |
+| [`@react-av/vtt-controls`](./packages/vtt-controls) | Storyboard thumbnail previews from WebVTT tracks. | 1.2 kB |
+| [`@react-av/shaka`](./packages/shaka) | HLS and DASH playback powered by Shaka Player. | 1.6 kB |
+| [`@react-av/editor`](./packages/editor) | Timeline editor components for subtitles and media. | 11.4 kB |
 
 Every package except `@react-av/vtt-core` has `react` and `react-dom` as peer dependencies.
+
+Sizes are minified and gzipped. They include each package's own dependencies but not its peer dependencies, such as React, Radix UI, or Shaka Player. See [Browser support and bundle size](https://react-av.wykerd.dev/en/browser-support) for how they were measured and which browsers support each feature.
 
 ## Development
 

@@ -69,7 +69,7 @@ Vidstack, Media Chrome, and Video.js display text tracks but ship no editing com
 
 ## Bundle size
 
-React AV does not publish bundle size figures. Each part is a separate package, so you install only the parts you use. Adding HLS and DASH brings in Shaka Player, because `@react-av/shaka` imports Shaka's full compiled build.
+Each part of React AV is a separate package, so you install only the parts you use. [Bundle size](/en/browser-support/#bundle-size) lists the measured size of each package. Adding HLS and DASH brings in Shaka Player, because `@react-av/shaka` imports Shaka's full compiled build.
 
 The Video.js team published [size measurements](https://videojs.org/blog/videojs-v10-beta-hello-world-again#bundle) with its v10 beta in March 2026. For a player without adaptive streaming, it measured these gzipped sizes:
 
