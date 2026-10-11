@@ -17,7 +17,7 @@ export default defineConfig({
             {
                 resolve: {
                     alias: [{ find: /^@react-av\/([\w-]+)$/, replacement: packageSources }],
-                    dedupe: ["react", "react-dom", "@radix-ui/react-slider"],
+                    dedupe: ["react", "react-dom", "@radix-ui/react-slider", "@radix-ui/react-select"],
                 },
                 test: {
                     name: "e2e",

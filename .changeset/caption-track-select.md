@@ -2,4 +2,4 @@
 "@react-av/vtt-controls": minor
 ---
 
-Add `CaptionTrackSelect`, an accessible native select for choosing which subtitle or caption track is shown, and the `useMediaCaptionTracks` hook for building custom caption menus.
+Add `CaptionTrackSelectRoot` and `CaptionTrackSelectItems` for composing a caption language picker with Radix Select, and the independent `useMediaCaptionTracks` hook for building custom caption menus.

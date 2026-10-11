@@ -1,11 +1,13 @@
-import { ChangeEvent, ComponentPropsWithRef, forwardRef } from "react";
+import * as Select from "@radix-ui/react-select";
+import { ComponentPropsWithoutRef, createContext, useContext } from "react";
 import VTT, { TextTrack } from "@react-av/vtt-core";
 import { useMediaElement } from "@react-av/core";
 import { useMediaTextTrackList } from "@react-av/vtt";
 
-export type CaptionTrackSelectProps = Omit<ComponentPropsWithRef<'select'>, "value" | "defaultValue" | "multiple" | "children"> & {
-    offLabel?: string
-}
+export type CaptionTrackSelectRootProps = Omit<ComponentPropsWithoutRef<typeof Select.Root>, "value" | "defaultValue">;
+export type CaptionTrackSelectItemsProps = Omit<ComponentPropsWithoutRef<typeof Select.Item>, "value" | "children"> & {
+    offLabel?: string;
+};
 
 function isCaptionTrack(track: TextTrack) {
     return track.kind === "subtitles" || track.kind === "captions";
@@ -28,25 +30,38 @@ export function useMediaCaptionTracks() {
     return { tracks, selected, select };
 }
 
-const CaptionTrackSelect = forwardRef<HTMLSelectElement, CaptionTrackSelectProps>(function CaptionTrackSelect({ offLabel = "Off", onChange, ...props }, ref) {
-    const { tracks, selected, select } = useMediaCaptionTracks();
+const CaptionTrackSelectContext = createContext<ReturnType<typeof useMediaCaptionTracks> | null>(null);
 
-    let value = "";
+export function CaptionTrackSelectRoot({ onValueChange, ...props }: CaptionTrackSelectRootProps) {
+    const state = useMediaCaptionTracks();
+    const { tracks, selected, select } = state;
+
+    let value = "off";
     if (selected) value = String(tracks.indexOf(selected));
 
-    function handleChange(event: ChangeEvent<HTMLSelectElement>) {
-        onChange?.(event);
-        const optionValue = event.target.value;
-        if (optionValue === "") select(null);
-        else select(tracks[Number(optionValue)]);
+    function handleValueChange(nextValue: string) {
+        if (nextValue === "off") select(null);
+        else {
+            const track = tracks[Number(nextValue)];
+            if (!track) return;
+            select(track);
+        }
+        onValueChange?.(nextValue);
     }
 
-    return <select aria-label="Captions" {...props} ref={ref} value={value} onChange={handleChange}>
-        <option value="">{offLabel}</option>
-        {tracks.map((track, index) => <option key={index} value={index}>
-            {track.label || track.language || `Track ${index + 1}`}
-        </option>)}
-    </select>;
-});
+    return <CaptionTrackSelectContext.Provider value={state}>
+        <Select.Root {...props} value={value} onValueChange={handleValueChange} />
+    </CaptionTrackSelectContext.Provider>;
+}
 
-export default CaptionTrackSelect;
+export function CaptionTrackSelectItems({ offLabel = "Off", ...props }: CaptionTrackSelectItemsProps) {
+    const state = useContext(CaptionTrackSelectContext);
+    if (!state) throw new Error("CaptionTrackSelectItems must be wrapped in CaptionTrackSelectRoot");
+
+    return <>
+        <Select.Item {...props} value="off"><Select.ItemText>{offLabel}</Select.ItemText></Select.Item>
+        {state.tracks.map((track, index) => <Select.Item {...props} key={index} value={String(index)}>
+            <Select.ItemText>{track.label || track.language || `Track ${index + 1}`}</Select.ItemText>
+        </Select.Item>)}
+    </>;
+}

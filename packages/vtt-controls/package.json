@@ -17,6 +17,7 @@
     "dev": "tsc --watch"
   },
   "devDependencies": {
+    "@radix-ui/react-select": "^2.3.8",
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
     "@react-av/vtt-core": "workspace:^",
@@ -28,6 +29,7 @@
     "typescript": "^7.0.2"
   },
   "peerDependencies": {
+    "@radix-ui/react-select": "^2.3.8",
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
     "@react-av/vtt-core": "workspace:^",

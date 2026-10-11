@@ -1,8 +1,9 @@
-import { PlayPause } from "@react-av/controls";
+import * as Select from "@radix-ui/react-select";
+import { Fullscreen, PlayPause } from "@react-av/controls";
 import * as Media from "@react-av/core";
 import { Track } from "@react-av/vtt";
-import { CaptionTrackSelect } from "@react-av/vtt-controls";
-import { StrictMode } from "react";
+import { CaptionTrackSelectItems, CaptionTrackSelectRoot, useMediaCaptionTracks } from "@react-av/vtt-controls";
+import { StrictMode, useState } from "react";
 import { expect, test } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { render } from "vitest-browser-react";
@@ -10,32 +11,151 @@ import clip from "./fixtures/clip.webm";
 import english from "./fixtures/english.vtt";
 import french from "./fixtures/french.vtt";
 
-test("choosing a caption language shows only its captions and Off hides them", async () => {
-    await render(
-        <StrictMode>
-            <Media.Root>
-                <Media.Container>
-                    <Media.Video src={clip} />
-                </Media.Container>
-                <Track kind="subtitles" srclang="en" label="English" src={english} />
-                <Track kind="subtitles" srclang="fr" src={french} />
-                <PlayPause />
-                <CaptionTrackSelect />
-            </Media.Root>
-        </StrictMode>,
-    );
+function CaptionPicker({ container, label = "Captions", disabled = false }: {
+    container: HTMLElement | null;
+    label?: string;
+    disabled?: boolean;
+}) {
+    return <CaptionTrackSelectRoot disabled={disabled}>
+        <Select.Trigger aria-label={label}><Select.Value /></Select.Trigger>
+        <Select.Portal container={container}>
+            <Select.Content position="popper" style={{ background: "white", color: "black" }}>
+                <Select.Viewport><CaptionTrackSelectItems /></Select.Viewport>
+            </Select.Content>
+        </Select.Portal>
+    </CaptionTrackSelectRoot>;
+}
+
+function CaptionButtons() {
+    const { tracks, select } = useMediaCaptionTracks();
+    return <button onClick={() => select(tracks[0] ?? null)}>Use English</button>;
+}
+
+function CaptionPlayer({ label = "Captions", delayed = false, disabled = false, shared = false }: {
+    label?: string;
+    delayed?: boolean;
+    disabled?: boolean;
+    shared?: boolean;
+}) {
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+    const [mounted, setMounted] = useState(!delayed);
+    return <Media.Root>
+        <Media.Container ref={setContainer}>
+            {mounted && <Media.Video src={clip} />}
+            <PlayPause />
+            <Fullscreen />
+            <CaptionPicker container={container} label={label} disabled={disabled} />
+            {shared && <CaptionButtons />}
+            {!mounted && <button onClick={() => setMounted(true)}>Load player</button>}
+        </Media.Container>
+        {mounted && <>
+            <Track kind="subtitles" srclang="en" label="English" src={english} />
+            <Track kind="subtitles" srclang="fr" src={french} />
+        </>}
+    </Media.Root>;
+}
+
+async function chooseLanguage(label: string, language: string) {
+    await userEvent.click(page.getByRole("combobox", { name: label, exact: true }));
+    await userEvent.click(page.getByRole("option", { name: language, exact: true }));
+}
+
+async function pauseAfterPlayback(index = 0) {
+    await userEvent.click(page.getByRole("button", { name: "Play", exact: true }).nth(index));
+    const video = document.querySelectorAll("video")[index];
+    await expect.poll(() => video.currentTime).toBeGreaterThan(0);
+    await userEvent.click(page.getByRole("button", { name: "Pause", exact: true }));
+}
+
+test("choosing a caption language while paused shows only its captions and Off hides them", async () => {
+    await render(<StrictMode><CaptionPlayer /></StrictMode>);
     const captions = page.getByRole("combobox", { name: "Captions" });
-    await expect.element(captions).toHaveDisplayValue("Off");
+    await expect.element(captions).toHaveTextContent("Off");
+    await pauseAfterPlayback();
 
-    await userEvent.click(page.getByRole("button", { name: "Play" }));
-    await userEvent.selectOptions(captions, "English");
-    await expect.element(captions).toHaveDisplayValue("English");
+    await chooseLanguage("Captions", "English");
+    await expect.element(captions).toHaveTextContent("English");
     await expect.element(page.getByText("Hello, world")).toBeVisible();
+    await expect.element(captions).toHaveFocus();
 
-    await userEvent.selectOptions(captions, "fr");
+    await chooseLanguage("Captions", "fr");
     await expect.element(page.getByText("Bonjour le monde")).toBeVisible();
     await expect.element(page.getByText("Hello, world")).not.toBeInTheDocument();
 
-    await userEvent.selectOptions(captions, "Off");
+    await chooseLanguage("Captions", "Off");
     await expect.element(page.getByText("Bonjour le monde")).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+});
+
+test("keyboard selection and Escape restore focus without changing the cancelled choice", async () => {
+    await render(<CaptionPlayer />);
+    await pauseAfterPlayback();
+    const captions = page.getByRole("combobox", { name: "Captions" });
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect.element(captions).toHaveFocus();
+    await userEvent.keyboard("{ArrowDown}");
+    await expect.element(page.getByRole("listbox")).toBeVisible();
+    await userEvent.keyboard("{End}");
+    await expect.element(page.getByRole("option", { name: "fr", exact: true })).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    await expect.element(captions).toHaveTextContent("fr");
+    await expect.element(captions).toHaveFocus();
+    await userEvent.keyboard("{ArrowDown}");
+    await expect.element(page.getByRole("listbox")).toBeVisible();
+    await userEvent.keyboard("{Home}");
+    await expect.element(page.getByRole("option", { name: "Off", exact: true })).toHaveFocus();
+    await userEvent.keyboard("{Escape}");
+    await expect.element(captions).toHaveTextContent("fr");
+    await expect.element(captions).toHaveFocus();
+    await userEvent.keyboard("{ArrowDown}");
+    await expect.element(page.getByRole("listbox")).toBeVisible();
+    await userEvent.keyboard("English");
+    await expect.element(page.getByRole("option", { name: "English", exact: true })).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    await expect.element(captions).toHaveTextContent("English");
+    await expect.element(page.getByText("Hello, world")).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+});
+
+test("caption choices stay local to each player and follow other caption controls", async () => {
+    await render(<StrictMode>
+        <CaptionPlayer label="First captions" shared />
+        <CaptionPlayer label="Second captions" />
+    </StrictMode>);
+    await pauseAfterPlayback(0);
+    await pauseAfterPlayback(1);
+    await chooseLanguage("Second captions", "fr");
+    await userEvent.click(page.getByRole("button", { name: "Use English" }));
+    await expect.element(page.getByRole("combobox", { name: "First captions" })).toHaveTextContent("English");
+    await expect.element(page.getByRole("combobox", { name: "Second captions" })).toHaveTextContent("fr");
+    await expect.element(page.getByText("Hello, world")).toBeVisible();
+    await expect.element(page.getByText("Bonjour le monde")).toBeVisible();
+    await chooseLanguage("First captions", "Off");
+    await expect.element(page.getByText("Hello, world")).not.toBeInTheDocument();
+    await expect.element(page.getByText("Bonjour le monde")).toBeVisible();
+    await expect.element(page.getByRole("combobox", { name: "Second captions" })).toHaveTextContent("fr");
+});
+
+test("caption options become available when the player mounts later and disabled pickers stay disabled", async () => {
+    await render(<CaptionPlayer delayed />);
+    await chooseLanguage("Captions", "Off");
+    await userEvent.click(page.getByRole("button", { name: "Load player" }));
+    await chooseLanguage("Captions", "English");
+    await expect.element(page.getByRole("combobox", { name: "Captions" })).toHaveTextContent("English");
+    await render(<CaptionPlayer label="Disabled captions" disabled />);
+    await expect.element(page.getByRole("combobox", { name: "Disabled captions" })).toBeDisabled();
+});
+
+test("the caption popup stays usable inside the fullscreen player", async () => {
+    await render(<CaptionPlayer />);
+    await pauseAfterPlayback();
+    await userEvent.click(page.getByRole("button", { name: "Enter Fullscreen" }));
+    await expect.element(page.getByRole("button", { name: "Exit Fullscreen" })).toBeVisible();
+    await chooseLanguage("Captions", "English");
+    await expect.element(page.getByRole("combobox", { name: "Captions" })).toHaveTextContent("English");
+    await expect.element(page.getByRole("combobox", { name: "Captions" })).toHaveFocus();
+    await expect.element(page.getByText("Hello, world")).toBeVisible();
+    await userEvent.click(page.getByRole("button", { name: "Exit Fullscreen" }));
+    await expect.element(page.getByRole("button", { name: "Enter Fullscreen" })).toBeVisible();
 });
