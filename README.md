@@ -85,6 +85,7 @@ This is a [pnpm](https://pnpm.io) workspace managed with [Turborepo](https://tur
 pnpm install
 pnpm build        # build all packages and the docs site
 pnpm dev          # watch packages and run the docs site locally
+pnpm test         # run the test suite with Vitest
 ```
 
 The documentation and demo site lives in [`apps/docs`](./apps/docs). Releases are versioned with [Changesets](https://github.com/changesets/changesets): run `pnpm changes` to describe your change before opening a pull request.

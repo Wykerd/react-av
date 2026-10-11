@@ -3,6 +3,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "test": "vitest run",
     "changes": "changeset",
     "publish-packages": "turbo run build && changeset version && pnpm install && pnpm publish -r --access public --filter !@react-av/docs --no-git-checks"
   },
@@ -10,7 +11,9 @@
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
-    "turbo": "^2.11.7"
+    "@types/node": "^26.6.4",
+    "turbo": "^2.11.7",
+    "vitest": "^5.0.3"
   },
   "packageManager": "pnpm@10.34.6"
 }
