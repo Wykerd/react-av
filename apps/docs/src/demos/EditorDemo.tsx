@@ -9,6 +9,7 @@ import {
     TimelineHeader,
     TimelineSubtitleCueEditor,
     TimelineSubtitlesTrack,
+    useTimelineSubtitleTrack,
     type EditorStyling,
     type TimelineControlBarStyling,
     type TimelineHeaderStyling,
@@ -183,6 +184,14 @@ const classroom: EditorSkinDefinition = {
 
 const DEFINITIONS: Record<EditorSkin, EditorSkinDefinition> = { paper, studio, classroom };
 
+function HistoryButtons() {
+    const { undo, redo, canUndo, canRedo } = useTimelineSubtitleTrack();
+    return <div className="flex gap-2 px-4 py-2">
+        <button className="border border-current px-3 py-1 text-xs disabled:opacity-30" disabled={!canUndo} onClick={undo}>Undo</button>
+        <button className="border border-current px-3 py-1 text-xs disabled:opacity-30" disabled={!canRedo} onClick={redo}>Redo</button>
+    </div>;
+}
+
 export default function EditorDemo() {
     const [skin, setSkin] = useState<EditorSkin>("paper");
     const definition = DEFINITIONS[skin];
@@ -208,6 +217,7 @@ export default function EditorDemo() {
                                 labelComponent={<TimelineEntryLabel icon={definition.trackLabel.icon} label={definition.trackLabel.label} />}
                             >
                                 <TimelineSubtitleCueEditor styling={definition.cueEditor} />
+                                <HistoryButtons />
                             </TimelineSubtitlesTrack>
                         </TimelineContainer>
                     </TimelineEditor>

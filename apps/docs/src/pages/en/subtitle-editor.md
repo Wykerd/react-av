@@ -84,3 +84,11 @@ The components are headless. Use their `styling` props to supply classes or inli
 This edits subtitle text and timing. It does not transcribe speech, encode video, burn captions into the video, or provide storage. `toVTT` exports cue text and times; it does not preserve cue positioning, regions, or style blocks. Serve cross-origin caption files with the appropriate CORS headers.
 
 For caption playback without editing, see [React subtitles and WebVTT captions](/en/text-track-introduction/). For adaptive streams, see the [React HLS and DASH player guide](/en/core-other-sources/).
+
+## Undo and redo
+
+Subtitle tracks keep up to 100 edit steps. Text changes during one visit to a cue's text field count as one step; dragging or resizing a cue counts as one step when released. Adding and deleting cues can also be undone. Clearing a whole track resets its history.
+
+Outside text fields, use Cmd/Ctrl+Z to undo, Shift+Cmd/Ctrl+Z or Ctrl+Y to redo. Shortcuts apply only within that subtitle track. Text fields retain their browser's native text undo. Changes made by custom cue editors through `sync()` alone are not recorded; use `setText()` from `useTimelineSubtitleCueEditor()` for text edits.
+
+Inside `TimelineSubtitlesTrack`, `useTimelineSubtitleTrack()` provides `undo`, `redo`, `canUndo` and `canRedo` for app buttons. Undo and redo refresh captions and call `onTrackCuesChanged`, keeping saved output current.
