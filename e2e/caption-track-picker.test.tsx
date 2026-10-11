@@ -31,14 +31,17 @@ function CaptionButtons() {
     return <button onClick={() => select(tracks[0] ?? null)}>Use English</button>;
 }
 
-function CaptionPlayer({ label = "Captions", delayed = false, disabled = false, shared = false }: {
+function CaptionPlayer({ label = "Captions", delayed = false, disabled = false, shared = false, delayedTracks = false, defaultEnglish = false }: {
     label?: string;
     delayed?: boolean;
     disabled?: boolean;
     shared?: boolean;
+    delayedTracks?: boolean;
+    defaultEnglish?: boolean;
 }) {
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [mounted, setMounted] = useState(!delayed);
+    const [tracksMounted, setTracksMounted] = useState(!delayedTracks);
     return <Media.Root>
         <Media.Container ref={setContainer}>
             {mounted && <Media.Video src={clip} />}
@@ -47,9 +50,10 @@ function CaptionPlayer({ label = "Captions", delayed = false, disabled = false, 
             <CaptionPicker container={container} label={label} disabled={disabled} />
             {shared && <CaptionButtons />}
             {!mounted && <button onClick={() => setMounted(true)}>Load player</button>}
+            {!tracksMounted && <button onClick={() => setTracksMounted(true)}>Load captions</button>}
         </Media.Container>
-        {mounted && <>
-            <Track kind="subtitles" srclang="en" label="English" src={english} />
+        {mounted && tracksMounted && <>
+            <Track kind="subtitles" srclang="en" label="English" src={english} default={defaultEnglish} />
             <Track kind="subtitles" srclang="fr" src={french} />
         </>}
     </Media.Root>;
@@ -60,12 +64,41 @@ async function chooseLanguage(label: string, language: string) {
     await userEvent.click(page.getByRole("option", { name: language, exact: true }));
 }
 
-async function pauseAfterPlayback(index = 0) {
-    await userEvent.click(page.getByRole("button", { name: "Play", exact: true }).nth(index));
-    const video = document.querySelectorAll("video")[index];
+async function pauseAfterPlayback() {
+    await userEvent.click(page.getByRole("button", { name: "Play", exact: true }));
+    const video = document.querySelector("video")!;
     await expect.poll(() => video.currentTime).toBeGreaterThan(0);
     await userEvent.click(page.getByRole("button", { name: "Pause", exact: true }));
 }
+
+test("captions loaded before first playback appear immediately when selected", async () => {
+    const screen = await render(<StrictMode><CaptionPlayer delayedTracks /></StrictMode>);
+    const video = screen.container.querySelector("video")!;
+    await expect.poll(() => video.readyState).toBeGreaterThanOrEqual(2);
+    await chooseLanguage("Captions", "Off");
+    await userEvent.click(page.getByRole("button", { name: "Load captions" }));
+    await chooseLanguage("Captions", "English");
+    await expect.element(page.getByText("Hello, world")).toBeVisible();
+    await chooseLanguage("Captions", "fr");
+    await expect.element(page.getByText("Bonjour le monde")).toBeVisible();
+    await expect.element(page.getByText("Hello, world")).not.toBeInTheDocument();
+    await chooseLanguage("Captions", "Off");
+    await expect.element(page.getByText("Bonjour le monde")).not.toBeInTheDocument();
+    expect(video.currentTime).toBe(0);
+    expect(video.paused).toBe(true);
+});
+
+test("default captions loaded after the video appear without starting playback", async () => {
+    const screen = await render(<CaptionPlayer delayedTracks defaultEnglish />);
+    const video = screen.container.querySelector("video")!;
+    await expect.poll(() => video.readyState).toBeGreaterThanOrEqual(2);
+    await chooseLanguage("Captions", "Off");
+    await userEvent.click(page.getByRole("button", { name: "Load captions" }));
+    await expect.element(page.getByText("Hello, world")).toBeVisible();
+    await expect.element(page.getByRole("combobox", { name: "Captions" })).toHaveTextContent("English");
+    expect(video.currentTime).toBe(0);
+    expect(video.paused).toBe(true);
+});
 
 test("choosing a caption language while paused shows only its captions and Off hides them", async () => {
     await render(<StrictMode><CaptionPlayer /></StrictMode>);
@@ -89,8 +122,8 @@ test("choosing a caption language while paused shows only its captions and Off h
 
 test("keyboard selection and Escape restore focus without changing the cancelled choice", async () => {
     await render(<CaptionPlayer />);
-    await pauseAfterPlayback();
     const captions = page.getByRole("combobox", { name: "Captions" });
+    await userEvent.tab();
     await userEvent.tab();
     await userEvent.tab();
     await expect.element(captions).toHaveFocus();
@@ -123,8 +156,6 @@ test("caption choices stay local to each player and follow other caption control
         <CaptionPlayer label="First captions" shared />
         <CaptionPlayer label="Second captions" />
     </StrictMode>);
-    await pauseAfterPlayback(0);
-    await pauseAfterPlayback(1);
     await chooseLanguage("Second captions", "fr");
     await userEvent.click(page.getByRole("button", { name: "Use English" }));
     await expect.element(page.getByRole("combobox", { name: "First captions" })).toHaveTextContent("English");
@@ -143,6 +174,7 @@ test("caption options become available when the player mounts later and disabled
     await userEvent.click(page.getByRole("button", { name: "Load player" }));
     await chooseLanguage("Captions", "English");
     await expect.element(page.getByRole("combobox", { name: "Captions" })).toHaveTextContent("English");
+    await expect.element(page.getByText("Hello, world")).toBeVisible();
     await render(<CaptionPlayer label="Disabled captions" disabled />);
     await expect.element(page.getByRole("combobox", { name: "Disabled captions" })).toBeDisabled();
 });

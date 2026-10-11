@@ -160,7 +160,7 @@ export function updateTextTrackDisplay(element: HTMLMediaElement, affectedTracks
 export function timeMarchesOn() {
     for (const [element, context] of trackContext) {
         const lastTimestamp = context.lastTimestamp;
-        if (element.currentTime === lastTimestamp) continue;
+        if (element.currentTime === lastTimestamp && context.newlyIntroducedCues.size === 0) continue;
         context.lastTimestamp = element.currentTime;
         const textTrackList = context.tracks;
         if (!textTrackList) continue;

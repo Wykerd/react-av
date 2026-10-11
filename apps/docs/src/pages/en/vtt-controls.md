@@ -14,7 +14,7 @@ npm i @react-av/core @react-av/vtt-core @react-av/vtt @react-av/vtt-controls @ra
 
 ## CaptionTrackSelectRoot and CaptionTrackSelectItems
 
-Compose a caption language picker with [Radix Select](https://www.radix-ui.com/primitives/docs/components/select). `CaptionTrackSelectRoot` connects the selection to the current player's caption tracks. `CaptionTrackSelectItems` lists "Off" and one item per `subtitles` or `captions` track, using its `label`, then its `srclang`, then "Track N". Choosing a language shows only that track; choosing "Off" hides captions, including while paused.
+Compose a caption language picker with [Radix Select](https://www.radix-ui.com/primitives/docs/components/select). `CaptionTrackSelectRoot` connects the selection to the current player's caption tracks. `CaptionTrackSelectItems` lists "Off" and one item per `subtitles` or `captions` track, using its `label`, then its `srclang`, then "Track N". Choosing a language shows only that track; choosing "Off" hides captions, including while paused or before the first playback.
 
 Use Radix's trigger, value, content and viewport to control the layout and styling. Give the trigger an accessible name. Place the portal inside `Media.Container` so the menu remains visible in fullscreen.
 
