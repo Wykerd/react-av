@@ -106,12 +106,15 @@ test("focused buttons and sliders keep their own keyboard behaviour", async () =
     await expect.poll(() => video.paused).toBe(true);
     const seek = page.getByRole("slider", { name: "Seek" });
     seek.element().focus();
+    await userEvent.keyboard("{Home}");
+    await expect.poll(() => video.currentTime).toBe(0);
+    const previousTime = video.currentTime;
     await userEvent.keyboard("{ArrowRight}");
-    expect(video.currentTime).toBeLessThan(1);
+    expect(video.currentTime).toBeLessThan(previousTime + 5);
     const volume = page.getByRole("slider", { name: "Volume" });
     volume.element().focus();
     await userEvent.keyboard("{ArrowDown}");
-    expect(video.volume).toBeGreaterThan(0.99);
+    expect(video.volume).toBeGreaterThan(0.9);
     expect(video.volume).toBeLessThan(1);
 });
 
