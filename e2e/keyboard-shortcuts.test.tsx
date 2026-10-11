@@ -41,7 +41,8 @@ test("the up and down arrows change the volume by ten percent", async () => {
     await userEvent.click(video);
 
     await userEvent.keyboard("{ArrowDown}");
-    await expect.element(volume).toHaveAttribute("aria-valuenow", "0.9");
+    await expect.poll(() => Number(volume.element().getAttribute("aria-valuenow"))).toBeCloseTo(0.9, 6);
+    expect(video.volume).toBeCloseTo(0.9, 6);
 
     await userEvent.keyboard("{ArrowUp}{ArrowUp}");
     await expect.element(volume).toHaveAttribute("aria-valuenow", "1");
