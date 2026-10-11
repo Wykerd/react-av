@@ -234,20 +234,30 @@ table {
 	padding: var(--padding-block) 0;
 	margin: 0;
 	border-collapse: collapse;
+	font-family: var(--font-body);
+	font-size: 0.9rem;
 }
 
-/* Zebra striping */
-tr:nth-of-type(odd) {
-	background: var(--theme-bg-hover);
-}
 th {
-	background: var(--theme-bg-accent);
-	color: var(--theme-bg);
-	font-weight: bold;
+	font-family: var(--font-mono);
+	font-size: 10px;
+	font-weight: 400;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--theme-text-light);
+	white-space: nowrap;
+	border-bottom: 1px solid var(--theme-text-light);
+}
+td {
+	border-bottom: 1px solid var(--theme-divider);
+}
+td:first-child {
+	font-weight: 500;
 }
 td,
 th {
-	padding: 6px;
+	padding: 0.75rem 1.25rem 0.75rem 0;
+	vertical-align: baseline;
 	text-align: left;
 }
 
