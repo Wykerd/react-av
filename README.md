@@ -85,7 +85,10 @@ This is a [pnpm](https://pnpm.io) workspace managed with [Turborepo](https://tur
 pnpm install
 pnpm build        # build all packages and the docs site
 pnpm dev          # watch packages and run the docs site locally
+pnpm test         # run the test suite with Vitest
 ```
+
+The browser tests in [`e2e`](./e2e) play a real video through the package sources in headless Chromium and WebKit, so no build is needed first. Install the browsers once with `pnpm exec playwright install chromium webkit` (on Linux, add `--with-deps` for the system libraries and media codecs). Run only the browser tests with `pnpm test --project e2e`. Add one `e2e/<feature>.test.tsx` per feature: use `renderPlayer` from `e2e/player.tsx` when its controls cover the flow, otherwise render your own player in the test file, wrapped in `StrictMode`, with the clip from `e2e/fixtures/clip.webm`.
 
 The documentation and demo site lives in [`apps/docs`](./apps/docs). Releases are versioned with [Changesets](https://github.com/changesets/changesets): run `pnpm changes` to describe your change before opening a pull request.
 
@@ -96,3 +99,9 @@ Issues and pull requests are welcome. For larger changes, please open an issue f
 ## License
 
 [MIT](./LICENSE) © [Daniel Wykerd](https://wykerd.dev)
+
+### Releases
+
+Pull requests run the CI workflow to build the packages and test playback in Chromium and WebKit. The release workflow reuses those checks and waits for them to pass before updating the Version packages PR or publishing its merged versions on master. Enable GitHub Actions to create pull requests in the repository settings. Each public package needs an npm trusted publisher for owner `Wykerd`, repository `react-av`, workflow `release.yml`, with direct publishing allowed. No npm token is needed.
+
+For a manual release, use Node 24, npm 11.5.1 or later, and the pinned pnpm version. Run `pnpm version-packages`, review and commit the versions, then run `pnpm build && pnpm test && pnpm release` with your npm login. Merge the version-drift fix before the first release.

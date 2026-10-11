@@ -3,14 +3,24 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "test": "vitest run",
     "changes": "changeset",
-    "publish-packages": "turbo run build && changeset version && pnpm install && pnpm publish -r --access public --filter !@react-av/docs --no-git-checks"
+    "version-packages": "changeset version && pnpm install --lockfile-only",
+    "release": "changeset publish"
   },
   "author": "Daniel Wykerd <daniel@wykerd.dev>",
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
-    "turbo": "^2.11.7"
+    "@radix-ui/react-slider": "^1.5.0",
+    "@types/node": "^26.6.4",
+    "@vitest/browser-playwright": "^5.0.3",
+    "playwright": "^1.64.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "turbo": "^2.11.7",
+    "vitest": "^5.0.3",
+    "vitest-browser-react": "^2.3.0"
   },
   "packageManager": "pnpm@10.34.6"
 }
