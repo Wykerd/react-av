@@ -9,13 +9,17 @@ export default class VTTParser {
     // 3. Let seen cue be false.
     #seenCue: boolean = false;
     #cues: TextTrackCue[] = [];
-    #stylesheets: any[] = [];
+    #stylesheets: string[] = [];
     // 13. Let regions be an empty text track list of regions.
     #regions: VTTRegion[] = [];
 
     constructor(input: string) {
         this.#input = this.#prepare(input);
         this.#parse();
+    }
+
+    get stylesheets() {
+        return [...this.#stylesheets];
     }
 
     get regions() {
@@ -36,6 +40,7 @@ export default class VTTParser {
         for (const region of this.#regions) {
             textTrack._addRegion(region);
         }
+        textTrack._stylesheets.push(...this.#stylesheets);
         return textTrack;
     }
 
@@ -86,7 +91,7 @@ export default class VTTParser {
         // 8. Let cue be null.
         let cue: TextTrackCue | null = null;
         // 9. Let stylesheet be null.
-        let stylesheet = null;
+        let stylesheet: string | null = null;
         // 10. Let region be null.
         let region: VTTRegion | null = null;
         // 11. Loop: Run these substeps in a loop:
@@ -135,7 +140,8 @@ export default class VTTParser {
                 if (!inHeader && lineCount === 2) {
                     // 1. If seen cue is false and buffer starts with the substring "STYLE" (U+0053 LATIN CAPITAL LETTER S, U+0054 LATIN CAPITAL LETTER T, U+0059 LATIN CAPITAL LETTER Y, U+004C LATIN CAPITAL LETTER L, U+0045 LATIN CAPITAL LETTER E), and the remaining characters in buffer (if any) are all ASCII whitespace, then run these substeps:
                     if (!this.#seenCue && buffer.startsWith("STYLE") && buffer.substring(5).trim() === "") {
-                        // TODO: stylesheet implementation
+                        stylesheet = "";
+                        buffer = "";
                     }
                     // 2. Otherwise, if seen cue is false and buffer starts with the substring "REGION" (U+0052 LATIN CAPITAL LETTER R, U+0045 LATIN CAPITAL LETTER E, U+0047 LATIN CAPITAL LETTER G, U+0049 LATIN CAPITAL LETTER I, U+004F LATIN CAPITAL LETTER O, U+004E LATIN CAPITAL LETTER N), and the remaining characters in buffer (if any) are all ASCII whitespace, then run these substeps:
                     else if (!this.#seenCue && buffer.startsWith("REGION") && buffer.substring(6).trim() === "") {
@@ -160,7 +166,7 @@ export default class VTTParser {
             cue.text = buffer;
         // 13. Otherwise, if stylesheet is not null, then Parse a stylesheet from buffer. If it returned a list of rules, assign the list as stylesheet’s CSS rules; otherwise, set stylesheet’s CSS rules to an empty list. [CSSOM] [CSS-SYNTAX-3] Finally, return stylesheet.
         else if (stylesheet !== null) {
-            // TODO: stylesheet implementation
+            stylesheet = buffer;
         }
         // 14. Otherwise, if region is not null, then collect WebVTT region settings from buffer using region for the results. Construct a WebVTT Region Object from region, and return it.
         else if (region !== null) {
@@ -684,7 +690,7 @@ export default class VTTParser {
                 this.#cues.push(block.cue);
             }
             // 3. Otherwise, if block is a CSS style sheet, add block to stylesheets.
-            else if (block.stylesheet) {
+            else if (block.stylesheet !== null) {
                 this.#stylesheets.push(block.stylesheet);
             }
             // 4. Otherwise, if block is a WebVTT region object, add block to regions.

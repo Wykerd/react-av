@@ -13,3 +13,5 @@ npm i @react-av/vtt-core
 ```
 
 **This documentation is a work in progress and will be completed once the API is finalized and we've started running spec compliance tests on our implementation.**
+
+`VTTParser.stylesheets` returns the CSS text of validly placed STYLE blocks in file order. `parser.textTrack()` and fetched tracks retain the same text in `TextTrack._stylesheets`. Styles after the first cue are ignored. This preserves the original CSS for editors; the caption renderer does not apply these styles yet.

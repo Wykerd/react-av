@@ -42,6 +42,8 @@ export default class TextTrack extends EventTarget {
         return this.#cues?.filter(cue => getCueContext(cue)?.active);
     }
 
+    readonly _stylesheets: string[] = [];
+
     #regions: VTTRegion[] = [];
     // XXX: this is non-standard
     get _regions() {
