@@ -3,8 +3,9 @@ import * as Media from "@react-av/core";
 import { Fullscreen, Mute, PictureInPicture, PlayPause, Timestamp, toTimestampString } from "@react-av/controls";
 import { ProgressBarBufferedRanges, ProgressBarRoot, ProgressBarTooltip, VolumeRoot, useMediaProgressBarTooltip } from "@react-av/sliders";
 import { InterfaceOverlay, Track } from "@react-av/vtt";
+import { CaptionsToggle } from "@react-av/vtt-controls";
 import * as Slider from "@radix-ui/react-slider";
-import { ArrowsIn, ArrowsOut, CircleNotch, Pause, PictureInPicture as PipIcon, Play, SpeakerHigh, SpeakerLow, SpeakerNone, SpeakerX } from "@phosphor-icons/react";
+import { ArrowsIn, ArrowsOut, CircleNotch, ClosedCaptioning, Pause, PictureInPicture as PipIcon, Play, SpeakerHigh, SpeakerLow, SpeakerNone, SpeakerX } from "@phosphor-icons/react";
 import PlayerDemoHeader, { type PlayerSkin } from "./PlayerDemoHeader";
 
 const CONTAINER_CLASSES: Record<PlayerSkin, string> = {
@@ -99,6 +100,7 @@ function StudioControls() {
             </Slider.Track>
             <Slider.Thumb aria-label="Volume" className="block size-3 rounded-full bg-white outline-none" />
         </VolumeRoot>
+        <CaptionsToggle className={`${STUDIO_BUTTON} aria-[pressed=false]:opacity-40`} icon={<ClosedCaptioning {...icon} />} />
         <Fullscreen className={STUDIO_BUTTON} fullscreenIcon={<ArrowsOut {...icon} />} exitFullscreenIcon={<ArrowsIn {...icon} />} />
     </InterfaceOverlay>;
 }
@@ -136,6 +138,7 @@ function BroadcastControls() {
             <PlayPause className={BROADCAST_BUTTON} playIcon={<BroadcastPlayLabel />} pauseIcon={<BroadcastPlayLabel />} loadingIcon={<span>Loading</span>} />
             <Mute className={BROADCAST_BUTTON} highIcon={<BroadcastMuteLabel />} lowIcon={<BroadcastMuteLabel />} noneIcon={<BroadcastMuteLabel />} mutedIcon={<BroadcastMuteLabel />} />
             <span className="grow" />
+            <CaptionsToggle className={`${BROADCAST_BUTTON} aria-[pressed=false]:line-through`} icon={<span>CC</span>} />
             <Fullscreen className={BROADCAST_BUTTON} fullscreenIcon={<span>Full</span>} exitFullscreenIcon={<span>Exit</span>} />
         </div>
     </InterfaceOverlay>;

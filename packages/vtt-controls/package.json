@@ -19,6 +19,7 @@
   "devDependencies": {
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
+    "@react-av/vtt-core": "workspace:^",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "react": "^19.3.0",
@@ -29,8 +30,12 @@
   "peerDependencies": {
     "@react-av/core": "workspace:^",
     "@react-av/vtt": "workspace:^",
+    "@react-av/vtt-core": "workspace:^",
     "react": "^18.3.1 || ^19.0.0",
     "react-dom": "^18.3.1 || ^19.0.0"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10"
   },
   "keywords": [],
   "author": "Daniel Wykerd <daniel@wykerd.dev>",

@@ -2,8 +2,11 @@ import * as Slider from "@radix-ui/react-slider";
 import { Fullscreen, Mute, PlayPause, Timestamp } from "@react-av/controls";
 import * as Media from "@react-av/core";
 import { ProgressBarRoot, VolumeRoot } from "@react-av/sliders";
+import { Track } from "@react-av/vtt";
+import { CaptionsToggle } from "@react-av/vtt-controls";
 import { StrictMode } from "react";
 import { render } from "vitest-browser-react";
+import captions from "./fixtures/captions.vtt";
 import clip from "./fixtures/clip.webm";
 
 const sliderStyle = { display: "block", position: "relative", width: 200, height: 12 } as const;
@@ -16,6 +19,7 @@ export async function renderPlayer(videoProps: Media.VideoProps = {}) {
                 <Media.Container>
                     <Media.Video src={clip} {...videoProps} />
                 </Media.Container>
+                <Track kind="captions" srclang="en" label="English" src={captions} default />
                 <Media.Viewport>
                     <PlayPause />
                     <ProgressBarRoot style={sliderStyle}>
@@ -26,6 +30,7 @@ export async function renderPlayer(videoProps: Media.VideoProps = {}) {
                     <VolumeRoot style={sliderStyle}>
                         <Slider.Thumb aria-label="Volume" style={thumbStyle} />
                     </VolumeRoot>
+                    <CaptionsToggle />
                     <Fullscreen />
                 </Media.Viewport>
             </Media.Root>
