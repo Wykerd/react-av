@@ -1,5 +1,11 @@
 # @react-av/controls
 
+## 0.0.7
+
+### Patch Changes
+
+- Remove external icon library dependency
+
 ## 0.0.6
 
 ### Patch Changes
