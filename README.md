@@ -88,6 +88,8 @@ pnpm dev          # watch packages and run the docs site locally
 pnpm test         # run the test suite with Vitest
 ```
 
+The browser tests in [`e2e`](./e2e) play a real video through the package sources in headless Chromium and WebKit, so no build is needed first. Install the browsers once with `pnpm exec playwright install chromium webkit` (on Linux, add `--with-deps` for the system libraries and media codecs). Run only the browser tests with `pnpm test --project e2e`. Add one `e2e/<feature>.test.tsx` per feature: use `renderPlayer` from `e2e/player.tsx` when its controls cover the flow, otherwise render your own player in the test file, wrapped in `StrictMode`, with the clip from `e2e/fixtures/clip.webm`.
+
 The documentation and demo site lives in [`apps/docs`](./apps/docs). Releases are versioned with [Changesets](https://github.com/changesets/changesets): run `pnpm changes` to describe your change before opening a pull request.
 
 ## Contributing
