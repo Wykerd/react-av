@@ -1,4 +1,4 @@
-import { type TextTrack, type VTTCue, toTimestampString } from "@react-av/vtt-core";
+import { type TextTrack, type VTTCue, type VTTRegion, toTimestampString } from "@react-av/vtt-core";
 
 function toSafeCuePayload(text: string) {
     return text
@@ -25,6 +25,7 @@ function toCueSettings(cue: VTTCue) {
     }
     if (cue.size !== 100) settings.push(`size:${cue.size}%`);
     if (cue.align !== "center") settings.push(`align:${cue.align}`);
+    if (cue.region) settings.push(`region:${cue.region.id}`);
     return settings;
 }
 
@@ -37,10 +38,23 @@ function toCueBlock(cue: VTTCue) {
     return lines.join("\n");
 }
 
+function toRegionBlock(region: VTTRegion) {
+    const settings = [
+        `id:${region.id}`,
+        `width:${region.width}%`,
+        `lines:${region.lines}`,
+        `regionanchor:${region.regionAnchorX}%,${region.regionAnchorY}%`,
+        `viewportanchor:${region.viewportAnchorX}%,${region.viewportAnchorY}%`,
+    ];
+    if (region.scroll !== "") settings.push(`scroll:${region.scroll}`);
+    return `REGION\n${settings.join(" ")}`;
+}
+
 export function toVTT(track: TextTrack) {
     const cues = [...(track.cues ?? [])] as VTTCue[];
     const lines = cues
         .sort((a, b) => a.startTime - b.startTime)
         .map(toCueBlock);
-    return `WEBVTT\n\n${lines.join('\n\n')}`;
+    const blocks = [...track._regions.map(toRegionBlock), ...lines];
+    return `WEBVTT\n\n${blocks.join('\n\n')}`;
 }
