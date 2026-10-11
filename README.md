@@ -67,7 +67,7 @@ function PlayButton() {
 | Package | Description |
 | --- | --- |
 | [`@react-av/core`](./packages/core) | Media root, video/audio elements, viewport, and state hooks. |
-| [`@react-av/controls`](./packages/controls) | Play/pause, mute, loop, fullscreen, picture-in-picture, and timestamp controls. |
+| [`@react-av/controls`](./packages/controls) | Play/pause, mute, loop, playback speed, fullscreen, picture-in-picture, and timestamp controls. |
 | [`@react-av/sliders`](./packages/sliders) | Seek and volume sliders built on Radix UI. |
 | [`@react-av/vtt-core`](./packages/vtt-core) | Standalone W3C WebVTT parser and renderer. |
 | [`@react-av/vtt`](./packages/vtt) | WebVTT tracks, cues, and caption overlays for React AV. |
