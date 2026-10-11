@@ -90,3 +90,28 @@ If the stream is natively supported, the hook returns `null`.
 - Use [useMediaError](/en/core-hooks/#usemediaerror) to show playback failures in your interface. Inspect the browser's network panel if manifests or segments cannot load.
 
 For subtitles alongside a stream, follow the [WebVTT captions guide](/en/text-track-introduction/).
+
+### useMediaShakaQualities()
+
+Use this hook inside a media root to build a quality picker. It returns `qualities` (each with `id`, `height`, and `bitrate`), `active`, `automatic`, and `selectQuality(quality | "auto")`. Choosing a rendition turns automatic selection off; choosing `"auto"` enables it again. A small buffer remains during a switch so playback can continue. Native playback has an empty quality list because Shaka does not manage that stream.
+
+```tsx
+function QualityPicker() {
+  const { qualities, active, automatic, selectQuality } = Shaka.useMediaShakaQualities();
+  return (
+    <select
+      aria-label="Video quality"
+      value={automatic ? "auto" : active?.id ?? "auto"}
+      onChange={event => {
+        const quality = qualities.find(quality => quality.id === Number(event.target.value));
+        selectQuality(quality ?? "auto");
+      }}
+    >
+      <option value="auto">Automatic</option>
+      {qualities.map(quality => <option key={quality.id} value={quality.id}>{quality.height}p</option>)}
+    </select>
+  );
+}
+```
+
+Each player manages its own quality choice. The list groups renditions with the same height and video bitrate, and keeps the active audio language when switching video.

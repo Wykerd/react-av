@@ -279,3 +279,5 @@ const ShakaAudio = forwardRef<ShakaPlayerRef, ShakaAudioProps>(
 );
 
 export { ShakaVideo as Video, ShakaAudio as Audio };
+export { useMediaShakaQualities } from "./qualities.js";
+export type { ShakaQuality } from "./qualities.js";
