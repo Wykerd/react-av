@@ -132,3 +132,23 @@ test("modified keys and the opt-out leave the player's state alone", async () =>
     expect(disabledVideo.currentTime).toBe(0);
     expect(document.fullscreenElement).toBeNull();
 });
+
+test("apps can reserve player keys in child and container handlers", async () => {
+    const handledKeys: string[] = [];
+    const screen = await render(<Media.Root><Media.Container onKeyDown={event => {
+        handledKeys.push(event.key);
+        if (event.key === "m") event.preventDefault();
+    }}>
+        <Media.Video src={clip} />
+        <button onKeyDown={event => {
+            if (event.key === "k") event.preventDefault();
+        }}>Custom shortcuts</button>
+    </Media.Container></Media.Root>);
+    const video = screen.container.querySelector("video")!;
+    await userEvent.click(page.getByRole("button", { name: "Custom shortcuts" }));
+    page.getByRole("button", { name: "Custom shortcuts" }).element().focus();
+    await userEvent.keyboard("km");
+    expect(video.paused).toBe(true);
+    expect(video.muted).toBe(false);
+    expect(handledKeys).toEqual(["k", "m"]);
+});
