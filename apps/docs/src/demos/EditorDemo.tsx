@@ -16,7 +16,7 @@ import {
     type TimelineSubtitleCueEditorStylingProps,
 } from "@react-av/editor";
 import { Track } from "@react-av/vtt";
-import { Check, CircleNotch, ClosedCaptioning, MagnifyingGlassMinus, MagnifyingGlassPlus, Pause, Play, Subtitles, Trash } from "@phosphor-icons/react";
+import { ArrowUUpLeft, ArrowUUpRight, Check, CircleNotch, ClosedCaptioning, MagnifyingGlassMinus, MagnifyingGlassPlus, Pause, Play, Subtitles, Trash } from "@phosphor-icons/react";
 import SkinTabs, { type SkinOption } from "./SkinTabs";
 
 type EditorSkin = "paper" | "studio" | "classroom";
@@ -34,6 +34,7 @@ interface EditorSkinDefinition {
     header: TimelineHeaderStyling;
     cueEditor: TimelineSubtitleCueEditorStylingProps;
     trackLabel: { icon: ReactElement; label: string };
+    history: { button: string; undoIcon: ReactElement; redoIcon: ReactElement };
 }
 
 const paper: EditorSkinDefinition = {
@@ -50,7 +51,7 @@ const paper: EditorSkinDefinition = {
         timelineEntryLabelContainer: "flex items-center gap-2 border-b border-line px-3 text-ink",
         timelineEntryLabelTextContainer: "flex grow items-center gap-2",
         timelineEntryLabelText: "font-mono text-[10px] uppercase tracking-[0.12em]",
-        timelineEntryLabelControlsContainer: "flex items-center gap-2",
+        timelineEntryLabelControlsContainer: "flex items-center gap-1",
     },
     controlBar: {
         timelineControlBarContainer: "border-y border-ink px-2 py-1",
@@ -83,6 +84,11 @@ const paper: EditorSkinDefinition = {
         timelineSubtitleCueEditorDoneIcon: <Check weight="light" size={14} />,
     },
     trackLabel: { icon: <Subtitles weight="light" size={16} />, label: "Captions" },
+    history: {
+        button: "grid size-7 place-items-center border border-transparent enabled:hover:border-ink disabled:opacity-30",
+        undoIcon: <ArrowUUpLeft weight="light" size={16} />,
+        redoIcon: <ArrowUUpRight weight="light" size={16} />,
+    },
 };
 
 const studio: EditorSkinDefinition = {
@@ -99,7 +105,7 @@ const studio: EditorSkinDefinition = {
         timelineEntryLabelContainer: "flex items-center gap-2 border-b border-white/10 bg-neutral-900 px-3 text-neutral-400",
         timelineEntryLabelTextContainer: "flex grow items-center gap-2",
         timelineEntryLabelText: "text-xs font-medium",
-        timelineEntryLabelControlsContainer: "flex items-center gap-2",
+        timelineEntryLabelControlsContainer: "flex items-center gap-1",
     },
     controlBar: {
         timelineControlBarContainer: "border-b border-white/10 bg-neutral-900 px-2 py-1",
@@ -130,6 +136,11 @@ const studio: EditorSkinDefinition = {
         timelineSubtitleCueEditorDoneIcon: <Check weight="bold" size={14} />,
     },
     trackLabel: { icon: <ClosedCaptioning weight="fill" size={16} />, label: "Subtitles" },
+    history: {
+        button: "grid size-7 place-items-center rounded-md text-neutral-400 enabled:hover:bg-white/10 enabled:hover:text-white disabled:opacity-30",
+        undoIcon: <ArrowUUpLeft weight="bold" size={14} />,
+        redoIcon: <ArrowUUpRight weight="bold" size={14} />,
+    },
 };
 
 const classroom: EditorSkinDefinition = {
@@ -180,16 +191,21 @@ const classroom: EditorSkinDefinition = {
         timelineSubtitleCueEditorDoneIcon: <Check weight="bold" size={14} />,
     },
     trackLabel: { icon: <Subtitles weight="duotone" size={18} />, label: "Captions" },
+    history: {
+        button: "grid size-8 place-items-center rounded-full bg-indigo-50 text-indigo-600 enabled:hover:bg-indigo-100 disabled:opacity-40",
+        undoIcon: <ArrowUUpLeft weight="bold" size={16} />,
+        redoIcon: <ArrowUUpRight weight="bold" size={16} />,
+    },
 };
 
 const DEFINITIONS: Record<EditorSkin, EditorSkinDefinition> = { paper, studio, classroom };
 
-function HistoryButtons() {
+function HistoryButtons({ styling }: { styling: EditorSkinDefinition["history"] }) {
     const { undo, redo, canUndo, canRedo } = useTimelineSubtitleTrack();
-    return <div className="flex gap-2 px-4 py-2">
-        <button className="border border-current px-3 py-1 text-xs disabled:opacity-30" disabled={!canUndo} onClick={undo}>Undo</button>
-        <button className="border border-current px-3 py-1 text-xs disabled:opacity-30" disabled={!canRedo} onClick={redo}>Redo</button>
-    </div>;
+    return <>
+        <button type="button" aria-label="Undo" title="Undo" className={styling.button} disabled={!canUndo} onClick={undo}>{styling.undoIcon}</button>
+        <button type="button" aria-label="Redo" title="Redo" className={styling.button} disabled={!canRedo} onClick={redo}>{styling.redoIcon}</button>
+    </>;
 }
 
 export default function EditorDemo() {
@@ -214,10 +230,13 @@ export default function EditorDemo() {
                             <TimelineHeader styling={definition.header} />
                             <TimelineSubtitlesTrack
                                 id="editor-captions"
-                                labelComponent={<TimelineEntryLabel icon={definition.trackLabel.icon} label={definition.trackLabel.label} />}
+                                labelComponent={<TimelineEntryLabel
+                                    icon={definition.trackLabel.icon}
+                                    label={definition.trackLabel.label}
+                                    controls={<HistoryButtons styling={definition.history} />}
+                                />}
                             >
                                 <TimelineSubtitleCueEditor styling={definition.cueEditor} />
-                                <HistoryButtons />
                             </TimelineSubtitlesTrack>
                         </TimelineContainer>
                     </TimelineEditor>
