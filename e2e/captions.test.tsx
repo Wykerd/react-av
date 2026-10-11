@@ -55,10 +55,11 @@ test("the toggle restores the selected caption track and disables without tracks
 
 test("apps can disable the captions button when a track is available", async () => {
     await render(<Media.Root><Media.Container><Media.Video src={clip} /></Media.Container>
-        <Track kind="captions" src={captions} default /><CaptionsToggle disabled />
+        <Track kind="captions" src={captions} default /><CaptionsToggle disabled /><PlayPause />
     </Media.Root>);
-    await expect.element(page.getByRole("button", { name: "Captions" })).toBeDisabled();
+    await userEvent.click(page.getByRole("button", { name: "Play", exact: true }));
     await expect.element(page.getByText("Captions are on")).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Captions" })).toBeDisabled();
 });
 
 function DelayedCaptionsToolbar() {
@@ -77,9 +78,11 @@ test("a newly opened captions toolbar selects the default language", async () =>
     await render(<Media.Root><Media.Container><Media.Video src={clip} /></Media.Container>
         <Track kind="subtitles" label="Other" src={otherCaptions} />
         <Track kind="captions" label="Default" src={captions} default />
-        <DelayedCaptionsToolbar />
+        <DelayedCaptionsToolbar /><PlayPause />
     </Media.Root>);
+    await userEvent.click(page.getByRole("button", { name: "Play", exact: true }));
     await expect.element(page.getByText("Captions are on")).toBeVisible();
+    await userEvent.click(page.getByRole("button", { name: "Pause", exact: true }));
     await userEvent.click(page.getByRole("button", { name: "Hide captions and open toolbar" }));
     await userEvent.click(page.getByRole("button", { name: "Captions", exact: true }));
     await expect.element(page.getByText("Captions are on")).toBeVisible();
