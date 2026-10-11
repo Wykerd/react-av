@@ -77,7 +77,7 @@ function PlayButton() {
 
 Every package except `@react-av/vtt-core` has `react` and `react-dom` as peer dependencies.
 
-Sizes are minified and gzipped. They include each package's own dependencies but not its peer dependencies, such as React, Radix UI, or Shaka Player. See [Browser support and bundle size](https://react-av.wykerd.dev/en/browser-support) for how they were measured and which browsers support each feature.
+Sizes are minified and gzipped. They include each package's own dependencies and leave out peer dependencies such as React, Radix UI, and Shaka Player. [Browser support and bundle size](https://react-av.wykerd.dev/en/browser-support) covers the measurement method and which browsers support each feature.
 
 ## Development
 
