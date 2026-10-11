@@ -16,3 +16,9 @@ See the [documentation](https://react-av.wykerd.dev) for more information.
 
 `ProgressBarRoot` disables seeking until the media exposes a finite, positive
 duration. Keep its track mounted while loading so the control retains its layout.
+
+Arrow keys seek one second or adjust volume by five percentage points.
+`keyboardStep` customizes these increments independently of pointer precision.
+`step` controls pointer precision, defaulting to `0.001` seconds for seeking and
+`0.0001` for volume. Shift+Arrow and Page Up/Down use ten keyboard increments;
+Home and End move to the limits. Right-to-left and inverted directions are respected.
