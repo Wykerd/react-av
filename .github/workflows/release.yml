@@ -13,7 +13,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
   release:
+    needs: test
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
@@ -31,8 +34,6 @@ jobs:
       - run: npm install --global npm@11.15.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium webkit
-      - run: pnpm test
       - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51
         with:
           version-script: pnpm version-packages

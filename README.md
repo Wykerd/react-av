@@ -102,6 +102,6 @@ Issues and pull requests are welcome. For larger changes, please open an issue f
 
 ### Releases
 
-On pushes to master, the release workflow builds and tests the packages before updating the Version packages PR or publishing its merged versions. Enable GitHub Actions to create pull requests in the repository settings. Each public package needs an npm trusted publisher for owner `Wykerd`, repository `react-av`, workflow `release.yml`, with direct publishing allowed. No npm token is needed.
+Pull requests run the CI workflow to build the packages and test playback in Chromium and WebKit. The release workflow reuses those checks and waits for them to pass before updating the Version packages PR or publishing its merged versions on master. Enable GitHub Actions to create pull requests in the repository settings. Each public package needs an npm trusted publisher for owner `Wykerd`, repository `react-av`, workflow `release.yml`, with direct publishing allowed. No npm token is needed.
 
 For a manual release, use Node 24, npm 11.5.1 or later, and the pinned pnpm version. Run `pnpm version-packages`, review and commit the versions, then run `pnpm build && pnpm test && pnpm release` with your npm login. Merge the version-drift fix before the first release.
