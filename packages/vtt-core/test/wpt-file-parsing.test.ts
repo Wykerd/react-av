@@ -4,8 +4,6 @@ import { describe, expect, it } from "vitest";
 import { VTTParser } from "../src";
 import expectedCues from "./wpt-file-parsing/expected-cues.json";
 
-const knownParserBugs = ["header-regions", "regions-id", "settings-line", "settings-multiple"];
-
 const invalidSignatures = [
     "empty",
     "signature-formfeed",
@@ -25,8 +23,7 @@ function readFixture(name: string) {
 
 describe("WebVTT file parsing (web-platform-tests)", () => {
     for (const [name, cues] of Object.entries(expectedCues)) {
-        const parserCase = knownParserBugs.includes(name) ? it.fails : it;
-        parserCase(name, () => {
+        it(name, () => {
             const parser = new VTTParser(readFixture(name));
             expect(parser.cues).toMatchObject(cues);
         });
