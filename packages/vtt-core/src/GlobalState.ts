@@ -242,7 +242,7 @@ export function timeMarchesOn() {
         affectedTracks = [...new Set(affectedTracks)].sort((a, b) => trackOrder.indexOf(a) - trackOrder.indexOf(b));
         // 16. For each text track in affected tracks, in the list order, queue a media element task given the media element to fire an event named cuechange at the TextTrack object, and, if the text track has a corresponding track element, to then fire an event named cuechange at the track element as well.
         affectedTracks.forEach(track => {
-            // TODO: track.dispatchEvent(new Event("cuechange"));
+            queueMicrotask(() => track.dispatchEvent(new Event("cuechange")));
             // XXX: we do not support html element tracks.
         });
         // 17. Set the text track cue active flag of all the cues in the current cues, and unset the text track cue active flag of all the cues in the other cues.
