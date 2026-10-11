@@ -28,6 +28,8 @@ React AV gives you the state, behaviour, and accessibility of a full media playe
 
 ## Quick start
 
+[Open the starter in StackBlitz](https://stackblitz.com/github/Wykerd/react-av/tree/master/examples/starter), or run [`examples/starter`](./examples/starter) locally. It uses the published packages with React 18.3.
+
 ```bash
 npm i @react-av/core @react-av/controls
 ```

@@ -18,6 +18,8 @@ A modern library for building media experiences in React, including features suc
 
 ## Getting Started
 
+[Open the starter in StackBlitz](https://stackblitz.com/github/Wykerd/react-av/tree/master/examples/starter) to try a styled player with playback, seek, volume, and fullscreen controls. The example uses the published packages with React 18.3. You can also download [`examples/starter`](https://github.com/Wykerd/react-av/tree/master/examples/starter) and run it locally.
+
 To get started, install the core module:
 
 ```bash

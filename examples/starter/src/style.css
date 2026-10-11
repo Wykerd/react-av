@@ -1,0 +1,15 @@
+body { margin: 0; background: #101218; color: #f7f8fb; font: 16px system-ui, sans-serif; }
+main { max-width: 800px; margin: 64px auto; padding: 24px; }
+p { color: #b4bdcd; }
+.player { position: relative; overflow: hidden; border-radius: 16px; background: #000; }
+video { display: block; width: 100%; aspect-ratio: 16 / 9; }
+.controls { position: absolute; bottom: 0; left: 0; right: 0; display: flex; gap: 12px; align-items: center; padding: 16px; background: #101218e8; }
+button { display: grid; place-items: center; border: 0; border-radius: 6px; padding: 8px; background: #283044; color: white; cursor: pointer; }
+button:focus-visible, [role="slider"]:focus-visible { outline: 2px solid #a9c7ff; outline-offset: 3px; }
+.slider { display: flex; align-items: center; position: relative; height: 24px; touch-action: none; }
+.seek { flex: 1; }
+.volume { width: 70px; }
+.slider > span:first-child { position: relative; flex: 1; height: 4px; border-radius: 4px; background: #566078; }
+.slider > span:first-child > span { position: absolute; height: 100%; background: #a9c7ff; border-radius: 4px; }
+[role="slider"] { display: block; width: 12px; height: 12px; background: white; border-radius: 50%; }
+@media (max-width: 520px) { main { margin: 16px auto; padding: 12px; } .controls { gap: 6px; padding: 10px; } .volume { width: 40px; } }
