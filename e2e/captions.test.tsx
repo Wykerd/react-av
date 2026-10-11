@@ -1,3 +1,5 @@
+import { useState } from "react";
+import VTT from "@react-av/vtt-core";
 import * as Media from "@react-av/core";
 import { PlayPause } from "@react-av/controls";
 import { Track } from "@react-av/vtt";
@@ -48,4 +50,38 @@ test("the toggle restores the selected caption track and disables without tracks
     await screen.unmount();
     await render(<Media.Root><Media.Container><Media.Video src={clip} /></Media.Container><CaptionsToggle /></Media.Root>);
     await expect.element(page.getByRole("button", { name: "Captions" })).toBeDisabled();
+});
+
+
+test("apps can disable the captions button when a track is available", async () => {
+    await render(<Media.Root><Media.Container><Media.Video src={clip} /></Media.Container>
+        <Track kind="captions" src={captions} default /><CaptionsToggle disabled />
+    </Media.Root>);
+    await expect.element(page.getByRole("button", { name: "Captions" })).toBeDisabled();
+    await expect.element(page.getByText("Captions are on")).toBeVisible();
+});
+
+function DelayedCaptionsToolbar() {
+    const media = Media.useMediaElement();
+    const [visible, setVisible] = useState(false);
+    return <><button onClick={() => {
+        const context = VTT.getContext(media!)!;
+        for (const track of context.tracks) track.mode = "hidden";
+        context.tracksChanged.dispatchEvent(new CustomEvent("change", { detail: context }));
+        VTT.updateTextTrackDisplay(media!, context.tracks);
+        setVisible(true);
+    }}>Hide captions and open toolbar</button>{visible && <CaptionsToggle />}</>;
+}
+
+test("a newly opened captions toolbar selects the default language", async () => {
+    await render(<Media.Root><Media.Container><Media.Video src={clip} /></Media.Container>
+        <Track kind="subtitles" label="Other" src={otherCaptions} />
+        <Track kind="captions" label="Default" src={captions} default />
+        <DelayedCaptionsToolbar />
+    </Media.Root>);
+    await expect.element(page.getByText("Captions are on")).toBeVisible();
+    await userEvent.click(page.getByRole("button", { name: "Hide captions and open toolbar" }));
+    await userEvent.click(page.getByRole("button", { name: "Captions", exact: true }));
+    await expect.element(page.getByText("Captions are on")).toBeVisible();
+    await expect.element(page.getByText("Other captions")).not.toBeInTheDocument();
 });

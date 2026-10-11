@@ -24,6 +24,7 @@ const CaptionsToggle: React.ForwardRefExoticComponent<CaptionsToggleProps & RefA
         icon = <ClosedCaptioning weight='fill' size={defaultIconSize} />,
         className = "",
         activeClassName = "",
+        disabled = false,
         ...btnProps
     } = props;
 
@@ -44,7 +45,7 @@ const CaptionsToggle: React.ForwardRefExoticComponent<CaptionsToggleProps & RefA
                 track.mode = "hidden";
             }
         } else {
-            let track = captionTracks[0];
+            let track = captionTracks.find(track => track._default) ?? captionTracks[0];
             if (lastShownTrack.current && captionTracks.includes(lastShownTrack.current)) {
                 track = lastShownTrack.current;
             }
@@ -64,7 +65,7 @@ const CaptionsToggle: React.ForwardRefExoticComponent<CaptionsToggleProps & RefA
         type="button"
         aria-label="Captions"
         aria-pressed={captionsOn}
-        disabled={captionTracks.length === 0}
+        disabled={disabled || captionTracks.length === 0}
     >
         {icon}
     </button>
