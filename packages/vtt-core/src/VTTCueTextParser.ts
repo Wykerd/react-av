@@ -1,5 +1,5 @@
-import named_character_reference from "./NamedCharacterReference";
-import VTTParser from "./VTTParser";
+import named_character_reference from "./NamedCharacterReference.js";
+import VTTParser from "./VTTParser.js";
 
 export class WebVTTNode {}
 

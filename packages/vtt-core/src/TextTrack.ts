@@ -1,5 +1,5 @@
-import { getCueContext } from "./GlobalState";
-import { TextTrackCue } from "./VTTCue";
+import { getCueContext } from "./GlobalState.js";
+import { TextTrackCue } from "./VTTCue.js";
 
 export type TextTrackKind = "subtitles" |  "captions" |  "descriptions" |  "chapters" | "metadata";
 export type TextTrackMode = "disabled" | "hidden" | "showing";

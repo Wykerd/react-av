@@ -1,4 +1,4 @@
-import { SliderRoot } from './SliderRoot';
+import { SliderRoot } from './SliderRoot.js';
 import React, { ComponentProps, ComponentPropsWithoutRef, forwardRef, RefAttributes } from 'react';
 import { useMediaVolume } from '@react-av/core';
 

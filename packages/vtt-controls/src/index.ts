@@ -1,2 +1,2 @@
-export { default as StoryboardThumbnail } from './StoryboardThumbnail';
-export type { StoryboardThumbnailProps } from './StoryboardThumbnail';
+export { default as StoryboardThumbnail } from './StoryboardThumbnail.js';
+export type { StoryboardThumbnailProps } from './StoryboardThumbnail.js';

@@ -1,8 +1,8 @@
 // When the current playback position of a media element changes (e.g. due to playback or seeking), the user agent must run the time marches on steps. To support use cases that depend on the timing accuracy of cue event firing, such as synchronizing captions with shot changes in a video, user agents should fire cue events as close as possible to their position on the media timeline, and ideally within 20 milliseconds. If the current playback position changes while the steps are running, then the user agent must wait for the steps to complete, and then must immediately rerun the steps. These steps are thus run as often as possible or needed.
 
-import TextTrack from "./TextTrack";
-import { TextTrackCue } from "./VTTCue";
-import WebVTTUpdateTextTracksDisplay from "./VTTRenderer";
+import TextTrack from "./TextTrack.js";
+import { TextTrackCue } from "./VTTCue.js";
+import WebVTTUpdateTextTracksDisplay from "./VTTRenderer.js";
 
 export type TextTrackChangedCallback = (element: HTMLMediaElement, track?: TextTrack) => void;
 export type TextTrackUpdateRule = (element: HTMLMediaElement, affectedTracks: TextTrack[]) => void;

@@ -1,11 +1,11 @@
-import { getContext, getCueContext, setCueDisplayState } from "./GlobalState";
-import VTTCue, { toTimestampString } from "./VTTCue";
-import WebVTTParseCueText, { WebVTTBold, WebVTTClass, WebVTTInternalNode, WebVTTItalic, WebVTTLanguage, WebVTTNode, WebVTTNodeList, WebVTTRuby, WebVTTRubyText, WebVTTText, WebVTTTimestamp, WebVTTUnderline, WebVTTVoice } from "./VTTCueTextParser";
-import VTTRegion from "./VTTRegion";
+import { getContext, getCueContext, setCueDisplayState } from "./GlobalState.js";
+import VTTCue, { toTimestampString } from "./VTTCue.js";
+import WebVTTParseCueText, { WebVTTBold, WebVTTClass, WebVTTInternalNode, WebVTTItalic, WebVTTLanguage, WebVTTNode, WebVTTNodeList, WebVTTRuby, WebVTTRubyText, WebVTTText, WebVTTTimestamp, WebVTTUnderline, WebVTTVoice } from "./VTTCueTextParser.js";
+import VTTRegion from "./VTTRegion.js";
 
 // custom elements
-import './renderer/TextTrackContainer';
-import './renderer/TextTrackContainer';
+import './renderer/TextTrackContainer.js';
+import './renderer/TextTrackContainer.js';
 
 const uiContainers = new Map<HTMLVideoElement, HTMLDivElement>();
 const didShowUI = new Set<HTMLVideoElement>();

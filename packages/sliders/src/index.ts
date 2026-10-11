@@ -1,4 +1,4 @@
-export { default as ProgressBarBufferedRanges } from './ProgressBarBufferedRanges';
-export * from './ProgressBarRoot';
-export * from './ProgressBarTooltip';
-export * from './VolumeRoot';
+export { default as ProgressBarBufferedRanges } from './ProgressBarBufferedRanges.js';
+export * from './ProgressBarRoot.js';
+export * from './ProgressBarTooltip.js';
+export * from './VolumeRoot.js';

@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { useEditorContext } from "./Editor";
+import { useEditorContext } from "./Editor.js";
 
 export function TimelineEntryLabel({ 
     icon, 

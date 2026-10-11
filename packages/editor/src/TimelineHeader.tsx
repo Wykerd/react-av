@@ -5,8 +5,8 @@ import { useState, useMemo, cloneElement } from 'react';
 import { toTimestampString as toTimestampStringShort } from "@react-av/controls";
 import { toTimestampString } from '@react-av/vtt-core';
 import { useResizeObserver } from 'use-resize-observer';
-import { TimelineOverflowContainer } from './TimelineOverflowContainer';
-import { useTimelineEditorContext } from './TimelineEditor';
+import { TimelineOverflowContainer } from './TimelineOverflowContainer.js';
+import { useTimelineEditorContext } from './TimelineEditor.js';
 
 function parseTimestampString(timestamp: string): number {
     const [hms, ms] = timestamp.split(".");

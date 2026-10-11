@@ -1,3 +1,3 @@
-export * from './TextTrack';
-export { default as Track } from './Track';
-export { default as InterfaceOverlay } from './InterfaceOverlay';
+export * from './TextTrack.js';
+export { default as Track } from './Track.js';
+export { default as InterfaceOverlay } from './InterfaceOverlay.js';
