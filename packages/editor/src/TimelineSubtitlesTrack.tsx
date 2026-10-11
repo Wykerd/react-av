@@ -155,7 +155,6 @@ export function TimelineSubtitlesTrack({
     function handleCueDelete() {
         if (!selectedEntry) return;
         const cue = selectedEntry;
-        console.log(currentTrack);
         currentTrack?.removeCue(cue);
         setSelectedEntry(undefined);
         forceRefresh();
