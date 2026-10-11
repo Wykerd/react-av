@@ -101,6 +101,53 @@ export const Audio: React.ForwardRefExoticComponent<AudioProps & RefAttributes<H
     </audio>;
 });
 
+function handleMediaKeyDown(event: React.KeyboardEvent<HTMLDivElement>, store: ReturnType<typeof useMediaStore>) {
+    function seekBy(seconds: number) {
+        store.currentTime.setState(store.currentTime.getState() + seconds);
+    }
+
+    function changeVolumeBy(amount: number) {
+        const volume = store.volume.getState() + amount;
+        store.volume.setState(Math.round(volume * 100) / 100);
+    }
+
+    const target = event.target as HTMLElement;
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+    const key = event.key.toLowerCase();
+    if (key === ' ' && target.matches('button, [role="button"]')) return;
+    if (key.startsWith('arrow') && target.matches('[role="slider"]')) return;
+
+    switch (key) {
+        case ' ':
+        case 'k':
+            store.playing.setState(!store.playing.getState());
+            break;
+        case 'arrowleft':
+            seekBy(-5);
+            break;
+        case 'arrowright':
+            seekBy(5);
+            break;
+        case 'arrowup':
+            changeVolumeBy(0.1);
+            break;
+        case 'arrowdown':
+            changeVolumeBy(-0.1);
+            break;
+        case 'f':
+            if (store.audioOnly.getState()) return;
+            store.fullscreen.setState(!store.fullscreen.getState());
+            break;
+        case 'm':
+            store.muted.setState(!store.muted.getState());
+            break;
+        default:
+            return;
+    }
+    event.preventDefault();
+}
+
 export type ContainerProps = ComponentPropsWithoutRef<'div'> & {
     keyboardShortcuts?: boolean;
 };
@@ -119,53 +166,9 @@ export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttr
     const loadingState = useMediaLoadingState();
     useImperativeHandle(ref, () => containerRef.current!, []);
 
-    function seekBy(seconds: number) {
-        store.currentTime.setState(store.currentTime.getState() + seconds);
-    }
-
-    function changeVolumeBy(amount: number) {
-        const volume = store.volume.getState() + amount;
-        store.volume.setState(Math.round(volume * 100) / 100);
-    }
-
     function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
         props.onKeyDown?.(event);
-        if (!keyboardShortcuts) return;
-        const target = event.target as HTMLElement;
-        if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
-        if (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
-        const key = event.key.toLowerCase();
-        if (key === ' ' && target.matches('button, [role="button"]')) return;
-        if (key.startsWith('arrow') && target.matches('[role="slider"]')) return;
-
-        switch (key) {
-            case ' ':
-            case 'k':
-                store.playing.setState(!store.playing.getState());
-                break;
-            case 'arrowleft':
-                seekBy(-5);
-                break;
-            case 'arrowright':
-                seekBy(5);
-                break;
-            case 'arrowup':
-                changeVolumeBy(0.1);
-                break;
-            case 'arrowdown':
-                changeVolumeBy(-0.1);
-                break;
-            case 'f':
-                if (store.audioOnly.getState()) return;
-                store.fullscreen.setState(!store.fullscreen.getState());
-                break;
-            case 'm':
-                store.muted.setState(!store.muted.getState());
-                break;
-            default:
-                return;
-        }
-        event.preventDefault();
+        if (keyboardShortcuts) handleMediaKeyDown(event, store);
     }
 
     useEffect(() => {
@@ -183,6 +186,7 @@ export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttr
 
     return <div tabIndex={keyboardShortcuts ? 0 : undefined} {...props} style={{ position: 'relative', ...(style || {}) }} ref={containerRef} data-media-container="true"
         data-media-loading={loadingState}
+        data-media-keyboard-shortcuts={keyboardShortcuts ? "true" : "false"}
         onKeyDown={handleKeyDown}
         onPointerDownCapture={event => {
             activate();
@@ -216,6 +220,7 @@ export type ViewportProps = Omit<ComponentPropsWithoutRef<'div'>, "onMouseMove">
  */
 export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, onPointerMove, onPointerDown, onPointerLeave, ...props }, ref) {
     const element = useMediaElement();
+    const store = useMediaStore();
     const [ hover, setHover ] = useState(false);
     const hoverTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -245,11 +250,19 @@ export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttrib
         }
     }
 
+    function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+        props.onKeyDown?.(event);
+        if (element?.parentElement?.getAttribute("data-media-keyboard-shortcuts") === "true") {
+            handleMediaKeyDown(event, store);
+        }
+    }
+
     const overlay = <ViewportHoverContext.Provider value={hover}>
         <div 
             {...props} 
             data-media-viewport="true"
             data-media-viewport-hover={""+hover}
+            onKeyDown={handleKeyDown}
             onPointerMove={handlePointerMove}
             onPointerDown={handlePointerDown}
             onPointerLeave={handlePointerLeave}

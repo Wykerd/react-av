@@ -152,3 +152,24 @@ test("apps can reserve player keys in child and container handlers", async () =>
     expect(video.muted).toBe(false);
     expect(handledKeys).toEqual(["k", "m"]);
 });
+
+
+test("portalled controls keep shortcuts and respect child handlers and opt-out", async () => {
+    for (const enabled of [true, false]) {
+        const screen = await render(<Media.Root>
+            <Media.Container keyboardShortcuts={enabled}><Media.Video src={clip} /></Media.Container>
+            <Media.Viewport>
+                <button>Toolbar</button>
+                <button onKeyDown={event => event.preventDefault()}>Reserved key</button>
+            </Media.Viewport>
+        </Media.Root>);
+        const video = screen.container.querySelector("video")!;
+        page.getByRole("button", { name: "Reserved key" }).element().focus();
+        await userEvent.keyboard("k");
+        expect(video.paused).toBe(true);
+        page.getByRole("button", { name: "Toolbar", exact: true }).element().focus();
+        await userEvent.keyboard("m");
+        expect(video.muted).toBe(enabled);
+        await screen.unmount();
+    }
+});
