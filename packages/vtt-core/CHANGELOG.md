@@ -1,5 +1,14 @@
 # @react-av/vtt-core
 
+## 0.0.9
+
+### Patch Changes
+
+- 0478387: Parse multiline region settings and numeric cue line positions correctly, while ignoring malformed and non-finite line values.
+- 63ef314: Security hardening: `toVTT` no longer lets cue text inject extra cues, `StoryboardThumbnail` validates storyboard URLs and regions instead of crashing, WebVTT cue text now decodes HTML character references, caption layout no longer loops forever when a cue cannot be placed, and published packages only include build output and sources.
+- 3a63648: Reveal video controls on touch and let taps pass through the caption overlay.
+- 0de08e4: Upgrade dependencies, support React 19 and Shaka Player 5 alongside React 18 and Shaka Player 4.
+
 ## 0.0.8
 
 ### Patch Changes
