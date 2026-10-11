@@ -16,7 +16,7 @@ npm i @react-av/core @react-av/vtt-core @react-av/vtt @react-av/vtt-controls
 
 A button that turns captions on and off for the `captions` and `subtitles` tracks added with `Track`.
 
-Turning captions off hides every showing captions or subtitles track. Turning them on shows the track that was showing last, or the first captions or subtitles track if none was. Add `default` to a `Track` to show it from the start.
+Turning captions off hides every showing captions or subtitles track. Turning them on restores the last shown track, otherwise the default track, then the first captions or subtitles track. Add `default` to a `Track` to show it from the start.
 
 The button sets `aria-pressed` while captions are showing and is disabled while the media has no captions or subtitles tracks.
 
