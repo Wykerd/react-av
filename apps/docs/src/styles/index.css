@@ -229,6 +229,7 @@ pre {
 }
 
 table {
+	display: block;
 	width: 100%;
 	padding: var(--padding-block) 0;
 	margin: 0;
@@ -240,8 +241,8 @@ tr:nth-of-type(odd) {
 	background: var(--theme-bg-hover);
 }
 th {
-	background: var(--color-black);
-	color: var(--theme-color);
+	background: var(--theme-bg-accent);
+	color: var(--theme-bg);
 	font-weight: bold;
 }
 td,

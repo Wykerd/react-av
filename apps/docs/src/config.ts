@@ -48,6 +48,7 @@ export const SIDEBAR: Sidebar = {
 	en: {
 		'Getting Started': [
 			{ text: 'Introduction', link: 'en/introduction' },
+			{ text: 'Comparison', link: 'en/comparison' },
 		],
 		'Guides': [
 			{ text: 'Subtitle editor', link: 'en/subtitle-editor' },
