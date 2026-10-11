@@ -1,5 +1,11 @@
 # @react-av/shaka
 
+## 0.0.6
+
+### Patch Changes
+
+- Clear up deprecation warnings
+
 ## 0.0.5
 
 ### Patch Changes
