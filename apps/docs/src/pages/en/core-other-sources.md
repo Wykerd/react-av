@@ -50,13 +50,37 @@ import * as Shaka from '@react-av/shaka';
 );
 ```
 
+### Configuration
+
+Pass a `shakaConfig` prop to configure Shaka Player before the stream loads. It accepts any part of Shaka Player's configuration, the same object `player.configure()` takes, and is typed as `Shaka.ShakaConfig`. The `onPlayerReady` prop receives the `shaka.Player` once the stream has loaded. Define both outside the component or memoise them, because a new value reloads the stream.
+
+```tsx
+import * as Media from '@react-av/core';
+import * as Shaka from '@react-av/shaka';
+
+const shakaConfig: Shaka.ShakaConfig = {
+  streaming: { bufferingGoal: 30 },
+  abr: { restrictions: { maxHeight: 1080 } },
+};
+
+() => (
+  <Media.Root>
+    <Media.Container>
+      <Shaka.Video src="https://example.com/video.mpd" shakaConfig={shakaConfig} controls playsInline />
+    </Media.Container>
+  </Media.Root>
+);
+```
+
+Types come from the typings bundled with `shaka-player`, so no extra type package is needed. Use the Shaka Player 4.15 line from 4.15.30, the 4.x line from 4.16.18, or Shaka 5 from 5.0.2. Earlier releases have missing or broken bundled declarations and are no longer supported.
+
 ### useMediaShaka()
 
 The `useMediaShaka()` hook can be used to access the underlying `shaka-player` instance. This can be useful for customizing the player.
 
 If the stream is natively supported, the hook returns `null`.
 
-**Returns:** `unknown` - shaka player has some issue exporting the TypeScript types correctly so type inference is not available.
+**Returns:** `shaka.Player | null`
 
 ## Hosting and browser requirements
 
