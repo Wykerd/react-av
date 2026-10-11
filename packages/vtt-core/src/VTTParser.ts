@@ -390,9 +390,24 @@ export default class VTTParser {
                             continue;
                         number = parsed;
                     } else {
-                        const isValidLinePosition = /^-?[0-9]+(?:\.[0-9]+)?$/.test(linepos);
-                        if (!isValidLinePosition)
+                        // 1. If linepos contains any characters other than U+002D HYPHEN-MINUS characters (-), ASCII digits, and U+002E DOT character (.), then jump to the step labeled next setting.
+                        if (/[^-0-9.]/.test(linepos))
                             continue;
+                        // 2. If any character in linepos other than the first character is a U+002D HYPHEN-MINUS character (-), then jump to the step labeled next setting.
+                        if (linepos.substring(1).includes("-"))
+                            continue;
+                        // 3. If there are more than one U+002E DOT characters (.), then jump to the step labeled next setting.
+                        const decimalPointCount = linepos.match(/\./g)?.length || 0;
+                        if (decimalPointCount > 1)
+                            continue;
+                        // 4. If there is a U+002E DOT character (.) and the character before or the character after is not an ASCII digit, or if the U+002E DOT character (.) is the first or the last character, then jump to the step labeled next setting.
+                        const decimalPointPosition = linepos.indexOf(".");
+                        if (decimalPointPosition !== -1) {
+                            const previousCharacter = linepos.charAt(decimalPointPosition - 1);
+                            const nextCharacter = linepos.charAt(decimalPointPosition + 1);
+                            if (!/[0-9]/.test(previousCharacter) || !/[0-9]/.test(nextCharacter))
+                                continue;
+                        }
                         // 5. Let number be the result of parsing linepos using the rules for parsing floating-point number values. [HTML51]
                         number = parseFloat(linepos);
                         if (number === 0)
