@@ -5,6 +5,7 @@
   "description": "Easy to use media control elements for use with React AV.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "sideEffects": false,
   "files": [
     "dist/cjs",
     "dist/esm",

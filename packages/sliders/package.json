@@ -5,6 +5,7 @@
   "description": "Media control sliders built on top of Radix UI for use with React AV.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "sideEffects": false,
   "files": [
     "dist/cjs",
     "dist/esm",
