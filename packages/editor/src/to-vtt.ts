@@ -55,6 +55,7 @@ export function toVTT(track: TextTrack) {
     const lines = cues
         .sort((a, b) => a.startTime - b.startTime)
         .map(toCueBlock);
-    const blocks = [...track._regions.map(toRegionBlock), ...lines];
+    const styles = track._stylesheets.map(css => `STYLE\n${css}`);
+    const blocks = [...styles, ...track._regions.map(toRegionBlock), ...lines];
     return `WEBVTT\n\n${blocks.join('\n\n')}`;
 }
