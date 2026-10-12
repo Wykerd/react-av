@@ -1,5 +1,5 @@
 import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes, useEffect, useRef } from "react";
-import { useMediaProgressBarTooltip } from "./ProgressBarRoot";
+import { useMediaProgressBarTooltip } from "./ProgressBarRoot.js";
 import { useResizeObserver } from "use-resize-observer";
 
 export type ProgressBarTooltipProps = ComponentPropsWithoutRef<'div'> & {

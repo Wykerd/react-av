@@ -1,6 +1,6 @@
-import TextTrack, { TextTrackKind } from './TextTrack';
-import TextTrackCue from './VTTCue';
-import VTTRegion from './VTTRegion';
+import TextTrack, { TextTrackKind } from './TextTrack.js';
+import TextTrackCue from './VTTCue.js';
+import VTTRegion from './VTTRegion.js';
 
 export default class VTTParser {
     // 2. Let position be a pointer into input, initially pointing at the start of the string.

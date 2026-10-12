@@ -1,5 +1,5 @@
 import React, { forwardRef, CSSProperties, ComponentPropsWithoutRef } from "react";
-import { useEditorContext } from "./Editor";
+import { useEditorContext } from "./Editor.js";
 
 export type DragElementProps = ComponentPropsWithoutRef<'div'> & { selected?: boolean, base?: string | CSSProperties };
 

@@ -2,10 +2,10 @@ import * as Media from '@react-av/core';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import VTT, { TextTrack, VTTCue } from "@react-av/vtt-core";
 import { useMediaTextTrackList } from "@react-av/vtt";
-import { TimelineTrack } from "./TimelineTrack";
+import { TimelineTrack } from "./TimelineTrack.js";
 import { ClosedCaptioning } from "@phosphor-icons/react";
-import { useTimelineEditorContext } from './TimelineEditor';
-import { TimelineEntryLabel } from './TimelineEntryLabel';
+import { useTimelineEditorContext } from './TimelineEditor.js';
+import { TimelineEntryLabel } from './TimelineEntryLabel.js';
 
 // this is a special version of useMediaTextTrack hook that tracks start and end time changes for resizes of cues
 interface TimeKeyedCue {

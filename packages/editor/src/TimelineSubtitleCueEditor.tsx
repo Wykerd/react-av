@@ -1,4 +1,4 @@
-import { useTimelineSubtitleCueEditor } from "./TimelineSubtitlesTrack";
+import { useTimelineSubtitleCueEditor } from "./TimelineSubtitlesTrack.js";
 import React, { type CSSProperties, useId } from "react";
 
 export interface TimelineSubtitleCueEditorStylingProps {

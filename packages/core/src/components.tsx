@@ -1,6 +1,6 @@
 import React, { ComponentPropsWithoutRef, createContext, forwardRef, RefAttributes, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MediaReadyState, MediaStoreProvider, useMediaElement, useMediaElementState, useMediaError, useMediaReadyState } from "./state";
+import { MediaReadyState, MediaStoreProvider, useMediaElement, useMediaElementState, useMediaError, useMediaReadyState } from "./state.js";
 
 const LoadingContext = createContext({ active: true, activate: () => {} });
 

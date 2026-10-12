@@ -5,6 +5,33 @@
   "description": "Easy to use media control elements for use with React AV.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "module": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "node": {
+        "import": {
+          "types": "./dist/esm/node.d.ts",
+          "default": "./dist/esm/node.js"
+        },
+        "require": {
+          "types": "./dist/cjs/index.d.ts",
+          "default": "./dist/cjs/index.js"
+        }
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "files": [
     "dist/cjs",
@@ -13,8 +40,8 @@
   ],
   "scripts": {
     "build:cjs": "tsc --outDir dist/cjs --module commonjs",
-    "build:esm": "tsc --outDir dist/esm --module esnext",
-    "build": "pnpm build:cjs && pnpm build:esm",
+    "build:esm": "tsc --outDir dist/esm --module esnext && node -e \"fs.writeFileSync('dist/esm/package.json', JSON.stringify({ type: 'module', sideEffects: false }))\"",
+    "build": "pnpm build:cjs && pnpm build:esm && node ../../scripts/build-node-entry.mjs",
     "dev": "tsc --watch"
   },
   "keywords": [],

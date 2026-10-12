@@ -2,11 +2,11 @@ import type { CSSProperties, ReactNode, RefObject} from "react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as Media from '@react-av/core';
 import { useResizeObserver } from "use-resize-observer";
-import { TimelineEntryLabel } from "./TimelineEntryLabel";
-import { TimelineOverflowContainer } from "./TimelineOverflowContainer";
-import { DraftElement, DragElement, PlayheadLine, TimelineElement } from "./TimelineElements";
-import { useEditorContext } from "./Editor";
-import { useTimelineEditorContext } from "./TimelineEditor";
+import { TimelineEntryLabel } from "./TimelineEntryLabel.js";
+import { TimelineOverflowContainer } from "./TimelineOverflowContainer.js";
+import { DraftElement, DragElement, PlayheadLine, TimelineElement } from "./TimelineElements.js";
+import { useEditorContext } from "./Editor.js";
+import { useTimelineEditorContext } from "./TimelineEditor.js";
 
 export interface TimelineEntryData {
     start: number,

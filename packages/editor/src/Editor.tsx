@@ -1,6 +1,6 @@
 import * as Media from "@react-av/core"
 import React, { useState, type CSSProperties } from "react"
-import { VideoRatio } from "./VideoRatio";
+import { VideoRatio } from "./VideoRatio.js";
 
 export interface EditorStyling {
     mediaContainer?: string | CSSProperties;

@@ -1,6 +1,6 @@
-import TextTrack from './TextTrack';
-import WebVTTParseCueText, { WebVTTBold, WebVTTClass, WebVTTInternalNode, WebVTTItalic, WebVTTLanguage, WebVTTNode, WebVTTNodeList, WebVTTRuby, WebVTTRubyText, WebVTTText, WebVTTTimestamp, WebVTTUnderline, WebVTTVoice } from './VTTCueTextParser';
-import VTTRegion from './VTTRegion';
+import TextTrack from './TextTrack.js';
+import WebVTTParseCueText, { WebVTTBold, WebVTTClass, WebVTTInternalNode, WebVTTItalic, WebVTTLanguage, WebVTTNode, WebVTTNodeList, WebVTTRuby, WebVTTRubyText, WebVTTText, WebVTTTimestamp, WebVTTUnderline, WebVTTVoice } from './VTTCueTextParser.js';
+import VTTRegion from './VTTRegion.js';
 
 export type DirectionSetting = "" | "lr" | "rl";
 export type AutoKeyword = "auto";

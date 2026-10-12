@@ -1,2 +1,2 @@
-export * from './components';
-export * from './state';
+export * from './components.js';
+export * from './state.js';

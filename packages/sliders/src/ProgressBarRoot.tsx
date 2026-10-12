@@ -1,4 +1,4 @@
-import { SliderRoot } from './SliderRoot';
+import { SliderRoot } from './SliderRoot.js';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
 import React, { ComponentProps, ComponentPropsWithoutRef, createContext, forwardRef, MouseEvent, RefAttributes, RefObject, useContext, useEffect, useRef, useState } from 'react';

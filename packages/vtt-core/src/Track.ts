@@ -1,6 +1,6 @@
-import { addTrack, getContext, init, removeTrack, updateTextTrackDisplay } from "./GlobalState";
-import TextTrack from "./TextTrack";
-import VTTParser from "./VTTParser";
+import { addTrack, getContext, init, removeTrack, updateTextTrackDisplay } from "./GlobalState.js";
+import TextTrack from "./TextTrack.js";
+import VTTParser from "./VTTParser.js";
 
 export interface HTMLTrackElementAttributes {
     kind?: TextTrackKind;

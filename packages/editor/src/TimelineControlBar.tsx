@@ -1,6 +1,6 @@
 import { PlayPause } from "@react-av/controls";
 import { Spinner } from "@phosphor-icons/react";
-import { useTimelineEditorContext } from "./TimelineEditor";
+import { useTimelineEditorContext } from "./TimelineEditor.js";
 import { useMediaDuration } from "@react-av/core";
 import React, { CSSProperties } from "react";
 

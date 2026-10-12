@@ -1,5 +1,5 @@
 import React, { ComponentPropsWithoutRef, forwardRef, RefAttributes } from "react";
-import { useEditorContext } from "./Editor";
+import { useEditorContext } from "./Editor.js";
 
 export type TimelineOverflowContainerProps = ComponentPropsWithoutRef<'div'> & { 
     componentRole?: "timeline-header" | "timeline" 

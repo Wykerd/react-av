@@ -77,6 +77,10 @@ function PlayButton() {
 
 Every package except `@react-av/vtt-core` has `react` and `react-dom` as peer dependencies.
 
+## Module formats
+
+Native Node imports and `require` calls share the same CommonJS module, so player contexts and WebVTT classes stay shared when both loaders are used. Browser bundlers use the ES module entry. Import from the package name; deep imports into `dist` are not supported. `@react-av/shaka` still requires a browser environment.
+
 ## Development
 
 This is a [pnpm](https://pnpm.io) workspace managed with [Turborepo](https://turbo.build).
