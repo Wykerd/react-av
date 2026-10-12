@@ -5,6 +5,9 @@
   "description": "W3C specification compliant WebVTT implementation.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "sideEffects": [
+    "./dist/*/renderer/*.js"
+  ],
   "files": [
     "dist/cjs",
     "dist/esm",
