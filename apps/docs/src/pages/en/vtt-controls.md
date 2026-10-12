@@ -4,13 +4,61 @@ description: Show storyboard thumbnail previews at a video's playback position u
 layout: ../../layouts/MainLayout.astro
 ---
 
-The vtt-controls module, `@react-av/vtt-controls`, provides a set of components for interacting with chapter and storyboard VTT files. 
+The vtt-controls module, `@react-av/vtt-controls`, provides a set of components for interacting with caption, chapter and storyboard VTT files.
 
 ```bash
 npm i @react-av/core @react-av/vtt-core @react-av/vtt @react-av/vtt-controls
 ```
 
 **This package is still very barebones and is still in active development, like most of the other packages.**
+
+## CaptionsToggle
+
+A button that turns captions on and off for the `captions` and `subtitles` tracks added with `Track`.
+
+Turning captions off hides every showing captions or subtitles track. Turning them on restores the last shown track, otherwise the default track, then the first captions or subtitles track. Add `default` to a `Track` to show it from the start.
+
+The button sets `aria-pressed` while captions are showing and is disabled while the media has no captions or subtitles tracks.
+
+It is a `HTMLButtonElement` and accepts all props that a `button` element accepts.
+
+Additionally, it accepts the following props for icon:
+
+- `icon` - The icon to use. Defaults to the `ClosedCaptioning` icon from the [Phosphor Icons](https://phosphoricons.com/) library.
+- `defaultIconSize` - Size of the default icon if you are using the default icon from the [Phosphor Icons](https://phosphoricons.com/) library. Defaults to `32`.
+
+Styling may be done via the props:
+
+- `activeClassName` - The class name to apply while captions are showing.
+
+Alternatively, use the CSS selectors to style the component:
+
+- `button[data-media-captions-state="on"]` - Captions are showing.
+- `button[data-media-captions-state="off"]` - Captions are hidden.
+
+```jsx
+import * as Media from '@react-av/core';
+import { Track } from '@react-av/vtt';
+import { CaptionsToggle } from '@react-av/vtt-controls';
+
+() => (
+  <Media.Root>
+    <Media.Container>
+      <Media.Video src="https://example.com/video.mp4" />
+    </Media.Container>
+    <Track
+      src="https://example.com/captions.vtt"
+      kind="captions"
+      srclang="en"
+      label="English"
+      default
+    />
+    <Media.Viewport>
+      <CaptionsToggle />
+    </Media.Viewport>
+  </Media.Root>
+)
+```
 
 ## StoryboardThumbnail
 

@@ -39,6 +39,7 @@ export class Track {
         this.default = !!attrs.default;
         this.#element = element;
         this.#track = new TextTrack(attrs.kind || "subtitles", this.default ? "showing" : "hidden", this.label, this.srclang, attrs.id);
+        this.#track._default = this.default;
         this.kind = this.#track.kind;
         addTrack(element, this.#track);
         this.#fetch();

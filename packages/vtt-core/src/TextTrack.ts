@@ -6,6 +6,7 @@ export type TextTrackMode = "disabled" | "hidden" | "showing";
 
 // TODO: make this spec compliant
 export default class TextTrack extends EventTarget {
+    _default = false;
     #kind: TextTrackKind;
     get kind() {
         return this.#kind;
