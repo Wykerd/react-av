@@ -38,6 +38,6 @@
     "@react-av/core": "workspace:^",
     "react": "^18.3.1 || ^19.0.0",
     "react-dom": "^18.3.1 || ^19.0.0",
-    "shaka-player": "^4.15.2 || ^5.0.0"
+    "shaka-player": "~4.15.30 || ^4.16.18 || ^5.0.2"
   }
 }

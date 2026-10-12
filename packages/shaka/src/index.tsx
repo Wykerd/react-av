@@ -2,8 +2,14 @@ import React, { forwardRef, useEffect, useRef, useImperativeHandle, useCallback 
 import shaka from 'shaka-player/dist/shaka-player.compiled'
 import { Video, Audio, useMediaOpaque, VideoProps, AudioProps } from "@react-av/core";
 
+type DeepPartial<T> = T extends Function
+    ? T
+    : { [Key in keyof T]?: DeepPartial<T[Key]> };
+
+export type ShakaConfig = DeepPartial<shaka.extern.PlayerConfiguration>;
+
 export interface ShakaPlayerRef {
-    player: unknown;
+    player: shaka.Player | null;
     retry: () => Promise<void>;
 }
 
@@ -12,8 +18,8 @@ export type StreamingFormat = 'auto' | 'hls' | 'dash' | 'native';
 export interface ShakaPlayerProps {
     src: string;
     format?: StreamingFormat;
-    onPlayerReady?: (player: unknown) => void;
-    shakaConfig?: any;
+    onPlayerReady?: (player: shaka.Player) => void;
+    shakaConfig?: ShakaConfig;
 }
 
 let polyfillsInstalled = false;
@@ -60,7 +66,7 @@ const createShakaPlayer = (
     src: string, 
     format: StreamingFormat = 'auto',
     onPlayerReady?: (player: shaka.Player) => void,
-    shakaConfig?: any,
+    shakaConfig?: ShakaConfig,
     setShakaInstance?: (player: shaka.Player | null) => void
 ): shaka.Player | null => {
     if (!mediaElement) {
@@ -139,16 +145,16 @@ const createShakaPlayer = (
     return player;
 };
 
-function useMediaShakaInternal(): readonly [unknown, (player: unknown) => void] {
-    return useMediaOpaque('react-av:shaka-player') as readonly [unknown, (player: unknown) => void];
+function useMediaShakaInternal() {
+    return useMediaOpaque('react-av:shaka-player') as readonly [shaka.Player | null, (player: shaka.Player | null) => void];
 }
 
 /**
  * Hook to access the Shaka Player instance from anywhere within the media context.
  * Returns the current Shaka Player instance or null if using native playback.
  */
-export function useMediaShaka() {
-    return useMediaOpaque('react-av:shaka-player')[0];
+export function useMediaShaka(): shaka.Player | null {
+    return useMediaOpaque('react-av:shaka-player')[0] as shaka.Player | null;
 }
 
 type ShakaVideoProps = VideoProps & ShakaPlayerProps;
@@ -163,7 +169,7 @@ type ShakaAudioProps = AudioProps & ShakaPlayerProps;
 const ShakaVideo = forwardRef<ShakaPlayerRef, ShakaVideoProps>(
     function ShakaVideo({ src, children, format = 'auto', onPlayerReady, shakaConfig, ...props }, ref) {
         const videoRef = useRef<HTMLVideoElement>(null);
-        const [shakaPlayer, setShakaInstance] = useMediaShakaInternal() as [shaka.Player | null, (player: shaka.Player | null) => void];
+        const [shakaPlayer, setShakaInstance] = useMediaShakaInternal();
 
         const retry = useCallback(async () => {
             if (shakaPlayer && src) {
@@ -221,7 +227,7 @@ const ShakaVideo = forwardRef<ShakaPlayerRef, ShakaVideoProps>(
 const ShakaAudio = forwardRef<ShakaPlayerRef, ShakaAudioProps>(
     function ShakaAudio({ src, children, format = 'auto', onPlayerReady, shakaConfig, ...props }, ref) {
         const audioRef = useRef<HTMLAudioElement>(null);
-        const [shakaPlayer, setShakaInstance] = useMediaShakaInternal() as [shaka.Player | null, (player: shaka.Player | null) => void];
+        const [shakaPlayer, setShakaInstance] = useMediaShakaInternal();
 
         const retry = useCallback(async () => {
             if (shakaPlayer && src) {
