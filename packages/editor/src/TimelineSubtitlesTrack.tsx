@@ -54,12 +54,39 @@ function useMediaTextTrack2(id: string) {
     return [cues, activeCues] as const;
 }
 
+interface CueState {
+    startTime: number,
+    endTime: number,
+    text: string
+}
+
+interface CueHistoryEntry {
+    cue: VTTCue,
+    before?: CueState,
+    after?: CueState,
+    isTextEdit: boolean
+}
+
+interface CueHistory {
+    past: CueHistoryEntry[],
+    future: CueHistoryEntry[]
+}
+
+const HISTORY_LIMIT = 100;
+const EMPTY_HISTORY: CueHistory = { past: [], future: [] };
+
+function isSameCueState(first?: CueState, second?: CueState) {
+    return first?.startTime === second?.startTime && first?.endTime === second?.endTime && first?.text === second?.text;
+}
+
 export interface TimelineSubtitleCueEditorContextValue {
     entry?: VTTCue,
     focusRef: React.RefObject<HTMLDivElement | null>,
     deselect: () => void,
     delete: () => void,
     focusTimeline: () => void,
+    setText: (text: string) => void,
+    finishTextEdit: () => void,
     // update cue display and notify of changes
     sync: () => void
 }
@@ -75,7 +102,11 @@ export function useTimelineSubtitleCueEditor() {
 export interface TimelineSubtitleTrackContextValue {
     track?: TextTrack,
     sync: () => void,
-    clear: () => void
+    clear: () => void,
+    undo: () => void,
+    redo: () => void,
+    canUndo: boolean,
+    canRedo: boolean
 }
 
 const TimelineSubtitleTrackContext = createContext<TimelineSubtitleTrackContextValue | null>(null);
@@ -108,6 +139,8 @@ export function TimelineSubtitlesTrack({
     const id = useMemo(() => defaultID ?? "__reactav__draft", [defaultID]);
     const [cues] = useMediaTextTrack2(id);
     const [selectedEntry, setSelectedEntry] = useState<VTTCue>();
+    const [history, setHistory] = useState(EMPTY_HISTORY);
+    const typingCue = useRef<VTTCue | undefined>(undefined);
     const selectedRef = useRef<HTMLDivElement>(null);
     const propertiesRef = useRef<HTMLDivElement>(null);
 
@@ -142,6 +175,11 @@ export function TimelineSubtitlesTrack({
         return textTrackList.find(track => track.id === id);
     }, [textTrackList, id]);
 
+    useEffect(() => {
+        setHistory(EMPTY_HISTORY);
+        typingCue.current = undefined;
+    }, [currentTrack]);
+
     function forceRefresh() {
         element && VTT.getContext(element)?.tracksChanged.dispatchEvent(new CustomEvent("cuechange", {
             detail: currentTrack
@@ -154,9 +192,11 @@ export function TimelineSubtitlesTrack({
 
     function handleCueDelete() {
         if (!selectedEntry) return;
+        const before = readCueState(selectedEntry);
         const cue = selectedEntry;
         console.log(currentTrack);
         currentTrack?.removeCue(cue);
+        recordCueChange(cue, before);
         setSelectedEntry(undefined);
         forceRefresh();
     }
@@ -169,13 +209,89 @@ export function TimelineSubtitlesTrack({
         for (const cue of oldCues) {
             currentTrack.removeCue(cue);
         }
+        setHistory(EMPTY_HISTORY);
         forceRefresh();
     }
 
-    return <TimelineSubtitleTrackContext.Provider value={{
+    function readCueState(cue: VTTCue): CueState | undefined {
+        if (!currentTrack?.cues?.includes(cue)) return undefined;
+        return { startTime: cue.startTime, endTime: cue.endTime, text: cue.text };
+    }
+
+    function applyCueState(cue: VTTCue, state?: CueState) {
+        if (!currentTrack) return;
+        const isInTrack = !!currentTrack.cues?.includes(cue);
+        if (!state) {
+            if (isInTrack) currentTrack.removeCue(cue);
+            return;
+        }
+        cue.startTime = state.startTime;
+        cue.endTime = state.endTime;
+        cue.text = state.text;
+        if (!isInTrack) currentTrack.addCue(cue);
+    }
+
+    function recordCueChange(cue: VTTCue, before: CueState | undefined, isTextEdit = false) {
+        const after = readCueState(cue);
+        if (isSameCueState(before, after)) return;
+        const previousTypingCue = typingCue.current;
+        typingCue.current = isTextEdit ? cue : undefined;
+        setHistory(previous => {
+            const lastEntry = previous.past[previous.past.length - 1];
+            const continuesTyping = isTextEdit && previousTypingCue === cue && previous.future.length === 0 && lastEntry?.isTextEdit && lastEntry.cue === cue;
+            if (continuesTyping) {
+                return { past: [...previous.past.slice(0, -1), { ...lastEntry, after }], future: [] };
+            }
+            const entry: CueHistoryEntry = { cue, before, after, isTextEdit };
+            return { past: [...previous.past, entry].slice(-HISTORY_LIMIT), future: [] };
+        });
+    }
+
+    function undo() {
+        const entry = history.past[history.past.length - 1];
+        if (!entry) return;
+        typingCue.current = undefined;
+        applyCueState(entry.cue, entry.before);
+        setHistory({ past: history.past.slice(0, -1), future: [...history.future, entry] });
+        setSelectedEntry(entry.before ? entry.cue : undefined);
+        forceRefresh();
+    }
+
+    function redo() {
+        const entry = history.future[history.future.length - 1];
+        if (!entry) return;
+        typingCue.current = undefined;
+        applyCueState(entry.cue, entry.after);
+        setHistory({ past: [...history.past, entry], future: history.future.slice(0, -1) });
+        setSelectedEntry(entry.after ? entry.cue : undefined);
+        forceRefresh();
+    }
+
+    function handleHistoryShortcut(event: React.KeyboardEvent) {
+        const target = event.target as HTMLElement;
+        if (target.isContentEditable || target.matches("input, textarea")) return;
+        if (event.altKey || (!event.metaKey && !event.ctrlKey)) return;
+        const key = event.key.toLowerCase();
+        if (key === "z" && !event.shiftKey) {
+            event.preventDefault();
+            event.stopPropagation();
+            undo();
+        } else if ((key === "z" && event.shiftKey) || (key === "y" && event.ctrlKey)) {
+            event.preventDefault();
+            event.stopPropagation();
+            redo();
+        }
+    }
+
+    return <div style={{ display: "contents" }} onKeyDown={handleHistoryShortcut}>
+    <TimelineSubtitleTrackContext.Provider value={{
         track: currentTrack,
         sync: forceRefresh,
-        clear: handleEraseSubtitles
+        clear: handleEraseSubtitles,
+        undo,
+        redo,
+        canUndo: history.past.length > 0,
+        canRedo: history.future.length > 0
     }}>
         <TimelineTrack 
             labelComponent={
@@ -193,13 +309,15 @@ export function TimelineSubtitlesTrack({
                 if (Math.abs(start - end) < interval / 20) return;
                 if (!currentTrack) return;
                 const cue = new VTTCue(start, end, "New Subtitle");
-                currentTrack?.addCue(cue);
+                currentTrack.addCue(cue);
+                recordCueChange(cue, undefined);
                 forceRefresh();
                 setSelectedEntry(cue);
             }}
             onEntryMove={delta => {
                 if (!selectedEntry) return;
                 const cue = selectedEntry;
+                const before = readCueState(cue);
                 cue.startTime += delta;
                 cue.endTime += delta;
                 if (cue.startTime < 0) {
@@ -207,6 +325,7 @@ export function TimelineSubtitlesTrack({
                     cue.startTime = 0;
                     cue.endTime -= diff;
                 }
+                recordCueChange(cue, before);
                 forceRefresh();
             }}
             entries={entries}
@@ -220,8 +339,10 @@ export function TimelineSubtitlesTrack({
             onEntryResize={(start, end) => {
                 if (!selectedEntry) return;
                 const cue = selectedEntry;
+                const before = readCueState(cue);
                 cue.startTime = start;
                 cue.endTime = end;
+                recordCueChange(cue, before);
                 forceRefresh();
             }}
             selectedSymbol={selectedEntry}
@@ -237,6 +358,14 @@ export function TimelineSubtitlesTrack({
                 (selectedRef.current?.nextElementSibling as HTMLElement)?.focus();
             },
             focusTimeline: () => selectedRef.current?.focus(),
+            setText: text => {
+                if (!selectedEntry) return;
+                const before = readCueState(selectedEntry);
+                selectedEntry.text = text;
+                recordCueChange(selectedEntry, before, true);
+                forceRefresh();
+            },
+            finishTextEdit: () => { typingCue.current = undefined; },
             sync: forceRefresh
         }}>
         {
@@ -244,4 +373,5 @@ export function TimelineSubtitlesTrack({
         }
         </TimelineSubtitleCueEditorContext.Provider>
     </TimelineSubtitleTrackContext.Provider>
+    </div>
 }

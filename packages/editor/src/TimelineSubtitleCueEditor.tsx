@@ -58,10 +58,9 @@ export function TimelineSubtitleCueEditor({
                     id={"cue_text" + labelId}
                     value={cueEditor.entry.text} 
                     onChange={e => {
-                        const value = e.target.value;
-                        cueEditor.entry!.text = value;
-                        cueEditor.sync();
+                        cueEditor.setText(e.target.value);
                     }} 
+                    onBlur={cueEditor.finishTextEdit}
                     style={typeof styling?.timelineSubtitleCueEditorCueContentField === 'string' ? {} : styling?.timelineSubtitleCueEditorCueContentField}
                     className={typeof styling?.timelineSubtitleCueEditorCueContentField === 'string' ? styling.timelineSubtitleCueEditorCueContentField : undefined}
                 />
