@@ -1,5 +1,5 @@
 import * as Slider from "@radix-ui/react-slider";
-import { Fullscreen, Mute, PlayPause, Timestamp } from "@react-av/controls";
+import { Fullscreen, Mute, PlaybackRate, PlayPause, Timestamp } from "@react-av/controls";
 import * as Media from "@react-av/core";
 import { ProgressBarRoot, VolumeRoot } from "@react-av/sliders";
 import { StrictMode } from "react";
@@ -26,6 +26,7 @@ export async function renderPlayer(videoProps: Media.VideoProps = {}) {
                     <VolumeRoot style={sliderStyle}>
                         <Slider.Thumb aria-label="Volume" style={thumbStyle} />
                     </VolumeRoot>
+                    <PlaybackRate />
                     <Fullscreen />
                 </Media.Viewport>
             </Media.Root>

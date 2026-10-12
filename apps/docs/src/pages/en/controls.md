@@ -1,6 +1,6 @@
 ---
 title: React Media Player Controls
-description: Add play and pause, mute, looping, fullscreen, picture-in-picture, and timestamps to a React video or audio player with custom icons and styles.
+description: Add play and pause, mute, looping, playback speed, fullscreen, picture-in-picture, and timestamps to a React video or audio player with custom icons and styles.
 layout: ../../layouts/MainLayout.astro
 ---
 
@@ -200,6 +200,35 @@ import * as Controls from '@react-av/controls';
     </Media.Container>
     <Media.Viewport>
       <Controls.Loop />
+    </Media.Viewport>
+  </Media.Root>
+)
+```
+
+## Controls.PlaybackRate
+
+The `Controls.PlaybackRate` component is a button that steps through a list of playback speeds. It shows the current speed, such as `1.5×`, and its accessible name announces it, such as "Playback speed 1.5×".
+
+Each press moves to the next faster speed in the list, and wraps around to the slowest speed after the fastest. If the speed was changed to a value that is not in the list, for example with `useMediaPlaybackRate`, the next press moves to the next faster speed in the list.
+
+It is a `HTMLButtonElement` and accepts all props that a `button` element accepts.
+
+Additionally, it accepts the following props:
+
+- `rates` - The playback speeds to step through. Defaults to `[0.5, 0.75, 1, 1.25, 1.5, 2]`.
+- `children` - Custom content for the button. Defaults to the current speed, such as `1.5×`.
+
+```jsx
+import * as Media from '@react-av/core';
+import * as Controls from '@react-av/controls';
+
+() => (
+  <Media.Root>
+    <Media.Container>
+      <Media.Video src="https://example.com/video.mp4" />
+    </Media.Container>
+    <Media.Viewport>
+      <Controls.PlaybackRate rates={[1, 1.5, 2]} />
     </Media.Viewport>
   </Media.Root>
 )

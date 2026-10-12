@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as Media from "@react-av/core";
-import { Fullscreen, Mute, PictureInPicture, PlayPause, Timestamp, toTimestampString } from "@react-av/controls";
+import { Fullscreen, Mute, PictureInPicture, PlaybackRate, PlayPause, Timestamp, toTimestampString } from "@react-av/controls";
 import { ProgressBarBufferedRanges, ProgressBarRoot, ProgressBarTooltip, VolumeRoot, useMediaProgressBarTooltip } from "@react-av/sliders";
 import { InterfaceOverlay, Track } from "@react-av/vtt";
 import * as Slider from "@radix-ui/react-slider";
@@ -56,6 +56,7 @@ function InkControls() {
             noneIcon={<SpeakerNone {...icon} />}
             mutedIcon={<SpeakerX {...icon} />}
         />
+        <PlaybackRate className="h-8 w-12 shrink-0 border border-ink/0 font-mono text-[10px] tabular-nums text-ink transition-colors hover:border-ink focus-visible:border-ink focus-visible:outline-none" />
         <span className="size-8 shrink-0 max-sm:hidden">
             <PictureInPicture className={INK_BUTTON} icon={<PipIcon {...icon} />} />
         </span>
