@@ -18,4 +18,6 @@ Access the cues of a text track, given its ID. It returns a tuple of all the cue
 
 Access the list of text tracks for the current media element. This hook returns a list of `TextTrack` objects. These values are reactive and will update when the text tracks change.
 
+Each `TextTrack` fires a `cuechange` event whenever its active cues change, like the browser's native `TextTrack`.
+
 **Returns:** `TextTrack[]` the list of text tracks for the current media element.
