@@ -35,7 +35,7 @@ Each React AV package ships separately, so your bundle includes only the package
 | --- | --- |
 | `@react-av/core` | 4.4 kB |
 | `@react-av/controls` | 7.5 kB |
-| `@react-av/sliders` | 3.9 kB |
+| `@react-av/sliders` | 4.3 kB |
 | `@react-av/vtt-core` | 24.3 kB |
 | `@react-av/vtt` | 1.6 kB |
 | `@react-av/vtt-controls` | 1.2 kB |
