@@ -98,6 +98,33 @@ import * as Media from '@react-av/core';
 );
 ```
 
+### Keyboard shortcuts
+
+`Media.Container` is focusable and responds to these keys while focus is on the
+player or one of its controls:
+
+- `Space` or `K` plays or pauses.
+- `←` and `→` seek back or forward 5 seconds.
+- `↑` and `↓` raise or lower the volume by 10%.
+- `F` enters or exits fullscreen for video.
+- `M` mutes or unmutes.
+
+Shortcuts only control the focused player, so several players on one page stay
+independent. They leave text fields, selects, and editable content alone, ignore
+keys held with Ctrl, Cmd, or Alt, let `Space` press a focused button, and let
+arrow keys move a focused slider. Handled keys don't scroll the page.
+
+Browsers show their focus ring on the player once it is used from the keyboard.
+Style it with `[data-media-container]:focus-visible`. Set
+`keyboardShortcuts={false}` to turn the shortcuts off and leave the container
+out of the tab order.
+
+```jsx
+<Media.Container keyboardShortcuts={false}>
+  <Media.Video src="/video.mp4" />
+</Media.Container>
+```
+
 ## Media.Viewport
 
 The `Media.Viewport` component allows you to overlay UI components on top of the video element. It portals the UI components to the `Media.Container` component.

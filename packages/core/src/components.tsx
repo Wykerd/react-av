@@ -1,6 +1,6 @@
 import React, { ComponentPropsWithoutRef, createContext, forwardRef, RefAttributes, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MediaReadyState, MediaStoreProvider, useMediaElement, useMediaElementState, useMediaError, useMediaReadyState } from "./state";
+import { MediaReadyState, MediaStoreProvider, useMediaElement, useMediaElementState, useMediaError, useMediaReadyState, useMediaStore } from "./state";
 
 const LoadingContext = createContext({ active: true, activate: () => {} });
 
@@ -101,19 +101,75 @@ export const Audio: React.ForwardRefExoticComponent<AudioProps & RefAttributes<H
     </audio>;
 });
 
-export type ContainerProps = ComponentPropsWithoutRef<'div'>;
+function handleMediaKeyDown(event: React.KeyboardEvent<HTMLDivElement>, store: ReturnType<typeof useMediaStore>) {
+    function seekBy(seconds: number) {
+        store.currentTime.setState(store.currentTime.getState() + seconds);
+    }
+
+    function changeVolumeBy(amount: number) {
+        const volume = store.volume.getState() + amount;
+        store.volume.setState(Math.round(volume * 100) / 100);
+    }
+
+    const target = event.target as HTMLElement;
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+    const key = event.key.toLowerCase();
+    if (key === ' ' && target.matches('button, [role="button"]')) return;
+    if (key.startsWith('arrow') && target.matches('[role="slider"]')) return;
+
+    switch (key) {
+        case ' ':
+        case 'k':
+            store.playing.setState(!store.playing.getState());
+            break;
+        case 'arrowleft':
+            seekBy(-5);
+            break;
+        case 'arrowright':
+            seekBy(5);
+            break;
+        case 'arrowup':
+            changeVolumeBy(0.1);
+            break;
+        case 'arrowdown':
+            changeVolumeBy(-0.1);
+            break;
+        case 'f':
+            if (store.audioOnly.getState()) return;
+            store.fullscreen.setState(!store.fullscreen.getState());
+            break;
+        case 'm':
+            store.muted.setState(!store.muted.getState());
+            break;
+        default:
+            return;
+    }
+    event.preventDefault();
+}
+
+export type ContainerProps = ComponentPropsWithoutRef<'div'> & {
+    keyboardShortcuts?: boolean;
+};
 
 /**
  * The `Media.Container` component is a wrapper around the video element. It is required by other parts of the React AV library 
  * to correctly render overlays and captions. It acts as a portal for both captions and the `Media.Viewport` component.
  *
  * It is a `HTMLDivElement` and accepts all props that a `div` element accepts.
+ * Set `keyboardShortcuts={false}` to turn off the built-in shortcuts that work while focus is inside the player.
  */
-export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ContainerProps>(function Container({ children, style, onPointerDownCapture, onFocusCapture, ...props }, ref) {
+export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ContainerProps>(function Container({ children, style, keyboardShortcuts = true, onPointerDownCapture, onFocusCapture, ...props }, ref) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const store = useMediaStore();
     const { active, activate } = useContext(LoadingContext);
     const loadingState = useMediaLoadingState();
     useImperativeHandle(ref, () => containerRef.current!, []);
+
+    function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+        props.onKeyDown?.(event);
+        if (keyboardShortcuts) handleMediaKeyDown(event, store);
+    }
 
     useEffect(() => {
         if (active || !containerRef.current) return;
@@ -128,8 +184,10 @@ export const Container: React.ForwardRefExoticComponent<ContainerProps & RefAttr
         return () => observer.disconnect();
     }, [active, activate]);
 
-    return <div {...props} style={{ position: 'relative', ...(style || {}) }} ref={containerRef} data-media-container="true"
+    return <div tabIndex={keyboardShortcuts ? 0 : undefined} {...props} style={{ position: 'relative', ...(style || {}) }} ref={containerRef} data-media-container="true"
         data-media-loading={loadingState}
+        data-media-keyboard-shortcuts={keyboardShortcuts ? "true" : "false"}
+        onKeyDown={handleKeyDown}
         onPointerDownCapture={event => {
             activate();
             onPointerDownCapture?.(event);
@@ -162,6 +220,7 @@ export type ViewportProps = Omit<ComponentPropsWithoutRef<'div'>, "onMouseMove">
  */
 export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, ViewportProps>(function Viewport({ children, hoverInactiveTimeout = 2000, className, inactiveClassName, onPointerMove, onPointerDown, onPointerLeave, ...props }, ref) {
     const element = useMediaElement();
+    const store = useMediaStore();
     const [ hover, setHover ] = useState(false);
     const hoverTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -191,11 +250,19 @@ export const Viewport: React.ForwardRefExoticComponent<ViewportProps & RefAttrib
         }
     }
 
+    function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+        props.onKeyDown?.(event);
+        if (element?.parentElement?.getAttribute("data-media-keyboard-shortcuts") === "true") {
+            handleMediaKeyDown(event, store);
+        }
+    }
+
     const overlay = <ViewportHoverContext.Provider value={hover}>
         <div 
             {...props} 
             data-media-viewport="true"
             data-media-viewport-hover={""+hover}
+            onKeyDown={handleKeyDown}
             onPointerMove={handlePointerMove}
             onPointerDown={handlePointerDown}
             onPointerLeave={handlePointerLeave}
