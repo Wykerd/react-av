@@ -3,5 +3,6 @@ export {default as Loop} from './Loop';
 export {default as Mute} from './Mute';
 export {default as PictureInPicture} from './PictureInPicture';
 export {default as PlayPause} from './PlayPause';
+export * from './Skip';
 export {default as Timestamp} from './Timestamp';
 export * from './Timestamp';
