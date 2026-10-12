@@ -81,6 +81,6 @@ Select a cue to open its text field. Drag a cue to move it, drag its edge to res
 
 The components are headless. Use their `styling` props to supply classes or inline styles; the [demo source](https://github.com/Wykerd/react-av/blob/master/apps/docs/src/demos/EditorDemo.tsx) shows complete examples.
 
-This edits subtitle text and timing. It does not transcribe speech, encode video, burn captions into the video, or provide storage. `toVTT` exports cue text and times; it does not preserve cue positioning, regions, or style blocks. Serve cross-origin caption files with the appropriate CORS headers.
+This edits subtitle text and timing. It does not transcribe speech, encode video, burn captions into the video, or provide storage. `toVTT` exports cue IDs, times, positioning settings, and text; it does not preserve regions or style blocks. Serve cross-origin caption files with the appropriate CORS headers.
 
 For caption playback without editing, see [React subtitles and WebVTT captions](/en/text-track-introduction/). For adaptive streams, see the [React HLS and DASH player guide](/en/core-other-sources/).
